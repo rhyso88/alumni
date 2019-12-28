@@ -11,13 +11,15 @@
       "version": "6.0.0"
     },
     "tns-ios": {
-      "version": "6.0.1"
+      "version": "6.2.0"
     }
   },
   "dependencies": {
     "@nativescript/theme": "^2.2.1",
+    "atob": "^2.1.2",
     "kinvey-nativescript-sdk": "^4.2.5",
     "nativescript-vue": "^2.4.0",
+    "serialize-javascript": "^2.1.2",
     "tns-core-modules": "^6.0.0"
   },
   "devDependencies": {
