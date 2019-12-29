@@ -84,7 +84,7 @@ export default {
         // first establish dataStore from Kinvey, with 'Auto' data type
 
         const dataStore = Kinvey.DataStore.collection(
-          "test",
+          "members",
           Kinvey.DataStoreType.Auto
         );
 
@@ -93,18 +93,52 @@ export default {
         // now store the dataStore locally in an array
 
         dataStore.find().then(
-          (items) => {
-            console.log(items);
+          items => {
+            //console.log(items);
             //vm.message = "changed inside datastore twice";
             items.forEach(item => {
               vm.localdata.push(item);
             });
           },
-          (error) => {
+          error => {
             console.log("stream error found:" + error);
           }
         );
       })
+
+      // ability to save data/entities to server
+      // 'pass' is undefined as I am not carrying anything over from previous then
+
+      .then(function(pass) {
+
+
+        //set dataStore within this promise
+
+         const dataStore = Kinvey.DataStore.collection(
+          "members",
+          Kinvey.DataStoreType.Auto
+        );
+
+        //entity to upload to Kinvey dataStore
+
+        console.log("inside function to save entities");
+        console.log("using this to save to:"+dataStore);
+
+        const promise = dataStore
+          .save({
+            name: "value"
+          })
+          .then(function(entity) {
+            // ...
+          })
+          .catch(function(error) {
+            // ...
+          });
+        //await dataStore.save(savEnt);
+
+        
+      })
+
       .catch(function(error) {
         console.log(
           "&&&&&&&& Kinvey NOT linked within Home.vue &&&&&&&&. Response: " +
