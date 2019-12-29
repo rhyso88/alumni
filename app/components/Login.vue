@@ -57,9 +57,9 @@
                 isLoggingIn: true,
                 processing: false,
                 user: {
-                    email: "vue@nativescript.org",
-                    password: "vue",
-                    confirmPassword: "vue"
+                    email: "rhyso88@hotmail.com",
+                    password: "testing",
+                    confirmPassword: "testing"
                 }
             };
         },
