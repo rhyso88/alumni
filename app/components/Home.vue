@@ -19,20 +19,19 @@
 </template>
 
 <script>
-//Import required
+// import required
+
 import Login from "./Login";
 import * as Kinvey from "kinvey-nativescript-sdk";
 
-//import datasync2 from "../services/data-sync2";
-
-//rest of Vue code
+// rest of Vue code
 
 export default {
   data() {
     return {
-      message: "Yocation functionality.",
-      message2: "test2",
-      message3: "final",
+      message: "empty starting apple",
+      message2: "empty starting text",
+      message3: "empty starting text",
       localdata: []
     };
   },
@@ -45,12 +44,12 @@ export default {
     }
   },
   created() {
-    //Create an variable to hold 'this' so I can used inside of other function scopes
+    // create a variable to hold 'this' so I can used inside of other function scopes
+    //this.message2 = "Rhys changed on entry";
 
-    this.message2 = "Rhys changed on entry"; // Just a check to see what 'this' is
     var vm = this;
 
-    //initialise and then check Kinvey connection using promises to wait for connection
+    // initialise and then check Kinvey connection using promises to wait for connection
 
     Kinvey.init({
       appKey: "kid_S1Gok7ARr",
@@ -60,53 +59,55 @@ export default {
     Kinvey.ping()
       .then(function(response) {
         console.log(
-          "&&&&&&&& Kinvey linked within SFC Home &&&&&&&&" +
+          "&&&&&&&& Kinvey linked within Home.vue &&&&&&&&" +
             response.version +
             ", response: " +
             response.kinvey
         );
       })
       .then(function(pass) {
-        console.log("after Kinvey received");
+        console.log(
+          "Kinvey ping connection received - now get data collection"
+        );
 
-        // check active user once data received from Kinvey
+        // check active user once data received from Kinvey (add if statement later)
 
         const activeUser = Kinvey.User.getActiveUser();
         if (activeUser == null) {
-          console.log("active user is null");
+          console.log("active user is null inside Home.vue");
         } else {
-          console.log("active user is true inside SFC");
+          console.log("active user is true inside Home.vue");
         }
 
         // collect datastore from kinvey
 
-        const dataStore = Kinvey.DataStore.collection("names");
-        const stream = dataStore.find();
-        //console.log("SFC - datastore returned" + dataStore);
-        //console.log("SFC - stream returned" + stream);
+        // first establish dataStore from Kinvey, with 'Auto' data type
 
-        //var localdata = [];
+        const dataStore = Kinvey.DataStore.collection(
+          "test",
+          Kinvey.DataStoreType.Auto
+        );
 
-        // loop through datastore array and store data locally
+        //console.log("Home.vue - datastore returned:" + dataStore);
 
-        stream.subscribe(
-          employees => {
-            employees.forEach(element => {
-              vm.localdata.push(element);
-              vm.message = "Im acessing Vue data inside the loop";
+        // now store the dataStore locally in an array
+
+        dataStore.find().then(
+          (items) => {
+            console.log(items);
+            //vm.message = "changed inside datastore twice";
+            items.forEach(item => {
+              vm.localdata.push(item);
             });
           },
-          error => {
-            console.log("error found in datasync2" + error);
-          },
-          () => {
-            console.log("adding values to local data store");
+          (error) => {
+            console.log("stream error found:" + error);
           }
         );
       })
       .catch(function(error) {
         console.log(
-          "&&&&&&&& Kinvey NOT linked within SFC Home &&&&&&&&. Response: " +
+          "&&&&&&&& Kinvey NOT linked within Home.vue &&&&&&&&. Response: " +
             error.description
         );
       });
