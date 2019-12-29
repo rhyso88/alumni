@@ -13,6 +13,10 @@
 
 <script>
 import Login from "./Login";
+//import datasync from "../services/data-sync";
+import datasync2 from "../services/data-sync2";
+//datasync();
+datasync2();
 
 //retrieve data from Kinvey
 
