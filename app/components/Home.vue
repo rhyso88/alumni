@@ -3,16 +3,17 @@
     <ActionBar title="Home1 APP"></ActionBar>
     <ScrollView orientation="vertical">
       <StackLayout>
-        <Label class="body m-20" :text="message" textWrap="true"></Label>
         <Button class="btn btn-primary" text="Add Data" @tap="addData"></Button>
-        <Button class="btn btn-primary" text="Update Data" @tap="getData"></Button>
+        <Button class="btn btn-primary" text="Get Data" @tap="getData"></Button>
+        <Button class="btn btn-primary" text="Update Data" @tap="updateData"></Button>
         <!--<Button class="btn btn-primary" text="Delete Data" @tap="deleteData"></Button>-->
         <Label class="body m-20" :text="message3" textWrap="true"></Label>
         <StackLayout orientation="vertical">
           <ListView for="item in localdata" @itemTap="onItemTap">
             <v-template>
               <StackLayout orientation="horizontal">
-                  <Label :text="item.name" verticalAlignment="center"/>
+                <Label :text="'Name: '+item.name" verticalAlignment="center" />
+                <Label :text="'Occupation: '+item.occupation" verticalAlignment="center" />
               </StackLayout>
             </v-template>
           </ListView>
@@ -37,11 +38,10 @@ export default {
     return {
       message3: "Data from Kinvey:",
       localdata: [],
-      todelete:"_id of object will go here"
+      todelete: "_id of object you want to delete will go here"
     };
   },
   methods: {
-
     logout() {
       this.$backendService.logout();
       this.$navigateTo(Login, {
@@ -50,8 +50,12 @@ export default {
     },
 
     onItemTap: function(event) {
-      console.log("ID of object tapped: " + this.$data.localdata[event.index]._id);
-      console.log("Object name tapped: " + this.$data.localdata[event.index].name);
+      console.log(
+        "ID of object tapped: " + this.$data.localdata[event.index]._id
+      );
+      console.log(
+        "Object name tapped: " + this.$data.localdata[event.index].name
+      );
       this.$data.todelete = this.$data.localdata[event.index]._id;
       this.deleteData();
     },
@@ -88,7 +92,7 @@ export default {
           // if client confirms wants to add data, connect to Kinvey and addData
 
           if (result) {
-            console.log("You have detected true, and will add this data");
+            //console.log("You have detected true, and will add this data");
 
             // establish Kinvey connection dataStore
 
@@ -104,13 +108,69 @@ export default {
             const promise = dataStore
               .save(entAdd)
               .then(function(entity) {
-                vm.message =
-                  "now inside promised update data after save update";
+                console.log("now inside promised update data after save update");
                 vm.getData();
               })
               .catch(function(error) {
                 // ...
               });
+          }
+        });
+    },
+
+    updateData() {
+      // create a variable to hold 'this' so I can used inside of other function scopes
+
+      var vm = this;
+
+      // confirm if user wants to update data to Kinvey Server
+
+      dialogs
+        .confirm({
+          title: "Update Data",
+          message: "Do you want to update this data to the server?",
+          okButtonText: "Yes",
+          cancelButtonText: "No"
+        })
+        .then(function(result) {
+          // result argument is boolean
+
+          // if client confirms wants to update data, connect to Kinvey and update
+
+          if (result) {
+
+            // establish Kinvey connection dataStore
+
+            const dataStore = Kinvey.DataStore.collection(
+              "members",
+              Kinvey.DataStoreType.Auto
+            );
+
+            /* Used in debugging
+              // var count = 0;
+              //const entAdd = vm.localdata[0];
+              //const entAdd = vm.localdata["5e0993b02e5dcb0016db072d"];
+              // update Kinvey dataStore with local dataStore when update button clicked
+            */
+
+           vm.localdata[5].occupation = "Painter";
+
+            //Loop through local dataStore, to create an object in format Kinvey format
+            //Once suitbale object created, save it to Kinvey server
+
+            vm.localdata.forEach(item => {
+              //console.log("Item name and occupation"+ count + item.name + item.occupation);
+              var saveObject = {_id: item._id, name: item.name, occupation: item.occupation};
+              dataStore
+              .save(saveObject)
+              .then(function(entity) {
+                console.log("just completed updating server with local data");
+                //vm.getData(); - if using later need to work out data flow direction
+              })
+              .catch(function(error) {
+                console.log("error within update funciton:"+ error)
+              });
+            });
           }
         });
     },
@@ -248,40 +308,6 @@ export default {
           }
         );
       })
-
-      /* This was the first way I used to save data to Kinvey
-
-      // ability to save data/entities to server
-      // 'pass' is undefined as I am not carrying anything over from previous then
-
-      .then(function(pass) {
-        //set dataStore within this promise
-
-        const dataStore = Kinvey.DataStore.collection(
-          "members",
-          Kinvey.DataStoreType.Auto
-        );
-
-        //entity to upload to Kinvey dataStore
-
-        console.log("inside function to save entities");
-        //console.log("using this to save to:" + dataStore);
-
-        const entSave = { name: "Hermione Granger" };
-
-        const promise = dataStore
-          .save(entSave)
-          .then(function(passedBack) {
-            //do nothing atm, will call update list soon
-          })
-          .catch(function(error) {
-            // ...
-          });
-        //await dataStore.save(savEnt);
-      })
-
-      */
-
       .catch(function(error) {
         console.log(
           "&&&&&&&& Kinvey NOT linked within Home.vue &&&&&&&&. Response: " +
