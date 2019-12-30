@@ -6,6 +6,7 @@
       <Label class="body m-20" :text="message" textWrap="true"></Label>
       <Label class="body m-20" :text="message2" textWrap="true"></Label>
       <Label class="body m-20" :text="message3" textWrap="true"></Label>
+      <Button class="btn btn-primary" text="Add Data" @tap="saveData"></Button>
       <StackLayout orientation="vertical">
         <ListView for="data in localdata">
           <v-template>
@@ -23,6 +24,7 @@
 
 import Login from "./Login";
 import * as Kinvey from "kinvey-nativescript-sdk";
+var dialogs = require("tns-core-modules/ui/dialogs");
 
 // rest of Vue code
 
@@ -41,6 +43,19 @@ export default {
       this.$navigateTo(Login, {
         clearHistory: true
       });
+    },
+    saveData() {
+      dialogs
+        .confirm({
+          title: "Save Data",
+          message: "Do you want to add this data to the server?",
+          okButtonText: "Yes",
+          cancelButtonText: "No"
+        })
+        .then(function(result) {
+          // result argument is boolean
+          console.log("Dialog result completed: " + result);
+        });
     }
   },
   created() {
@@ -110,11 +125,9 @@ export default {
       // 'pass' is undefined as I am not carrying anything over from previous then
 
       .then(function(pass) {
-
-
         //set dataStore within this promise
 
-         const dataStore = Kinvey.DataStore.collection(
+        const dataStore = Kinvey.DataStore.collection(
           "members",
           Kinvey.DataStoreType.Auto
         );
@@ -122,12 +135,12 @@ export default {
         //entity to upload to Kinvey dataStore
 
         console.log("inside function to save entities");
-        console.log("using this to save to:"+dataStore);
+        console.log("using this to save to:" + dataStore);
+
+        const entSave = {name: "Harry Potter"};
 
         const promise = dataStore
-          .save({
-            name: "value"
-          })
+          .save(entSave)
           .then(function(entity) {
             // ...
           })
@@ -135,8 +148,6 @@ export default {
             // ...
           });
         //await dataStore.save(savEnt);
-
-        
       })
 
       .catch(function(error) {
