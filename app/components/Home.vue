@@ -6,15 +6,14 @@
         <Button class="btn btn-primary" text="Add Data" @tap="addData"></Button>
         <Button class="btn btn-primary" text="Get Data" @tap="getData"></Button>
         <Button class="btn btn-primary" text="Update Data" @tap="updateData"></Button>
-        <!--<Button class="btn btn-primary" text="Delete Data" @tap="deleteData"></Button>-->
         <Label class="body m-20" :text="message3" textWrap="true"></Label>
         <StackLayout orientation="vertical">
           <ListView for="item in localdata" @itemTap="onItemTap">
             <v-template>
-              <StackLayout orientation="horizontal">
-                <Label :text="'Name: '+item.name" verticalAlignment="center" />
-                <Label :text="'Occupation: '+item.occupation" verticalAlignment="center" />
-              </StackLayout>
+              <GridLayout rows="*" columns="auto, *">
+                <Image row="0" col="0" :src="item.src" class="thumb img-circle"/>
+						    <Label row="0" col="1" :text="'Name: '+item.name" />
+              </GridLayout>
             </v-template>
           </ListView>
         </StackLayout>
@@ -153,14 +152,15 @@ export default {
               // update Kinvey dataStore with local dataStore when update button clicked
             */
 
-           vm.localdata[5].occupation = "Painter";
+           //vm.localdata[3].occupation = "Painter";
 
             //Loop through local dataStore, to create an object in format Kinvey format
             //Once suitbale object created, save it to Kinvey server
 
             vm.localdata.forEach(item => {
               //console.log("Item name and occupation"+ count + item.name + item.occupation);
-              var saveObject = {_id: item._id, name: item.name, occupation: item.occupation};
+              var saveObject = {_id: item._id, name: item.name, occupation: item.occupation,
+              src: item.src};
               dataStore
               .save(saveObject)
               .then(function(entity) {
