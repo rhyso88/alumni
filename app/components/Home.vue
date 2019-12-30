@@ -6,20 +6,14 @@
         <Label class="body m-20" :text="message" textWrap="true"></Label>
         <Button class="btn btn-primary" text="Add Data" @tap="addData"></Button>
         <Button class="btn btn-primary" text="Update Data" @tap="getData"></Button>
-        <Button class="btn btn-primary" text="Delete Data" @tap="deleteData"></Button>
+        <!--<Button class="btn btn-primary" text="Delete Data" @tap="deleteData"></Button>-->
         <Label class="body m-20" :text="message3" textWrap="true"></Label>
         <StackLayout orientation="vertical">
-          <ListView for="data in localdata">
+          <ListView for="item in localdata" @itemTap="onItemTap">
             <v-template>
-              <Label :text="data.name" verticalAlignment="center" />
-            </v-template>
-          </ListView>
-        </StackLayout>
-        <Label class="body m-20" :text="message4" textWrap="true"></Label>
-        <StackLayout orientation="vertical">
-          <ListView for="data in recentdata">
-            <v-template>
-              <Label :text="data.name" verticalAlignment="center" />
+              <StackLayout orientation="horizontal">
+                  <Label :text="item.name" verticalAlignment="center"/>
+              </StackLayout>
             </v-template>
           </ListView>
         </StackLayout>
@@ -41,20 +35,37 @@ var dialogs = require("tns-core-modules/ui/dialogs");
 export default {
   data() {
     return {
-      message: "test message location",
       message3: "Data from Kinvey:",
-      message4: "Updated data post add:",
       localdata: [],
-      recentdata: []
+      todelete:"_id of object will go here"
     };
   },
   methods: {
+
     logout() {
       this.$backendService.logout();
       this.$navigateTo(Login, {
         clearHistory: true
       });
     },
+
+    onItemTap: function(event) {
+      console.log("ID of object tapped: " + this.$data.localdata[event.index]._id);
+      console.log("Object name tapped: " + this.$data.localdata[event.index].name);
+      this.$data.todelete = this.$data.localdata[event.index]._id;
+      this.deleteData();
+    },
+
+    /* Long press ability - need to work out later for delete ability
+
+    onLongPress(args) {
+    console.log("long press initiated");
+    console.log(`Object that triggered the event: ${args.object}`);
+    console.log(`Event name: ${args.eventName}`);
+    },
+
+    */
+
     addData() {
       // create a variable to hold 'this' so I can used inside of other function scopes
 
@@ -70,13 +81,11 @@ export default {
           cancelButtonText: "No"
         })
         .then(function(result) {
-
           // result argument is boolean
-          
-          console.log("Do you want to save data - result returned: " + result);
+
+          //console.log("Do you want to save data - result returned: " + result);
 
           // if client confirms wants to add data, connect to Kinvey and addData
-
 
           if (result) {
             console.log("You have detected true, and will add this data");
@@ -105,6 +114,7 @@ export default {
           }
         });
     },
+
     getData() {
       // create a variable to hold 'this' so I can used inside of other function scopes
 
@@ -140,7 +150,7 @@ export default {
 
       // confirm want to delete data, then remove it from Kinvey server
 
-      console.log("inside delete funciton");
+      //console.log("inside delete funciton");
 
       dialogs
         .confirm({
@@ -151,7 +161,30 @@ export default {
         })
         .then(function(result) {
           // result argument is boolean
-          console.log("Dialog result returned true or false: " + result);
+          //console.log("Client delete data result returned true or false: " + result);
+
+          // establish a Kinvey connection dataStore
+          const dataStore = Kinvey.DataStore.collection(
+            "members",
+            Kinvey.DataStoreType.Auto
+          );
+
+          //object for id/data that we want to remove from Kinvey server
+
+          //console.log("item to delete using tap method" + vm.todelete);
+
+          const remID = { _id: vm.todelete };
+
+          //remove object with _id from Kinvey server
+
+          var promise = dataStore
+            .removeById(remID._id)
+            .then(function(result) {
+              vm.getData();
+            })
+            .catch(function(error) {
+              // ...
+            });
         });
     }
   },
@@ -199,8 +232,6 @@ export default {
           "members",
           Kinvey.DataStoreType.Auto
         );
-
-        //console.log("Home.vue - datastore returned:" + dataStore);
 
         // now store the dataStore locally in an array
 
