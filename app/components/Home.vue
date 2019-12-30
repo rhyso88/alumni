@@ -4,8 +4,9 @@
     <ScrollView orientation="vertical">
       <StackLayout>
         <Label class="body m-20" :text="message" textWrap="true"></Label>
-        <Button class="btn btn-primary" text="Add Data" @tap="saveData"></Button>
+        <Button class="btn btn-primary" text="Add Data" @tap="addData"></Button>
         <Button class="btn btn-primary" text="Update Data" @tap="getData"></Button>
+        <Button class="btn btn-primary" text="Delete Data" @tap="deleteData"></Button>
         <Label class="body m-20" :text="message3" textWrap="true"></Label>
         <StackLayout orientation="vertical">
           <ListView for="data in localdata">
@@ -42,7 +43,7 @@ export default {
     return {
       message: "test message location",
       message3: "Data from Kinvey:",
-      message4: "Updated data post save:",
+      message4: "Updated data post add:",
       localdata: [],
       recentdata: []
     };
@@ -54,33 +55,11 @@ export default {
         clearHistory: true
       });
     },
-    saveData() {
-
+    addData() {
       // create a variable to hold 'this' so I can used inside of other function scopes
 
       var vm = this;
 
-      // establish Kinvey connection dataStore
-
-      const dataStore = Kinvey.DataStore.collection(
-        "members",
-        Kinvey.DataStoreType.Auto
-      );
-
-      // save object below on button click
-
-      const entSave = { name: "Green Goblin" };
-
-      const promise = dataStore
-        .save(entSave)
-        .then(function(entity) {
-          vm.message = "now inside promised update data after save update";
-          vm.getData();
-        })
-        .catch(function(error) {
-          // ...
-        });
-      
       // confirm if user wants to add data to Kinvey
 
       dialogs
@@ -91,12 +70,42 @@ export default {
           cancelButtonText: "No"
         })
         .then(function(result) {
+
           // result argument is boolean
-          console.log("Dialog result completed: " + result);
+          
+          console.log("Do you want to save data - result returned: " + result);
+
+          // if client confirms wants to add data, connect to Kinvey and addData
+
+
+          if (result) {
+            console.log("You have detected true, and will add this data");
+
+            // establish Kinvey connection dataStore
+
+            const dataStore = Kinvey.DataStore.collection(
+              "members",
+              Kinvey.DataStoreType.Auto
+            );
+
+            // add object below on button click
+
+            const entAdd = { name: "Green Goblin" };
+
+            const promise = dataStore
+              .save(entAdd)
+              .then(function(entity) {
+                vm.message =
+                  "now inside promised update data after save update";
+                vm.getData();
+              })
+              .catch(function(error) {
+                // ...
+              });
+          }
         });
     },
     getData() {
-
       // create a variable to hold 'this' so I can used inside of other function scopes
 
       var vm = this;
@@ -110,20 +119,40 @@ export default {
 
       // get dataStore data, and store it locally in a Vue data array
 
-        dataStore.find().then(
-          items => {
-            //console.log(items);
-            //vm.message = "2nd cahnge inside getData method";
-            vm.localdata = [];
-            items.forEach(item => {
-              vm.localdata.push(item);
-            });
-          },
-          error => {
-            console.log("error in getData method:" + error);
-          }
-        );
-        
+      dataStore.find().then(
+        items => {
+          //console.log(items);
+          //vm.message = "2nd cahnge inside getData method";
+          vm.localdata = [];
+          items.forEach(item => {
+            vm.localdata.push(item);
+          });
+        },
+        error => {
+          console.log("error in getData method:" + error);
+        }
+      );
+    },
+    deleteData() {
+      // create a variable to hold 'this' so I can used inside of other function scopes
+
+      var vm = this;
+
+      // confirm want to delete data, then remove it from Kinvey server
+
+      console.log("inside delete funciton");
+
+      dialogs
+        .confirm({
+          title: "Delete Data",
+          message: "Do you want to delete this entry from the server?",
+          okButtonText: "Yes",
+          cancelButtonText: "No"
+        })
+        .then(function(result) {
+          // result argument is boolean
+          console.log("Dialog result returned true or false: " + result);
+        });
     }
   },
   created() {
