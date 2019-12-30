@@ -55,6 +55,11 @@ module.exports = env => {
     const useLibs = compileSnapshot;
     const isAnySourceMapEnabled = !!sourceMap || !!hiddenSourceMap;
     const externals = nsWebpack.getConvertedExternals(env.externals);
+    let extendedExternals = {
+        "nativescript-sqlite-commercial": "nativescript-sqlite-commercial",
+        "nativescript-sqlite-encrypted": "nativescript-sqlite-encrypted",
+        ...externals,
+    };
 
     const mode = production ? "production" : "development"
 
@@ -95,7 +100,7 @@ module.exports = env => {
     const config = {
         mode: mode,
         context: appFullPath,
-        externals,
+        externals: extendedExternals,
         watchOptions: {
             ignored: [
                 appResourcesFullPath,
