@@ -1,21 +1,30 @@
 <template>
   <Page>
     <ActionBar title="Home1 APP"></ActionBar>
-
-    <StackLayout>
-      <Label class="body m-20" :text="message" textWrap="true"></Label>
-      <Label class="body m-20" :text="message2" textWrap="true"></Label>
-      <Label class="body m-20" :text="message3" textWrap="true"></Label>
-      <Button class="btn btn-primary" text="Add Data" @tap="saveData"></Button>
-      <StackLayout orientation="vertical">
-        <ListView for="data in localdata">
-          <v-template>
-            <Label :text="data.name" verticalAlignment="center" />
-          </v-template>
-        </ListView>
+    <ScrollView orientation="vertical">
+      <StackLayout>
+        <Label class="body m-20" :text="message" textWrap="true"></Label>
+        <Button class="btn btn-primary" text="Add Data" @tap="saveData"></Button>
+        <Button class="btn btn-primary" text="Update Data" @tap="getData"></Button>
+        <Label class="body m-20" :text="message3" textWrap="true"></Label>
+        <StackLayout orientation="vertical">
+          <ListView for="data in localdata">
+            <v-template>
+              <Label :text="data.name" verticalAlignment="center" />
+            </v-template>
+          </ListView>
+        </StackLayout>
+        <Label class="body m-20" :text="message4" textWrap="true"></Label>
+        <StackLayout orientation="vertical">
+          <ListView for="data in recentdata">
+            <v-template>
+              <Label :text="data.name" verticalAlignment="center" />
+            </v-template>
+          </ListView>
+        </StackLayout>
+        <Button class="btn btn-primary" text="Log out" @tap="logout"></Button>
       </StackLayout>
-      <Button class="btn btn-primary" text="Log out" @tap="logout"></Button>
-    </StackLayout>
+    </ScrollView>
   </Page>
 </template>
 
@@ -31,10 +40,11 @@ var dialogs = require("tns-core-modules/ui/dialogs");
 export default {
   data() {
     return {
-      message: "empty starting apple",
-      message2: "empty starting text",
-      message3: "empty starting text",
-      localdata: []
+      message: "test message location",
+      message3: "Data from Kinvey:",
+      message4: "Updated data post save:",
+      localdata: [],
+      recentdata: []
     };
   },
   methods: {
@@ -45,6 +55,34 @@ export default {
       });
     },
     saveData() {
+
+      // create a variable to hold 'this' so I can used inside of other function scopes
+
+      var vm = this;
+
+      // establish Kinvey connection dataStore
+
+      const dataStore = Kinvey.DataStore.collection(
+        "members",
+        Kinvey.DataStoreType.Auto
+      );
+
+      // save object below on button click
+
+      const entSave = { name: "Green Goblin" };
+
+      const promise = dataStore
+        .save(entSave)
+        .then(function(entity) {
+          vm.message = "now inside promised update data after save update";
+          vm.getData();
+        })
+        .catch(function(error) {
+          // ...
+        });
+      
+      // confirm if user wants to add data to Kinvey
+
       dialogs
         .confirm({
           title: "Save Data",
@@ -56,6 +94,36 @@ export default {
           // result argument is boolean
           console.log("Dialog result completed: " + result);
         });
+    },
+    getData() {
+
+      // create a variable to hold 'this' so I can used inside of other function scopes
+
+      var vm = this;
+
+      // establish a Kinvey connection dataStore
+
+      const dataStore = Kinvey.DataStore.collection(
+        "members",
+        Kinvey.DataStoreType.Auto
+      );
+
+      // get dataStore data, and store it locally in a Vue data array
+
+        dataStore.find().then(
+          items => {
+            //console.log(items);
+            //vm.message = "2nd cahnge inside getData method";
+            vm.localdata = [];
+            items.forEach(item => {
+              vm.localdata.push(item);
+            });
+          },
+          error => {
+            console.log("error in getData method:" + error);
+          }
+        );
+        
     }
   },
   created() {
@@ -121,6 +189,8 @@ export default {
         );
       })
 
+      /* This was the first way I used to save data to Kinvey
+
       // ability to save data/entities to server
       // 'pass' is undefined as I am not carrying anything over from previous then
 
@@ -135,20 +205,22 @@ export default {
         //entity to upload to Kinvey dataStore
 
         console.log("inside function to save entities");
-        console.log("using this to save to:" + dataStore);
+        //console.log("using this to save to:" + dataStore);
 
-        const entSave = {name: "Harry Potter"};
+        const entSave = { name: "Hermione Granger" };
 
         const promise = dataStore
           .save(entSave)
-          .then(function(entity) {
-            // ...
+          .then(function(passedBack) {
+            //do nothing atm, will call update list soon
           })
           .catch(function(error) {
             // ...
           });
         //await dataStore.save(savEnt);
       })
+
+      */
 
       .catch(function(error) {
         console.log(
