@@ -7,12 +7,18 @@
         <Button class="btn btn-primary" text="Get Data" @tap="getData"></Button>
         <Button class="btn btn-primary" text="Update Data" @tap="updateData"></Button>
         <Label class="body m-20" :text="message3" textWrap="true"></Label>
+        <Label class="fas" :text="'fa-tools' | fonticon" />
+        <Label class="fas" :text="'fa-briefcase' | fonticon" />
+        <Label class="fas" :text="'fa-stethoscope' | fonticon" />
+        <Label class="fas" :text="'fa-newspaper' | fonticon" />
+        <Label class="fas" :text="'fa-address-card' | fonticon" />
+        <Label class="fas" :text="'fa-bell' | fonticon" />
         <StackLayout orientation="vertical">
           <ListView for="item in localdata" @itemTap="onItemTap">
             <v-template>
               <GridLayout rows="*" columns="auto, *">
-                <Image row="0" col="0" :src="item.src" class="thumb img-circle"/>
-						    <Label row="0" col="1" :text="'Name: '+item.name" />
+                <Image row="0" col="0" :src="item.src" class="thumb img-circle" />
+                <Label row="0" col="1" :text="'Name: '+item.name" />
               </GridLayout>
             </v-template>
           </ListView>
@@ -107,7 +113,9 @@ export default {
             const promise = dataStore
               .save(entAdd)
               .then(function(entity) {
-                console.log("now inside promised update data after save update");
+                console.log(
+                  "now inside promised update data after save update"
+                );
                 vm.getData();
               })
               .catch(function(error) {
@@ -137,7 +145,6 @@ export default {
           // if client confirms wants to update data, connect to Kinvey and update
 
           if (result) {
-
             // establish Kinvey connection dataStore
 
             const dataStore = Kinvey.DataStore.collection(
@@ -152,24 +159,28 @@ export default {
               // update Kinvey dataStore with local dataStore when update button clicked
             */
 
-           //vm.localdata[3].occupation = "Painter";
+            //vm.localdata[3].occupation = "Painter";
 
             //Loop through local dataStore, to create an object in format Kinvey format
             //Once suitbale object created, save it to Kinvey server
 
             vm.localdata.forEach(item => {
               //console.log("Item name and occupation"+ count + item.name + item.occupation);
-              var saveObject = {_id: item._id, name: item.name, occupation: item.occupation,
-              src: item.src};
+              var saveObject = {
+                _id: item._id,
+                name: item.name,
+                occupation: item.occupation,
+                src: item.src
+              };
               dataStore
-              .save(saveObject)
-              .then(function(entity) {
-                console.log("just completed updating server with local data");
-                //vm.getData(); - if using later need to work out data flow direction
-              })
-              .catch(function(error) {
-                console.log("error within update funciton:"+ error)
-              });
+                .save(saveObject)
+                .then(function(entity) {
+                  console.log("just completed updating server with local data");
+                  //vm.getData(); - if using later need to work out data flow direction
+                })
+                .catch(function(error) {
+                  console.log("error within update funciton:" + error);
+                });
             });
           }
         });
