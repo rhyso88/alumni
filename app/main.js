@@ -12,7 +12,7 @@ Vue.prototype.$backendService = backendService;
 
 import {TNSFontIcon, fonticon} from 'nativescript-fonticon';
 
-TNSFontIcon.debug = true;
+TNSFontIcon.debug = false;
 TNSFontIcon.paths = {
   'fa': './assets/css/all.css',
   'far': './assets/css/all.css',
@@ -20,9 +20,9 @@ TNSFontIcon.paths = {
   'fab': './assets/css/all.css',
 };
 TNSFontIcon.loadCss();
-
 Vue.filter('fonticon', fonticon);
 
+//Vue instance
 
 new Vue({
   render: h => h("frame", [h(backendService.isLoggedIn() ? routes.home : routes.login)])

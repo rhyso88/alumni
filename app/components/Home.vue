@@ -1,31 +1,104 @@
 <template>
-  <Page>
-    <ActionBar title="Home1 APP"></ActionBar>
-    <ScrollView orientation="vertical">
-      <StackLayout>
-        <Button class="btn btn-primary" text="Add Data" @tap="addData"></Button>
-        <Button class="btn btn-primary" text="Get Data" @tap="getData"></Button>
-        <Button class="btn btn-primary" text="Update Data" @tap="updateData"></Button>
-        <Label class="body m-20" :text="message3" textWrap="true"></Label>
-        <Label class="fas" :text="'fa-tools' | fonticon" />
-        <Label class="fas" :text="'fa-briefcase' | fonticon" />
-        <Label class="fas" :text="'fa-stethoscope' | fonticon" />
-        <Label class="fas" :text="'fa-newspaper' | fonticon" />
-        <Label class="fas" :text="'fa-address-card' | fonticon" />
-        <Label class="fas" :text="'fa-bell' | fonticon" />
+  <Page actionBarHidden="true">
+    <GridLayout rows="70, *, auto" columns="*, *, *">
+      <Image
+        src="~/assets/images/BD_reg_white_bg.png"
+        class="topLogo"
+        stretch="aspectFit"
+        row="0"
+        col="0"
+        colSpan="3"
+      />
+
+      <!-- main components all on top of each other, since only 1 will be visible at any given time -->
+
+      <ScrollView
+        orientation="vertical"
+        row="1"
+        col="0"
+        colSpan="3"
+        v-show="'AddressBook' === currentComponent"
+      >
+        <ListView for="item in localdata" @itemTap="onItemTap" height="800">
+          <v-template>
+            <GridLayout rows="*" columns="auto,*,auto,auto,auto">
+              <Image row="0" col="0" :src="item.src" class="thumb img-circle" />
+              <Label row="0" col="1" :text="'Name: '+item.name" />
+              <Label
+                class="fas skillIcons"
+                row="0"
+                col="2"
+                :text="'fa-tools' | fonticon"
+                v-show="item.eng_sci"
+              />
+              <Label
+                class="fas skillIcons"
+                row="0"
+                col="3"
+                :text="'fa-stethoscope' | fonticon"
+                v-show="item.medical"
+              />
+              <Label
+                class="fas skillIcons"
+                row="0"
+                col="4"
+                :text="'fa-briefcase' | fonticon"
+                v-show="item.corporate"
+              />
+            </GridLayout>
+          </v-template>
+        </ListView>
+      </ScrollView>
+
+      <ScrollView
+        orientation="vertical"
+        row="1"
+        col="0"
+        colSpan="3"
+        v-show="'Noticeboard' === currentComponent"
+      >
         <StackLayout orientation="vertical">
-          <ListView for="item in localdata" @itemTap="onItemTap">
-            <v-template>
-              <GridLayout rows="*" columns="auto, *">
-                <Image row="0" col="0" :src="item.src" class="thumb img-circle" />
-                <Label row="0" col="1" :text="'Name: '+item.name" />
-              </GridLayout>
-            </v-template>
-          </ListView>
+          <Label text="Noticeboard" />
+          <Button class="btn btn-primary" text="Log out" @tap="logout"></Button>
         </StackLayout>
-        <Button class="btn btn-primary" text="Log out" @tap="logout"></Button>
-      </StackLayout>
-    </ScrollView>
+      </ScrollView>
+
+      <ScrollView
+        orientation="vertical"
+        row="1"
+        col="0"
+        colSpan="3"
+        v-show="'Alerts' === currentComponent"
+      >
+        <StackLayout orientation="vertical">
+          <Label text="Alerts" />
+          <Button class="btn btn-primary" text="Log out" @tap="logout"></Button>
+        </StackLayout>
+      </ScrollView>
+
+      <!-- Bottom navigation -->
+      <Button
+        :class="navigationButtonClasses('AddressBook')"
+        @tap="currentComponent = 'AddressBook'"
+        :text="'fa-address-card' | fonticon"
+        row="2"
+        col="0"
+      />
+      <Button
+        :class="navigationButtonClasses('Noticeboard')"
+        @tap="currentComponent = 'Noticeboard'"
+        :text="'fa-newspaper' | fonticon"
+        row="2"
+        col="1"
+      />
+      <Button
+        :class="navigationButtonClasses('Alerts')"
+        @tap="currentComponent = 'Alerts'"
+        :text="'fa-bell' | fonticon"
+        row="2"
+        col="2"
+      />
+    </GridLayout>
   </Page>
 </template>
 
@@ -41,7 +114,10 @@ var dialogs = require("tns-core-modules/ui/dialogs");
 export default {
   data() {
     return {
-      message3: "Data from Kinvey:",
+      toSearch: false,
+      searchQuery: "defaultSearch",
+      currentComponent: "AddressBook",
+      componentsArray: ["AddressBook", "Noticeboard", "Alerts"],
       localdata: [],
       todelete: "_id of object you want to delete will go here"
     };
@@ -55,25 +131,11 @@ export default {
     },
 
     onItemTap: function(event) {
-      console.log(
-        "ID of object tapped: " + this.$data.localdata[event.index]._id
-      );
-      console.log(
-        "Object name tapped: " + this.$data.localdata[event.index].name
-      );
+      // console.log("ID of object tapped: " + this.$data.localdata[event.index]._id);
+      // console.log("Object name tapped: " + this.$data.localdata[event.index].name);
       this.$data.todelete = this.$data.localdata[event.index]._id;
       this.deleteData();
     },
-
-    /* Long press ability - need to work out later for delete ability
-
-    onLongPress(args) {
-    console.log("long press initiated");
-    console.log(`Object that triggered the event: ${args.object}`);
-    console.log(`Event name: ${args.eventName}`);
-    },
-
-    */
 
     addData() {
       // create a variable to hold 'this' so I can used inside of other function scopes
@@ -92,13 +154,9 @@ export default {
         .then(function(result) {
           // result argument is boolean
 
-          //console.log("Do you want to save data - result returned: " + result);
-
           // if client confirms wants to add data, connect to Kinvey and addData
 
           if (result) {
-            //console.log("You have detected true, and will add this data");
-
             // establish Kinvey connection dataStore
 
             const dataStore = Kinvey.DataStore.collection(
@@ -113,20 +171,19 @@ export default {
             const promise = dataStore
               .save(entAdd)
               .then(function(entity) {
-                console.log(
-                  "now inside promised update data after save update"
-                );
+                //console.log("now inside promised update data after save update");
                 vm.getData();
+                alert("Data successfully added");
               })
               .catch(function(error) {
-                // ...
+                console.log("Error with adddata() method:" + error);
               });
           }
         });
     },
 
     updateData() {
-      // create a variable to hold 'this' so I can used inside of other function scopes
+      // create a variable to hold 'this' so it can used inside of other function scopes
 
       var vm = this;
 
@@ -157,12 +214,11 @@ export default {
               //const entAdd = vm.localdata[0];
               //const entAdd = vm.localdata["5e0993b02e5dcb0016db072d"];
               // update Kinvey dataStore with local dataStore when update button clicked
+              //vm.localdata[3].occupation = "Painter";
             */
 
-            //vm.localdata[3].occupation = "Painter";
-
-            //Loop through local dataStore, to create an object in format Kinvey format
-            //Once suitbale object created, save it to Kinvey server
+            // Loop through local dataStore, to create an object in format Kinvey format
+            // Once a suitable object is created, save it to the Kinvey server
 
             vm.localdata.forEach(item => {
               //console.log("Item name and occupation"+ count + item.name + item.occupation);
@@ -170,13 +226,17 @@ export default {
                 _id: item._id,
                 name: item.name,
                 occupation: item.occupation,
-                src: item.src
+                src: item.src,
+                eng_sci: item.eng_sci,
+                medical: item.medical,
+                corporate: item.corporate
               };
               dataStore
                 .save(saveObject)
                 .then(function(entity) {
-                  console.log("just completed updating server with local data");
-                  //vm.getData(); - if using later need to work out data flow direction
+                  //console.log("just completed updating server with local data");
+                  //vm.getData(); - if using later need to work out data flow direction;
+                  alert("Server updated successfully");
                 })
                 .catch(function(error) {
                   console.log("error within update funciton:" + error);
@@ -202,8 +262,6 @@ export default {
 
       dataStore.find().then(
         items => {
-          //console.log(items);
-          //vm.message = "2nd cahnge inside getData method";
           vm.localdata = [];
           items.forEach(item => {
             vm.localdata.push(item);
@@ -221,8 +279,6 @@ export default {
 
       // confirm want to delete data, then remove it from Kinvey server
 
-      //console.log("inside delete funciton");
-
       dialogs
         .confirm({
           title: "Delete Data",
@@ -232,17 +288,15 @@ export default {
         })
         .then(function(result) {
           // result argument is boolean
-          //console.log("Client delete data result returned true or false: " + result);
 
           // establish a Kinvey connection dataStore
+
           const dataStore = Kinvey.DataStore.collection(
             "members",
             Kinvey.DataStoreType.Auto
           );
 
           //object for id/data that we want to remove from Kinvey server
-
-          //console.log("item to delete using tap method" + vm.todelete);
 
           const remID = { _id: vm.todelete };
 
@@ -254,14 +308,33 @@ export default {
               vm.getData();
             })
             .catch(function(error) {
-              // ...
+              console.log("Error in delete method:" + error);
             });
         });
     }
   },
+  computed: {
+    navigationButtonClasses() {
+      return component => ({
+        fas: true,
+        tabicons: true,
+        "nav-btn": true,
+        purple: component === this.currentComponent
+      });
+    },
+    filterList: function() {
+      if (item.name === "defaultSearch") {
+        return localdata;
+      } else {
+        data.filter(item => {
+          return item.name.includes(this.searchQuery);
+        });
+      }
+    }
+  },
+
   created() {
     // create a variable to hold 'this' so I can used inside of other function scopes
-    //this.message2 = "Rhys changed on entry";
 
     var vm = this;
 
@@ -282,9 +355,7 @@ export default {
         );
       })
       .then(function(pass) {
-        console.log(
-          "Kinvey ping connection received - now get data collection"
-        );
+        // console.log("Kinvey ping connection received - now get data collection");
 
         // check active user once data received from Kinvey (add if statement later)
 
@@ -292,7 +363,7 @@ export default {
         if (activeUser == null) {
           console.log("active user is null inside Home.vue");
         } else {
-          console.log("active user is true inside Home.vue");
+          console.log("active user is:" + activeUser);
         }
 
         // collect datastore from kinvey
@@ -329,5 +400,22 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.nav-btn {
+  color: #9d95b4;
+  margin: 20;
+  font-size: 30;
+  padding: 10;
+}
+
+.actioncol {
+  background-color: #073267;
+}
+
+.purple {
+  background-color: #073267;
+  color: white;
+  font-size: 30;
+  border-radius: 10;
+}
 </style>
