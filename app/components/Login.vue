@@ -2,8 +2,8 @@
     <Page actionBarHidden="true">
         <FlexboxLayout class="page">
             <StackLayout class="form">
-                <Image class="logo" src="~/images/logo.png"></Image>
-                <Label class="header" text="Kinvey Login Template"></Label>
+                <Image class="logo" src="~/assets/images/BD_reg_stacked.png" stretch="aspectFit"></Image>
+                <Label class="header" text="Alumni Login"></Label>
 
                 <GridLayout rows="auto, auto, auto">
                     <StackLayout row="0" class="input-field">
@@ -183,7 +183,7 @@
 
     .logo {
         margin-bottom: 12;
-        height: 90;
+        height: 180;
         font-weight: bold;
     }
 
@@ -193,7 +193,7 @@
         font-weight: 600;
         margin-bottom: 70;
         text-align: center;
-        color: #D51A1A;
+        color:#073267; 
     }
 
     .input-field {

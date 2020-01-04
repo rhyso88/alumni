@@ -29,25 +29,22 @@
               <Image row="0" col="0" :src="item.src" class="thumb img-circle" />
               <Label row="0" col="1" :text="'Name: '+item.name" />
               <Label
-                class="fas skillIcons"
                 row="0"
                 col="2"
+                :class="iconColWhite(item.eng_sci)"
                 :text="'fa-tools' | fonticon"
-                v-show="item.eng_sci"
               />
               <Label
-                class="fas skillIcons"
                 row="0"
                 col="3"
+                :class="iconColWhite(item.medical)"
                 :text="'fa-stethoscope' | fonticon"
-                v-show="item.medical"
               />
               <Label
-                class="fas skillIcons"
                 row="0"
                 col="4"
+                :class="iconColWhite(item.corporate)"
                 :text="'fa-briefcase' | fonticon"
-                v-show="item.corporate"
               />
             </GridLayout>
           </v-template>
@@ -130,7 +127,7 @@ const alumDetail = {
                 <Image :src="src" stretch="aspectFill" class="profilePic"></Image>
                 <Label :text="name" color="#000" fontSize="19" fontWeight="bold" textAlignment="center"/>
                 <StackLayout class="aboutContainer">
-                        <StackLayout orientation="horizontal">
+                        <StackLayout>
                             <Label :text="occupation" style="font-size:16;color:#000;margin-left:9;margin-top:1;"/>
                             <Label text="Qualifications" style="font-size:16;color:#000;margin-left:9;margin-top:1;"/>
                             <Label text="Contact" style="font-size:16;color:#000;margin-left:9;margin-top:1;"/>
@@ -391,6 +388,13 @@ export default {
         tabicons: true,
         "nav-btn": true,
         purple: component === this.currentComponent
+      });
+    },
+    iconColWhite() {
+      return component => ({
+        fas: true,
+        skillIcons: true,
+        whiteSkill: component === false
       });
     },
     filterList: function() {
