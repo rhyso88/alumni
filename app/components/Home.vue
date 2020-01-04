@@ -7,21 +7,25 @@
         stretch="aspectFit"
         row="0"
         col="0"
-        colSpan="3"
+        colSpan="1"
       />
+      <Button row="0" col="1" class="btn btn-primary" text="actOn/Off" @tap="toggleAct"></Button>
+      <Button row="0" col="2" class="btn btn-primary" text="Logout" @tap="logout"></Button>
 
       <!-- main components all on top of each other, since only 1 will be visible at any given time -->
+
+      <ActivityIndicator row="1" col="0" colSpan="3" :busy="activity" v-show="activity"/>
 
       <ScrollView
         orientation="vertical"
         row="1"
         col="0"
         colSpan="3"
-        v-show="'AddressBook' === currentComponent"
+        v-show="'AddressBook' === currentComponent & !activity"
       >
-        <ListView for="item in localdata" @itemTap="onItemTap" height="800">
+        <ListView for="item in localdata" height="800">
           <v-template>
-            <GridLayout rows="*" columns="auto,*,auto,auto,auto">
+            <GridLayout rows="*" columns="auto,*,auto,auto,auto" @tap="showDetailPageModally(item)">
               <Image row="0" col="0" :src="item.src" class="thumb img-circle" />
               <Label row="0" col="1" :text="'Name: '+item.name" />
               <Label
@@ -60,6 +64,9 @@
         <StackLayout orientation="vertical">
           <Label text="Noticeboard" />
           <Button class="btn btn-primary" text="Log out" @tap="logout"></Button>
+          <Button class="btn btn-primary" text="Add Data" @tap="addData"></Button>
+          <Button class="btn btn-primary" text="Get Data" @tap="getData"></Button>
+          <Button class="btn btn-primary" text="Update Data" @tap="updateData"></Button>
         </StackLayout>
       </ScrollView>
 
@@ -109,6 +116,49 @@ import Login from "./Login";
 import * as Kinvey from "kinvey-nativescript-sdk";
 var dialogs = require("tns-core-modules/ui/dialogs");
 
+// Define modal view template
+
+const alumDetail = {
+  props: ["name", "occupation", "src", "eng_sci", "medical", "corporate"],
+  template: `
+  <Page>
+    <DockLayout>
+      <StackLayout dock="top" height="90%" width="100%" style>
+        <ScrollView>
+          <StackLayout style="font-size:18;">
+            <StackLayout alignItems="center">
+                <Image :src="src" stretch="aspectFill" class="profilePic"></Image>
+                <Label :text="name" color="#000" fontSize="19" fontWeight="bold" textAlignment="center"/>
+                <StackLayout class="aboutContainer">
+                        <StackLayout orientation="horizontal">
+                            <Label :text="occupation" style="font-size:16;color:#000;margin-left:9;margin-top:1;"/>
+                            <Label text="Qualifications" style="font-size:16;color:#000;margin-left:9;margin-top:1;"/>
+                            <Label text="Contact" style="font-size:16;color:#000;margin-left:9;margin-top:1;"/>
+                        </StackLayout>
+                </StackLayout>
+            </StackLayout>
+              <StackLayout orientation="horizontal" class="followersContainer">
+                <StackLayout width="33%">
+                    <Label class="fas followersTxtValue" :text="'fa-tools' | fonticon" v-show="eng_sci"/>
+                    <Label class="followersTxt" text="Engineering/Science" v-show="eng_sci"/>
+                </StackLayout>
+                <StackLayout width="33%">
+                    <Label class="fas followersTxtValue" :text="'fa-stethoscope' | fonticon" v-show="medical"/>
+                    <Label class="followersTxt" text="Medicine" v-show="medical"/>
+                </StackLayout>
+                <StackLayout width="33%">
+                    <Label class="fas followersTxtValue" :text="'fa-briefcase' | fonticon" v-show="corporate"/>
+                    <Label class="followersTxt" text="Corporate" v-show="corporate"/>
+                </StackLayout>
+              </StackLayout>
+            </StackLayout>
+        </ScrollView>
+      </StackLayout>
+    </DockLayout>
+  </Page>
+	    `
+};
+
 // rest of Vue code
 
 export default {
@@ -119,7 +169,8 @@ export default {
       currentComponent: "AddressBook",
       componentsArray: ["AddressBook", "Noticeboard", "Alerts"],
       localdata: [],
-      todelete: "_id of object you want to delete will go here"
+      todelete: "_id of object you want to delete will go here",
+      activity: false
     };
   },
   methods: {
@@ -127,6 +178,23 @@ export default {
       this.$backendService.logout();
       this.$navigateTo(Login, {
         clearHistory: true
+      });
+    },
+    toggleAct() {
+      this.activity = !this.activity;
+      },
+    // actOn() {this.activity = true},
+    // actOff() {this.activity = false},
+    showDetailPageModally(item) {
+      this.$showModal(alumDetail, {
+        props: {
+          name: item.name,
+          occupation: item.occupation,
+          src: item.src,
+          eng_sci: item.eng_sci,
+          medical: item.medical,
+          corporate: item.corporate
+        }
       });
     },
 
@@ -186,6 +254,7 @@ export default {
       // create a variable to hold 'this' so it can used inside of other function scopes
 
       var vm = this;
+      vm.activity = true;
 
       // confirm if user wants to update data to Kinvey Server
 
@@ -238,6 +307,7 @@ export default {
                   //vm.getData(); - if using later need to work out data flow direction;
                   alert("Server updated successfully");
                 })
+                .then(() => {vm.activity = false;})
                 .catch(function(error) {
                   console.log("error within update funciton:" + error);
                 });
@@ -250,6 +320,7 @@ export default {
       // create a variable to hold 'this' so I can used inside of other function scopes
 
       var vm = this;
+      vm.activity = true;
 
       // establish a Kinvey connection dataStore
 
@@ -270,7 +341,7 @@ export default {
         error => {
           console.log("error in getData method:" + error);
         }
-      );
+      ).then(() => {vm.activity = false;})
     },
     deleteData() {
       // create a variable to hold 'this' so I can used inside of other function scopes
@@ -337,6 +408,7 @@ export default {
     // create a variable to hold 'this' so I can used inside of other function scopes
 
     var vm = this;
+    vm.activity = true;
 
     // initialise and then check Kinvey connection using promises to wait for connection
 
@@ -390,6 +462,7 @@ export default {
           }
         );
       })
+      .then(() => {vm.activity = false;})
       .catch(function(error) {
         console.log(
           "&&&&&&&& Kinvey NOT linked within Home.vue &&&&&&&&. Response: " +

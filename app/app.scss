@@ -39,3 +39,46 @@
 .skillIcons {
     font-size: 20;
 }
+
+.modal {
+    height: 70%;
+}
+
+.profilePic{
+	width:150;
+	height:150;
+	border-radius:100;
+	margin:20;
+	border-color:#073267; 
+	border-width: 1;
+}
+
+.aboutContainer{
+	width:85%;
+	border-radius:15;
+	background: #eeeeee;
+	margin-top: 20;
+	padding-top:20;
+	padding-bottom: 20;
+	padding-left: 20;
+	padding-right: 20;
+}
+
+.followersContainer{
+	width:90%
+}
+
+.followersTxt{
+	text-align: center;
+	font-size: 14;
+	height:20;
+}
+
+.followersTxtValue{
+	text-align: center;
+	margin-top: 10;
+	height:25;
+	font-size: 22;
+	font-weight: bold;
+    color:#000;
+}
