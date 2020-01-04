@@ -26,8 +26,8 @@
         <ListView for="item in localdata" height="800">
           <v-template>
             <GridLayout rows="*" columns="auto,*,auto,auto,auto" @tap="showDetailPageModally(item)">
-              <Image row="0" col="0" :src="item.src" class="thumb img-circle" />
-              <Label row="0" col="1" :text="'Name: '+item.name" />
+              <Image row="0" col="0" :src="item.src" class="thumb img-circle" stretch="aspectFill"/>
+              <Label row="0" col="1" :text="item.name" />
               <Label
                 row="0"
                 col="2"
@@ -112,49 +112,7 @@
 import Login from "./Login";
 import * as Kinvey from "kinvey-nativescript-sdk";
 var dialogs = require("tns-core-modules/ui/dialogs");
-
-// Define modal view template
-
-const alumDetail = {
-  props: ["name", "occupation", "src", "eng_sci", "medical", "corporate"],
-  template: `
-  <Page>
-    <DockLayout>
-      <StackLayout dock="top" height="90%" width="100%" style>
-        <ScrollView>
-          <StackLayout style="font-size:18;">
-            <StackLayout alignItems="center">
-                <Image :src="src" stretch="aspectFill" class="profilePic"></Image>
-                <Label :text="name" color="#000" fontSize="19" fontWeight="bold" textAlignment="center"/>
-                <StackLayout class="aboutContainer">
-                        <StackLayout>
-                            <Label :text="occupation" style="font-size:16;color:#000;margin-left:9;margin-top:1;"/>
-                            <Label text="Qualifications" style="font-size:16;color:#000;margin-left:9;margin-top:1;"/>
-                            <Label text="Contact" style="font-size:16;color:#000;margin-left:9;margin-top:1;"/>
-                        </StackLayout>
-                </StackLayout>
-            </StackLayout>
-              <StackLayout orientation="horizontal" class="followersContainer">
-                <StackLayout width="33%">
-                    <Label class="fas followersTxtValue" :text="'fa-tools' | fonticon" v-show="eng_sci"/>
-                    <Label class="followersTxt" text="Engineering/Science" v-show="eng_sci"/>
-                </StackLayout>
-                <StackLayout width="33%">
-                    <Label class="fas followersTxtValue" :text="'fa-stethoscope' | fonticon" v-show="medical"/>
-                    <Label class="followersTxt" text="Medicine" v-show="medical"/>
-                </StackLayout>
-                <StackLayout width="33%">
-                    <Label class="fas followersTxtValue" :text="'fa-briefcase' | fonticon" v-show="corporate"/>
-                    <Label class="followersTxt" text="Corporate" v-show="corporate"/>
-                </StackLayout>
-              </StackLayout>
-            </StackLayout>
-        </ScrollView>
-      </StackLayout>
-    </DockLayout>
-  </Page>
-	    `
-};
+import ProfModal from "./ProfModal";
 
 // rest of Vue code
 
@@ -183,14 +141,17 @@ export default {
     // actOn() {this.activity = true},
     // actOff() {this.activity = false},
     showDetailPageModally(item) {
-      this.$showModal(alumDetail, {
+      this.$showModal(ProfModal, {
         props: {
           name: item.name,
           occupation: item.occupation,
           src: item.src,
           eng_sci: item.eng_sci,
           medical: item.medical,
-          corporate: item.corporate
+          corporate: item.corporate,
+          workplace: item.workplace,
+          interest: item.interest,
+          qualification: item.qualification
         }
       });
     },
@@ -295,7 +256,10 @@ export default {
                 src: item.src,
                 eng_sci: item.eng_sci,
                 medical: item.medical,
-                corporate: item.corporate
+                corporate: item.corporate,
+                workplace:item.workplace,
+                interest:item.interest,
+                qualification:item.qualification
               };
               dataStore
                 .save(saveObject)

@@ -26,6 +26,10 @@
     font-size: 30;
 }
 
+.sendEmailIcon {
+	font-size: 40;
+}
+
 .pageHome {
     color: #FFF;
     background: linear-gradient(to right top, #2C163D, #142237);
@@ -60,29 +64,34 @@
 	margin-top: 20;
 	padding-top:20;
 	padding-bottom: 20;
-	padding-left: 20;
-	padding-right: 20;
+	padding-left: 10;
+	padding-right: 10;
 }
 
-.followersContainer{
-	width:90%
-}
-
-.followersTxt{
+.modSkilText{
 	text-align: center;
 	font-size: 14;
-	height:20;
+	margin-right: 20;
+	margin-left: 20;
+	margin-bottom: 20;
+	margin-top: 5;
 }
 
-.followersTxtValue{
+.modIcon{
 	text-align: center;
-	margin-top: 10;
-	height:25;
-	font-size: 22;
+	font-size: 50;
 	font-weight: bold;
-    color:#000;
+	color:#000;
+	margin-top: 20;
+	margin-right: 20;
+	margin-left: 20;
 }
 
 .whiteSkill {
 	color: white;
 }
+
+.labelCent {
+	text-align: center;
+}
+
