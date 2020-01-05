@@ -1,25 +1,43 @@
 <template>
   <Page>
-      <Gridlayout rows="auto, auto, *, *" columns="*,*,*">
-              <StackLayout row="0" col="0" colSpan="3">
+      <Gridlayout rows="auto, auto, auto, auto" columns="*,*,*">
+        <!-- Portrait Photo & Name -->
+              <StackLayout row="0" col="0" colSpan="3" horizontalAlignment="center" verticalAlignment="center">
                 <Image :src="src" stretch="aspectFill" class="profilePic"></Image>
                 <Label :text="name" color="#000" fontSize="19" fontWeight="bold" class="labelCent"/>
               </StackLayout>
-              <Gridlayout row="1" col="0" colSpan="3" rows="auto,auto,auto,auto" columns="*,*" class="aboutContainer">
-                      <!-- Occupation -->
-                      <Label row="0" col="0" text="Occupation: " style="font-size:16;color:#000;"/>
-                      <Label row="0" col="1" :text="occupation" style="font-size:16;color:#000;" textWrap="true"/>
-                      <!-- Qualifications -->
-                      <Label row="1" col="0" text="Qualifications: " style="font-size:16;color:#000;"/>
-                      <Label row="1" col="1" :text="qualification" style="font-size:16;color:#000;" textWrap="true"/>
-                      <!-- Workplace -->
-                      <Label row="2" col="0" text="Workplace: " style="font-size:16;color:#000;"/>
-                      <Label row="2" col="1" :text="workplace" style="font-size:16;color:#000;" textWrap="true"/>
-                      <!-- Interest -->
-                      <Label row="3" col="0" text="Interest: " style="font-size:16;color:#000;"/>
-                      <Label row="3" col="1" :text="interest" style="font-size:16;color:#000;" textWrap="true"/>
-              </Gridlayout>
-              <FlexboxLayout row="2" col="0" colSpan="3"  justifyContent="center">
+        <!-- Information about Alumni -->
+
+              <Stacklayout row="1" col="0" colSpan="3" horizontalAlignment="center" class="aboutContainer">
+                <Stacklayout>
+                  <Gridlayout rows="auto" columns="2*,3*">
+                      <Label row="0" col="0" text="Occupation: " fontWeight="bold" horizontalAlignment="right"/>
+                      <Label row="0" col="1" :text="occupation" textWrap="true" class="labelLeftDist"/>
+                  </Gridlayout>
+                </Stacklayout>
+                <Stacklayout>
+                   <Gridlayout rows="auto" columns="2*,3*">
+                      <Label row="0" col="0" text="Qualifications: " fontWeight="bold" horizontalAlignment="right"/>
+                      <Label row="0" col="1" :text="qualification" textWrap="true" class="labelLeftDist"/>
+                   </Gridlayout>
+                </Stacklayout>
+                <Stacklayout>
+                  <Gridlayout rows="auto" columns="2*,3*">
+                     <Label row="0" col="0" text="Workplace: " fontWeight="bold" horizontalAlignment="right"/>
+                     <Label row="0" col="1" :text="workplace" textWrap="true" class="labelLeftDist"/>
+                  </Gridlayout>
+                </Stacklayout>
+                <Stacklayout>
+                  <Gridlayout rows="auto" columns="2*,3*">
+                    <Label row="0" col="0" text="Interest: " fontWeight="bold" horizontalAlignment="right"/>
+                    <Label row="0" col="1" :text="interest" textWrap="true" class="labelLeftDist"/>
+                  </Gridlayout>
+                </Stacklayout>
+              </Stacklayout>
+
+        <!-- Skillset -->
+
+              <Stacklayout row="2" col="0" colSpan="3" horizontalAlignment="center" verticalAlignment="center" orientation="horizontal">
                   <StackLayout>
                       <Label class="fas modIcon" :text="'fa-tools' | fonticon" color="#53beb1" v-if="eng_sci"/>
                       <Label class="modSkilText" text="Eng/Science" v-if="eng_sci" textWrap="true"/>
@@ -32,8 +50,11 @@
                       <Label class="fas modIcon" :text="'fa-briefcase' | fonticon" color="#55a3bb" v-if="corporate"/>
                       <Label class="modSkilText" text="Corporate" v-if="corporate" textWrap="true"/>
                   </StackLayout>
-              </FlexboxLayout>
-              <StackLayout row="3" col="0" colSpan="3">
+              </Stacklayout>
+
+        <!-- Contact -->
+
+              <StackLayout row="3" col="0" colSpan="3" horizontalAlignment="center" verticalAlignment="center">
                 <Button class="fas sendEmailIcon" @tap="sendEmail" :text="'fa-paper-plane' | fonticon" />
                 <Label class="modSkilText" @tap="sendEmail" text="Send Query"/>
               </StackLayout>     
@@ -60,7 +81,9 @@ export default {
         interest:this.interest,
         qualification:this.qualification,
         email:this.email,
-        activeUserName:""
+        activeUserName:"",
+
+        isBold: true
       }
     },
     methods: {

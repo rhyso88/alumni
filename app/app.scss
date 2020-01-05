@@ -55,17 +55,35 @@
 	margin:20;
 	border-color:#073267; 
 	border-width: 1;
+	font-size: 15;
 }
 
 .aboutContainer{
-	width:85%;
+	width:90%;
 	border-radius:15;
 	background: #eeeeee;
+	color: #000;
 	margin-top: 20;
 	padding-top:20;
 	padding-bottom: 20;
 	padding-left: 10;
 	padding-right: 10;
+}
+
+.skillContainer{
+	width:90%;
+	border-radius:15;
+	background: #eeeeee;
+	color: #000;
+	margin-top: 20;
+	padding-top:20;
+	padding-bottom: 20;
+	padding-left: 10;
+	padding-right: 10;
+}
+
+.labelLeftDist {
+	margin-left: 5;
 }
 
 .modSkilText{
@@ -79,7 +97,7 @@
 
 .modIcon{
 	text-align: center;
-	font-size: 50;
+	font-size: 45;
 	font-weight: bold;
 	color:#000;
 	margin-top: 20;
