@@ -36,27 +36,33 @@
               </Stacklayout>
 
         <!-- Skillset -->
-
-              <Stacklayout row="2" col="0" colSpan="3" horizontalAlignment="center" verticalAlignment="center" orientation="horizontal">
-                  <StackLayout>
-                      <Label class="fas modIcon" :text="'fa-tools' | fonticon" color="#53beb1" v-if="eng_sci"/>
-                      <Label class="modSkilText" text="Eng/Science" v-if="eng_sci" textWrap="true"/>
+              <Stacklayout row="2" col="0" colSpan="3" horizontalAlignment="center" class="skillContainer">
+                <StackLayout>
+                  <StackLayout horizontalAlignment="center" class="skillTitle">
+                    <Label text="Skillset" textDecoration="underline"/>
                   </StackLayout>
-                  <StackLayout>
-                      <Label class="fas modIcon" :text="'fa-stethoscope' | fonticon" color="#d16a6e" v-if="medical"/>
-                      <Label class="modSkilText" text="Medicine" v-if="medical" textWrap="true"/>
-                  </StackLayout>
-                  <StackLayout>
-                      <Label class="fas modIcon" :text="'fa-briefcase' | fonticon" color="#55a3bb" v-if="corporate"/>
-                      <Label class="modSkilText" text="Corporate" v-if="corporate" textWrap="true"/>
-                  </StackLayout>
+                  <Stacklayout orientation="horizontal" horizontalAlignment="center">
+                    <StackLayout>
+                        <Label class="fas modIcon" :text="'fa-tools' | fonticon" color="#53beb1" v-if="eng_sci"/>
+                        <Label class="modSkilText" text="Eng/Science" v-if="eng_sci" textWrap="true"/>
+                    </StackLayout>
+                    <StackLayout>
+                        <Label class="fas modIcon" :text="'fa-stethoscope' | fonticon" color="#d16a6e" v-if="medical"/>
+                        <Label class="modSkilText" text="Medicine" v-if="medical" textWrap="true"/>
+                    </StackLayout>
+                    <StackLayout>
+                        <Label class="fas modIcon" :text="'fa-briefcase' | fonticon" color="#55a3bb" v-if="corporate"/>
+                        <Label class="modSkilText" text="Corporate" v-if="corporate" textWrap="true"/>
+                    </StackLayout>
+                  </Stacklayout>
+                </Stacklayout>
               </Stacklayout>
 
         <!-- Contact -->
 
-              <StackLayout row="3" col="0" colSpan="3" horizontalAlignment="center" verticalAlignment="center">
+              <StackLayout row="3" col="0" colSpan="3" horizontalAlignment="center" verticalAlignment="center" class="emailContainer">
                 <Button class="fas sendEmailIcon" @tap="sendEmail" :text="'fa-paper-plane' | fonticon" />
-                <Label class="modSkilText" @tap="sendEmail" text="Send Query"/>
+                <Label  class="modSkilText" @tap="sendEmail" text="Send Query"/>
               </StackLayout>     
     </Gridlayout>
   </Page>

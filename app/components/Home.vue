@@ -61,33 +61,28 @@
         </ListView>
       </ScrollView>
 
-      <ScrollView
-        orientation="vertical"
-        row="1"
-        col="0"
-        colSpan="3"
-        v-show="'Noticeboard' === currentComponent & !appLoading"
-      >
-        <StackLayout orientation="vertical">
-          <Label text="Noticeboard" />
-          <Button class="btn btn-primary" text="Log out" @tap="logout"></Button>
-          <Button class="btn btn-primary" text="Add Data" @tap="addData"></Button>
-          <Button class="btn btn-primary" text="Get Data" @tap="getData"></Button>
-          <Button class="btn btn-primary" text="Update Data" @tap="updateData"></Button>
-        </StackLayout>
+      <!--Noticeboard page -->
+
+      <ScrollView orientation="vertical" row="1" col="0" colSpan="3"
+        v-show="'Noticeboard' === currentComponent & !appLoading">
+       <ListView for="item in localposts" height="800">
+          <v-template>
+            <GridLayout rows="*" columns="auto,*,*,auto,auto,auto">
+              <Image row="0" col="0" :src="item.profpic" class="thumb img-circle" stretch="aspectFill"/>
+              <Label row="0" col="1" :text="item.userposting" />
+              <Label row="0" col="2" :text="item.time_add" />
+              <Label row="0" col="3" :class="iconColWhite(item.eng_sci)" :text="'fa-tools' | fonticon"/>
+              <Label row="0" col="4" :class="iconColWhite(item.medical)" :text="'fa-stethoscope' | fonticon"/>
+              <Label row="0" col="5" :class="iconColWhite(item.corporate)" :text="'fa-briefcase' | fonticon"/>
+            </GridLayout>
+          </v-template>
+        </ListView>
       </ScrollView>
 
-      <ScrollView
-        orientation="vertical"
-        row="1"
-        col="0"
-        colSpan="3"
-        v-show="'Alerts' === currentComponent & !appLoading"
-      >
-        <StackLayout orientation="vertical">
-          <Label text="Alerts" />
-          <Button class="btn btn-primary" text="Log out" @tap="logout"></Button>
-        </StackLayout>
+      <!--Alerts page -->
+
+      <ScrollView orientation="vertical" row="1" col="0" colSpan="3"
+        v-show="'Alerts' === currentComponent & !appLoading">
       </ScrollView>
 
       <!-- Bottom navigation -->
@@ -132,6 +127,9 @@ import ProfModal from "./ProfModal";
 export default {
   data() {
     return {
+
+      //Home & Modal Page data
+
       appLoading: true,
       toSearch: false,
       searchQuery: "defaultSearch",
@@ -139,7 +137,12 @@ export default {
       componentsArray: ["AddressBook", "Noticeboard", "Alerts"],
       localdata: [],
       todelete: "_id of object you want to delete will go here",
-      activity: false
+      activity: false,
+
+      //Post page data
+      
+      localposts:[],
+
     };
   },
   methods: {
@@ -443,14 +446,14 @@ export default {
 
         // collect datastore from kinvey
 
-        // first establish dataStore from Kinvey, with 'Auto' data type
+        // first establish dataStore from Kinvey, with 'Auto' data type, get Alumni
 
         const dataStore = Kinvey.DataStore.collection(
           "members",
           Kinvey.DataStoreType.Auto
         );
 
-        // now store the dataStore locally in an array
+        // now store the dataStore locally in an array, for Alumni
 
         dataStore.find().then(
           items => {
@@ -465,6 +468,31 @@ export default {
           }
         );
       })
+      .then(function(pass){
+
+        // Get post data from 'posts' collection
+
+        const postStore = Kinvey.DataStore.collection(
+          "posts",
+          Kinvey.DataStoreType.Auto
+        );
+
+        // now store the dataStore locally in an array, for Alumni
+
+        postStore.find().then(
+          items => {
+            //console.log(items);
+            //vm.message = "changed inside datastore twice";
+            items.forEach(item => {
+              vm.localposts.push(item);
+            });
+          },
+          error => {
+            console.log("stream error found retriving posts:" + error);
+          }
+        );
+      }
+      )
       .then(() => {
         // vm.activity = false;
         })

@@ -61,11 +61,14 @@
 .aboutContainer{
 	width:90%;
 	border-radius:15;
+	border-color:#073267; 
+	border-width: 1;
 	background: #eeeeee;
 	color: #000;
+	font-size: 15;
 	margin-top: 20;
-	padding-top:20;
-	padding-bottom: 20;
+	padding-top:15;
+	padding-bottom: 15;
 	padding-left: 10;
 	padding-right: 10;
 }
@@ -73,17 +76,29 @@
 .skillContainer{
 	width:90%;
 	border-radius:15;
-	background: #eeeeee;
-	color: #000;
-	margin-top: 20;
-	padding-top:20;
-	padding-bottom: 20;
-	padding-left: 10;
-	padding-right: 10;
+	border-color:#073267; 
+	border-width: 1;
+	/*background: #000;*/
+	/*color: #FFFFFF;*/
+	margin-top: 10;
+	padding-top:5;
+	padding-bottom: 10;
+}
+.emailContainer {
+	width:90%;
+	border-radius:15;
+	/*background: #E0E0E0;*/
+	/*color: #FFFFFF;*/
+	margin-top: 10;
 }
 
 .labelLeftDist {
 	margin-left: 5;
+}
+
+.skillTitle {
+	font-size: 19;
+	margin-bottom: 5;
 }
 
 .modSkilText{
@@ -91,16 +106,15 @@
 	font-size: 14;
 	margin-right: 20;
 	margin-left: 20;
-	margin-bottom: 20;
 	margin-top: 5;
 }
 
 .modIcon{
 	text-align: center;
-	font-size: 45;
+	font-size: 40;
 	font-weight: bold;
 	color:#000;
-	margin-top: 20;
+	margin-top: 10;
 	margin-right: 20;
 	margin-left: 20;
 }
