@@ -1,6 +1,15 @@
 <template>
   <Page actionBarHidden="true">
+
     <GridLayout rows="70, *, auto" columns="*, *, *">
+
+       <!-- hide main components until loaded appLoading = true -->
+
+       <Button row="0" col="0" rowSpan="3" colSpan="3" class="btn btn-primary" text="Toggle Page Load" v-show="appLoading"
+       @tap="togglePageLoad"></Button>
+
+       <!-- main components to show once loaded - appLoading = false -->
+
       <Image
         src="~/assets/images/BD_reg_white_bg.png"
         class="topLogo"
@@ -8,20 +17,21 @@
         row="0"
         col="0"
         colSpan="1"
+        v-show="!appLoading"
       />
-      <Button row="0" col="1" class="btn btn-primary" text="actOn/Off" @tap="toggleAct"></Button>
-      <Button row="0" col="2" class="btn btn-primary" text="Logout" @tap="logout"></Button>
+      <Button row="0" col="1" class="btn btn-primary" text="actOn/Off" @tap="toggleAct" v-show="!appLoading" ></Button>
+      <Button row="0" col="2" class="btn btn-primary" text="Logout" @tap="logout" v-show="!appLoading"></Button>
 
       <!-- main components all on top of each other, since only 1 will be visible at any given time -->
 
-      <ActivityIndicator row="1" col="0" colSpan="3" :busy="activity" v-show="activity"/>
+      <!--<ActivityIndicator row="1" col="0" colSpan="3" :busy="activity" v-show="activity"/>-->
 
       <ScrollView
         orientation="vertical"
         row="1"
         col="0"
         colSpan="3"
-        v-show="'AddressBook' === currentComponent & !activity"
+        v-show="'AddressBook' === currentComponent & !appLoading"
       >
         <ListView for="item in localdata" height="800">
           <v-template>
@@ -56,7 +66,7 @@
         row="1"
         col="0"
         colSpan="3"
-        v-show="'Noticeboard' === currentComponent"
+        v-show="'Noticeboard' === currentComponent & !appLoading"
       >
         <StackLayout orientation="vertical">
           <Label text="Noticeboard" />
@@ -72,7 +82,7 @@
         row="1"
         col="0"
         colSpan="3"
-        v-show="'Alerts' === currentComponent"
+        v-show="'Alerts' === currentComponent & !appLoading"
       >
         <StackLayout orientation="vertical">
           <Label text="Alerts" />
@@ -87,6 +97,7 @@
         :text="'fa-address-card' | fonticon"
         row="2"
         col="0"
+        v-show="!appLoading"
       />
       <Button
         :class="navigationButtonClasses('Noticeboard')"
@@ -94,6 +105,7 @@
         :text="'fa-newspaper' | fonticon"
         row="2"
         col="1"
+        v-show="!appLoading"
       />
       <Button
         :class="navigationButtonClasses('Alerts')"
@@ -101,6 +113,7 @@
         :text="'fa-bell' | fonticon"
         row="2"
         col="2"
+        v-show="!appLoading"
       />
     </GridLayout>
   </Page>
@@ -119,6 +132,7 @@ import ProfModal from "./ProfModal";
 export default {
   data() {
     return {
+      appLoading: true,
       toSearch: false,
       searchQuery: "defaultSearch",
       currentComponent: "AddressBook",
@@ -138,6 +152,9 @@ export default {
     toggleAct() {
       this.activity = !this.activity;
       },
+    togglePageLoad() {
+      this.appLoading = !this.appLoading;
+      },
     // actOn() {this.activity = true},
     // actOff() {this.activity = false},
     showDetailPageModally(item) {
@@ -151,7 +168,8 @@ export default {
           corporate: item.corporate,
           workplace: item.workplace,
           interest: item.interest,
-          qualification: item.qualification
+          qualification: item.qualification,
+          email: item.email
         }
       });
     },
@@ -259,7 +277,8 @@ export default {
                 corporate: item.corporate,
                 workplace:item.workplace,
                 interest:item.interest,
-                qualification:item.qualification
+                qualification:item.qualification,
+                email:item.email
               };
               dataStore
                 .save(saveObject)
@@ -281,7 +300,7 @@ export default {
       // create a variable to hold 'this' so I can used inside of other function scopes
 
       var vm = this;
-      vm.activity = true;
+      // vm.activity = true;
 
       // establish a Kinvey connection dataStore
 
@@ -302,7 +321,9 @@ export default {
         error => {
           console.log("error in getData method:" + error);
         }
-      ).then(() => {vm.activity = false;})
+      ).then(() => {
+        //vm.activity = false;
+        })
     },
     deleteData() {
       // create a variable to hold 'this' so I can used inside of other function scopes
@@ -372,11 +393,25 @@ export default {
     }
   },
 
+  /* Tried to get loading screen to work - no success
+
+  mounted() {
+    var vm = this;
+    console.log("Reached Mounting Stage");
+    vm.appLoading=true;
+    setTimeout(function(){
+      vm.appLoading=false, 3000;
+    })
+  },
+
+  */
+
   created() {
     // create a variable to hold 'this' so I can used inside of other function scopes
 
     var vm = this;
-    vm.activity = true;
+    // vm.activity = true;
+    // console.log("Reached Created Stage")
 
     // initialise and then check Kinvey connection using promises to wait for connection
 
@@ -430,7 +465,9 @@ export default {
           }
         );
       })
-      .then(() => {vm.activity = false;})
+      .then(() => {
+        // vm.activity = false;
+        })
       .catch(function(error) {
         console.log(
           "&&&&&&&& Kinvey NOT linked within Home.vue &&&&&&&&. Response: " +
