@@ -65,16 +65,23 @@
 
       <ScrollView orientation="vertical" row="1" col="0" colSpan="3"
         v-show="'Noticeboard' === currentComponent & !appLoading">
-       <ListView for="item in localposts" height="800">
+       <ListView for="item in localposts" height="800" separatorColor="transparent">
           <v-template>
-            <GridLayout rows="*" columns="auto,*,*,auto,auto,auto">
-              <Image row="0" col="0" :src="item.profpic" class="thumb img-circle" stretch="aspectFill"/>
-              <Label row="0" col="1" :text="item.userposting" />
-              <Label row="0" col="2" :text="item.time_add" />
-              <Label row="0" col="3" :class="iconColWhite(item.eng_sci)" :text="'fa-tools' | fonticon"/>
-              <Label row="0" col="4" :class="iconColWhite(item.medical)" :text="'fa-stethoscope' | fonticon"/>
-              <Label row="0" col="5" :class="iconColWhite(item.corporate)" :text="'fa-briefcase' | fonticon"/>
-            </GridLayout>
+              <StackLayout orientation="horizontal" style="border-bottom-width:1;border-bottom-color:#E4E4E4;"
+                padding="10">
+                <StackLayout width="20%">
+                  <Image :src="item.profpic" stretch="aspectFill" class="conImg" />
+                </StackLayout>
+                <StackLayout marginLeft="10" paddingTop="3" width="50%">
+                  <Label :text="item.userposting" class="convFriendName" />
+                  <Label :text="item.post_title" class="convTextOut" />
+                </StackLayout>
+                <StackLayout marginLeft="10" paddingTop="3" width="60%">
+                  <Label :text="item.time_add" class="convDateOut" />
+                  <Label :text="'fa-eye' | fonticon" class="fas" v-if="item.responded" 
+                  style="font-size:17;text-align:center;margin-top:12;color:#1aa3ff;"/>
+                </StackLayout>
+              </StackLayout>
           </v-template>
         </ListView>
       </ScrollView>
@@ -439,7 +446,7 @@ export default {
 
         const activeUser = Kinvey.User.getActiveUser();
         if (activeUser == null) {
-          console.log("active user is null inside Home.vue");
+          // console.log("active user is null inside Home.vue");
         } else {
           console.log("active user is:" + activeUser);
         }
@@ -524,4 +531,26 @@ export default {
   font-size: 30;
   border-radius: 10;
 }
+
+.conImg{
+	width: 60;
+	height: 60;
+	border-radius:30;
+}
+
+.convFriendName{
+	font-weight: bold;
+	font-size: 19;
+}
+
+.convTextOut{
+	font-size: 15;
+	margin-top: 8;
+}
+
+.convDateOut{
+	font-size: 15;
+	text-align: center;
+}
+
 </style>
