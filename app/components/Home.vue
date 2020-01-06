@@ -65,33 +65,36 @@
 
       <!--Noticeboard page -->
 
-      <ScrollView orientation="vertical" row="1" col="0" colSpan="3"
-        v-show="'Noticeboard' === currentComponent">
-       <ListView for="item in localposts" height="800" separatorColor="transparent">
+    <Stacklayout row="1" col="0" colSpan="3" v-show="'Noticeboard' === currentComponent">
+      <ScrollView orientation="vertical">
+        <ListView for="item in localposts" height="800">
           <v-template>
-              <StackLayout orientation="horizontal" style="border-bottom-width:1;border-bottom-color:#E4E4E4;"
-                padding="10">
-                <StackLayout width="20%">
-                  <Image :src="item.profpic" stretch="aspectFill" class="conImg" />
-                </StackLayout>
-                <StackLayout marginLeft="10" paddingTop="3" width="50%">
-                  <Label :text="item.userposting" class="convFriendName" />
-                  <Label :text="item.post_title" class="convTextOut" />
-                </StackLayout>
-                <StackLayout marginLeft="10" paddingTop="3" width="60%">
-                  <Label :text="item.time_add" class="convDateOut" />
-                  <Label :text="'fa-eye' | fonticon" class="fas" v-if="item.responded" 
-                  style="font-size:17;text-align:center;margin-top:12;color:#1aa3ff;"/>
-                </StackLayout>
-              </StackLayout>
+            <Gridlayout rows="*,*" columns="auto,*,auto">
+                <Image row="0" col="0" rowSpan="2" :src="item.profpic" stretch="aspectFill" class="postImg pictureBack"/>
+                <Label row="0" col="1" :text="item.userposting" class="userPoster"/>
+                <Label row="1" col="1" :text="item.post_title" class="userPoster"/>
+                <Label row="0" col="2" :text="item.time_add" class="dateViewPost" style="text-align:center;" />
+                <FlexboxLayout row="1" col="2" justifyContent="flex-end" alignItems="center" verticalAlignment="middle" class="dateViewPost"> 
+                  <Label :text="'fa-eye' | fonticon" class="fas" v-if="item.seen"/> 
+                  <Label :text="'fa-eye-slash' | fonticon" class="fas" v-else />
+                  <Label :text="item.no_seen"/>
+                </FlexboxLayout>
+            </Gridlayout>
           </v-template>
         </ListView>
       </ScrollView>
+    </Stacklayout>
+
 
       <!--Alerts page -->
 
       <ScrollView orientation="vertical" row="1" col="0" colSpan="3"
         v-show="'Alerts' === currentComponent">
+        <FlexboxLayout backgroundColor="#3c495e" justifyContent="center" verticalAlignment="middle" alignItems="center">
+          <Label text="first" width="70" backgroundColor="#43b883"/>
+          <Label text="second" width="70" backgroundColor="#1c6b48"/>
+          <Label text="third" width="70" backgroundColor="#289062"/>
+        </FlexboxLayout>
       </ScrollView>
 
       <!-- Bottom navigation -->
@@ -439,19 +442,6 @@ export default {
       }, 5000)
   },
 
-  /* Tried to get loading screen to work - no success
-
-  mounted() {
-    var vm = this;
-    console.log("Reached Mounting Stage");
-    vm.appLoading=true;
-    setTimeout(function(){
-      vm.appLoading=false, 3000;
-    })
-  },
-
-  */
-
   created() {
     // create a variable to hold 'this' so I can used inside of other function scopes
 
@@ -496,25 +486,35 @@ export default {
   border-radius: 10;
 }
 
-.conImg{
-	width: 60;
+.postImg{
+  width: 60;
 	height: 60;
 	border-radius:30;
 }
 
-.convFriendName{
+.postFriendName{
 	font-weight: bold;
 	font-size: 19;
 }
 
-.convTextOut{
+.postTextOut{
 	font-size: 15;
-	margin-top: 8;
 }
 
-.convDateOut{
+.postDateOut{
 	font-size: 15;
-	text-align: center;
+}
+
+.pictureBack {
+  background-color:#BBDEFB;
+}
+
+.userPoster {
+  background-color: #E1BEE7;
+}
+
+.dateViewPost {
+  background-color: #FFCDD2;
 }
 
 </style>
