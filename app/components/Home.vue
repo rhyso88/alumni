@@ -3,10 +3,12 @@
 
     <GridLayout rows="70, *, auto" columns="*, *, *">
 
-       <!-- hide main components until loaded appLoading = true -->
+       <!-- hide main components until loaded appLoading = true 
 
        <Button row="0" col="0" rowSpan="3" colSpan="3" class="btn btn-primary" text="Toggle Page Load" v-show="appLoading"
        @tap="togglePageLoad"></Button>
+
+       -->
 
        <!-- main components to show once loaded - appLoading = false -->
 
@@ -17,21 +19,21 @@
         row="0"
         col="0"
         colSpan="1"
-        v-show="!appLoading"
+        height="60"
       />
-      <Button row="0" col="1" class="btn btn-primary" text="actOn/Off" @tap="toggleAct" v-show="!appLoading" ></Button>
-      <Button row="0" col="2" class="btn btn-primary" text="Logout" @tap="logout" v-show="!appLoading"></Button>
+      <Button row="0" col="1" class="btn btn-primary" text="getdata" @tap="getData"></Button>
+      <Button row="0" col="2" class="btn btn-primary" text="Logout" @tap="logout"></Button>
 
       <!-- main components all on top of each other, since only 1 will be visible at any given time -->
 
-      <!--<ActivityIndicator row="1" col="0" colSpan="3" :busy="activity" v-show="activity"/>-->
+      <ActivityIndicator row="1" col="0" colSpan="3" :busy="activity" v-show="activity"/>
 
       <ScrollView
         orientation="vertical"
         row="1"
         col="0"
         colSpan="3"
-        v-show="'AddressBook' === currentComponent & !appLoading"
+        v-show="'AddressBook' === currentComponent"
       >
         <ListView for="item in localdata" height="800">
           <v-template>
@@ -64,7 +66,7 @@
       <!--Noticeboard page -->
 
       <ScrollView orientation="vertical" row="1" col="0" colSpan="3"
-        v-show="'Noticeboard' === currentComponent & !appLoading">
+        v-show="'Noticeboard' === currentComponent">
        <ListView for="item in localposts" height="800" separatorColor="transparent">
           <v-template>
               <StackLayout orientation="horizontal" style="border-bottom-width:1;border-bottom-color:#E4E4E4;"
@@ -89,7 +91,7 @@
       <!--Alerts page -->
 
       <ScrollView orientation="vertical" row="1" col="0" colSpan="3"
-        v-show="'Alerts' === currentComponent & !appLoading">
+        v-show="'Alerts' === currentComponent">
       </ScrollView>
 
       <!-- Bottom navigation -->
@@ -99,7 +101,6 @@
         :text="'fa-address-card' | fonticon"
         row="2"
         col="0"
-        v-show="!appLoading"
       />
       <Button
         :class="navigationButtonClasses('Noticeboard')"
@@ -107,7 +108,6 @@
         :text="'fa-newspaper' | fonticon"
         row="2"
         col="1"
-        v-show="!appLoading"
       />
       <Button
         :class="navigationButtonClasses('Alerts')"
@@ -115,7 +115,6 @@
         :text="'fa-bell' | fonticon"
         row="2"
         col="2"
-        v-show="!appLoading"
       />
     </GridLayout>
   </Page>
@@ -307,33 +306,62 @@ export default {
     },
 
     getData() {
-      // create a variable to hold 'this' so I can used inside of other function scopes
+
+      // create a variable to hold 'this' (for use inside other function scopes)
 
       var vm = this;
-      // vm.activity = true;
+      vm.activity = true;
 
-      // establish a Kinvey connection dataStore
+      // Establish Kinvey datastore connection with collection "members"
 
       const dataStore = Kinvey.DataStore.collection(
         "members",
         Kinvey.DataStoreType.Auto
       );
 
-      // get dataStore data, and store it locally in a Vue data array
+      // now store the dataStore locally in an array, for Alumni
 
       dataStore.find().then(
         items => {
-          vm.localdata = [];
           items.forEach(item => {
             vm.localdata.push(item);
           });
         },
         error => {
-          console.log("error in getData method:" + error);
+          console.log("Error getting members data:" + error);
         }
-      ).then(() => {
-        //vm.activity = false;
-        })
+      )
+      .then(function(pass){
+
+      // Get post data from 'posts' collection
+
+      const postStore = Kinvey.DataStore.collection(
+        "posts",
+        Kinvey.DataStoreType.Auto
+      );
+
+      // Store post data locally
+
+      postStore.find().then(
+        items => {
+          items.forEach(item => {
+            vm.localposts.push(item);
+          });
+        },
+        error => {
+          console.log("stream error found retriving posts:" + error);
+        }
+      )
+      })
+      .then(function(){
+        vm.activity = false
+      })
+      .catch(function(error) {
+        console.log(
+          "&&&&&&&& Kinvey NOT linked within Home.vue &&&&&&&&. Response: " +
+            error.description
+        );
+      })
     },
     deleteData() {
       // create a variable to hold 'this' so I can used inside of other function scopes
@@ -403,6 +431,14 @@ export default {
     }
   },
 
+  mounted () {
+    var vm = this;
+    setTimeout(() => {
+      vm.getData()
+      console.log("inside mounted command")
+      }, 5000)
+  },
+
   /* Tried to get loading screen to work - no success
 
   mounted() {
@@ -420,8 +456,6 @@ export default {
     // create a variable to hold 'this' so I can used inside of other function scopes
 
     var vm = this;
-    // vm.activity = true;
-    // console.log("Reached Created Stage")
 
     // initialise and then check Kinvey connection using promises to wait for connection
 
@@ -439,76 +473,6 @@ export default {
             response.kinvey
         );
       })
-      .then(function(pass) {
-        // console.log("Kinvey ping connection received - now get data collection");
-
-        // check active user once data received from Kinvey (add if statement later)
-
-        const activeUser = Kinvey.User.getActiveUser();
-        if (activeUser == null) {
-          // console.log("active user is null inside Home.vue");
-        } else {
-          console.log("active user is:" + activeUser);
-        }
-
-        // collect datastore from kinvey
-
-        // first establish dataStore from Kinvey, with 'Auto' data type, get Alumni
-
-        const dataStore = Kinvey.DataStore.collection(
-          "members",
-          Kinvey.DataStoreType.Auto
-        );
-
-        // now store the dataStore locally in an array, for Alumni
-
-        dataStore.find().then(
-          items => {
-            //console.log(items);
-            //vm.message = "changed inside datastore twice";
-            items.forEach(item => {
-              vm.localdata.push(item);
-            });
-          },
-          error => {
-            console.log("stream error found:" + error);
-          }
-        );
-      })
-      .then(function(pass){
-
-        // Get post data from 'posts' collection
-
-        const postStore = Kinvey.DataStore.collection(
-          "posts",
-          Kinvey.DataStoreType.Auto
-        );
-
-        // now store the dataStore locally in an array, for Alumni
-
-        postStore.find().then(
-          items => {
-            //console.log(items);
-            //vm.message = "changed inside datastore twice";
-            items.forEach(item => {
-              vm.localposts.push(item);
-            });
-          },
-          error => {
-            console.log("stream error found retriving posts:" + error);
-          }
-        );
-      }
-      )
-      .then(() => {
-        // vm.activity = false;
-        })
-      .catch(function(error) {
-        console.log(
-          "&&&&&&&& Kinvey NOT linked within Home.vue &&&&&&&&. Response: " +
-            error.description
-        );
-      });
   }
 };
 </script>
