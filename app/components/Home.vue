@@ -130,8 +130,8 @@ import Login from "./Login";
 import * as Kinvey from "kinvey-nativescript-sdk";
 var dialogs = require("tns-core-modules/ui/dialogs");
 import ProfModal from "./ProfModal";
-import ViewBlogModal from "./ViewBlogModal";
-import AddBlogModal from "./AddBlogModal";
+import ViewPostModal from "./ViewPostModal";
+import AddPostModal from "./AddPostModal";
 
 // rest of Vue code
 
@@ -193,16 +193,26 @@ export default {
     },
     addPostMod(){
       console.log("Modal blog page posted by: ")
-      this.$showModal(AddBlogModal, {
+      this.$showModal(AddPostModal, {
         props: {}
       })
     },
 
     viewPostMod(item){
-      console.log("The following user wants to view a blog post: "+ item.userposting)
-      this.$showModal(ViewBlogModal, {
+      console.log("Modal view of the following users post:  "+ item.userposting)
+      // **ON ENTRY - increase view count**//
+      this.$showModal(ViewPostModal, {
         props: {
-          user: item.userposting
+          profpic: item.profpic,
+          userposting: item.userposting,
+          post_title: item.post_title,
+          post_content: item.post_content,
+          eng_sci: item.eng_sci,
+          medical: item.medical,
+          corporate: item.corporate,
+          time_add: item.time_add,
+          seen: item.seen,
+          no_seen: item.seen
         }
       })
     },
