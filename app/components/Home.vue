@@ -66,10 +66,13 @@
       <!--Noticeboard page -->
 
     <Stacklayout row="1" col="0" colSpan="3" v-show="'Noticeboard' === currentComponent">
+      <FlexboxLayout justifyContent="center" alignItems="center" verticalAlignment="middle">
+        <Label :text="'fa-plus' | fonticon" class="fas plusIcon" @tap="addPostMod"/>
+      </FlexboxLayout>
       <ScrollView orientation="vertical">
         <ListView for="item in localposts" height="800">
           <v-template>
-            <Gridlayout rows="*,*" columns="auto,*,auto">
+            <Gridlayout rows="*,*" columns="auto,*,auto" @tap="viewPostMod(item)">
                 <Image row="0" col="0" rowSpan="2" :src="item.profpic" stretch="aspectFill" class="postImg pictureBack"/>
                 <Label row="0" col="1" :text="item.userposting" class="userPoster"/>
                 <Label row="1" col="1" :text="item.post_title" class="userPoster"/>
@@ -90,11 +93,8 @@
 
       <ScrollView orientation="vertical" row="1" col="0" colSpan="3"
         v-show="'Alerts' === currentComponent">
-        <FlexboxLayout backgroundColor="#3c495e" justifyContent="center" verticalAlignment="middle" alignItems="center">
-          <Label text="first" width="70" backgroundColor="#43b883"/>
-          <Label text="second" width="70" backgroundColor="#1c6b48"/>
-          <Label text="third" width="70" backgroundColor="#289062"/>
-        </FlexboxLayout>
+        <StackLayout backgroundColor="#3c495e" orientation="horizontal">
+        </StackLayout>
       </ScrollView>
 
       <!-- Bottom navigation -->
@@ -130,6 +130,8 @@ import Login from "./Login";
 import * as Kinvey from "kinvey-nativescript-sdk";
 var dialogs = require("tns-core-modules/ui/dialogs");
 import ProfModal from "./ProfModal";
+import ViewBlogModal from "./ViewBlogModal";
+import AddBlogModal from "./AddBlogModal";
 
 // rest of Vue code
 
@@ -152,6 +154,12 @@ export default {
       
       localposts:[],
 
+      //Checkbox test
+      fircheck: false,
+      seccheck: false,
+      thircheck: false
+
+
     };
   },
   methods: {
@@ -167,8 +175,6 @@ export default {
     togglePageLoad() {
       this.appLoading = !this.appLoading;
       },
-    // actOn() {this.activity = true},
-    // actOff() {this.activity = false},
     showDetailPageModally(item) {
       this.$showModal(ProfModal, {
         props: {
@@ -184,6 +190,21 @@ export default {
           email: item.email
         }
       });
+    },
+    addPostMod(){
+      console.log("Modal blog page posted by: ")
+      this.$showModal(AddBlogModal, {
+        props: {}
+      })
+    },
+
+    viewPostMod(item){
+      console.log("The following user wants to view a blog post: "+ item.userposting)
+      this.$showModal(ViewBlogModal, {
+        props: {
+          user: item.userposting
+        }
+      })
     },
 
     onItemTap: function(event) {
@@ -515,6 +536,13 @@ export default {
 
 .dateViewPost {
   background-color: #FFCDD2;
+}
+
+.plusIcon {
+  font-size:30;
+}
+.padBoxMarg {
+  padding-top:10;
 }
 
 </style>
