@@ -1,25 +1,28 @@
 <template>
   <Page>
-    <StackLayout class="borderTesting" height="100%" >
+    <StackLayout class="borderTesting" height="100%" horizontalAlignment="center" verticalAlignment="center"  >
         <!-- Portrait Photo & Name -->
 
-        <StackLayout height="30%" horizontalAlignment="center" verticalAlignment="center" class="">
+        <StackLayout height="30%" class="">
             <Image :src="profpic" stretch="aspectFill" class="profilePic" ></Image>
-            <Label :text="userposting" color="#000" fontSize="19" fontWeight="bold" class="labelCent"/>
+            <Label :text="userposting" color="#000" fontSize="23" fontWeight="bold" class="labelCent"/>
         </StackLayout>
 
         <!-- Information about Alumni -->
-        <StackLayout height="60%" width="100%" class="" horizontalAlignment="center" verticalAlignment="center" >
-            <GridLayout rows="*,*,2*" columns="auto,*" class="">
+        <StackLayout height="60%" width="100%" class="" horizontalAlignment="center">
+
                 <!-- Post Title **Limit to 15 characters ** -->
-                <Label row="0" col="0" text="Post Title: " class="leftColText" style="text-align:right;" fontWeight="bold"/>
-                <StackLayout row="0" col="1" class="textFieldBord">
-                    <TextField v-model="post_title" hint="Enter post title <30 characters..." height="90%" width="95%" 
+                <Label text="Topic: " class="titleText" style="text-align:center;" fontWeight="bold"
+                    textDecoration="underline"/>
+                <StackLayout class="textFieldBord" verticalAlignment="center">
+                    <TextField v-model="post_title" hint="Enter post title <30 characters..." 
                     class="fieldText" textWrap="true" maxLength="30"/>
                 </StackLayout>
+
                 <!-- Post Skills Required -->
-                <Label row="1" col="0" text="Skills Required: " class="leftColText" style="text-align:right;" fontWeight="bold"/>
-                <FlexboxLayout row="1" col="1" height="100%" class="textFieldBord" alignItems="center" justifyContent="center">
+                <Label text="Skills Required: " class="titleText" style="text-align:center;" fontWeight="bold"
+                    textDecoration="underline"/>
+                <FlexboxLayout class="textFieldBord" alignItems="center" justifyContent="center">
                     <StackLayout class="" @tap="toggleEngSci">
                         <Label class="fas skilReqModIcon" :text="'fa-tools' | fonticon" color="#53beb1"/>
                         <Label class="skilReqModIconText" text="Eng/Science" textWrap="true"/>
@@ -41,11 +44,13 @@
                 </FlexboxLayout>
 
                 <!-- Post Content **Limit to 100 characters - <50 words** -->
-                <Label row="2" col="0" text="Post Title: " class="leftColText" style="text-align:right;" fontWeight="bold"/>
-                <StackLayout row="2" col="1" class="textFieldBord">
-                    <TextView row="2" col="1" v-model="post_content" height="95%" width="95%" hint="Enter a short query <360 characters..." class="fieldText" textWrap="true" maxLength="100"/>
+                <Label text="Need Help With: " class="titleText" style="text-align:center;" fontWeight="bold" 
+                    textDecoration="underline"/>
+                <StackLayout class="textFieldBord">
+                    <TextView v-model="post_content" hint="Enter a short query <360 characters..." class="fieldText" 
+                        textWrap="true" maxLength="360"/>
                 </StackLayout>
-            </GridLayout>
+
         </StackLayout>
 
         <!-- Submit Post -->
@@ -219,19 +224,28 @@ export default {
 
 <style scoped>
 
+.titleText {
+    font-size: 19;
+    text-align: center;
+    margin-bottom: 5;
+    margin-top: 5;
+}
+
 .skilReqModIcon{
 	text-align: center;
-    font-size: 25;
+    font-size: 30;
     margin-left: 10;
     margin-right: 10;
+    margin-top: 10;
 }
 
 .skilReqModIconText{
 	text-align: center;
-	font-size: 10;
+	font-size: 14;
     color:#000;
     margin-left: 10;
     margin-right: 10;
+    margin-bottom: 5;
 }
 
 .skilReqYes{
@@ -262,12 +276,26 @@ export default {
 
 .fieldText {
     font-size: 15;
+    text-align: center;
+    vertical-align: middle;
+    padding-top: 5;
+    padding-bottom: 5;
+    padding-right: 5;
+    padding-left: 5;
 }
 
 .textFieldBord {
     border-color:#073267; 
     border-width: 1;
     border-radius:15;
+}
+
+.textFieldBord {
+    border-color:#073267; 
+    border-width: 1;
+    border-radius:15;
+    width:90%;
+    background: #eeeeee;
 }
 
 </style>
