@@ -3,37 +3,40 @@
 
     <GridLayout rows="70, *, auto" columns="*, *, *">
 
-       <!-- hide main components until loaded appLoading = true 
+      <StackLayout horizontalAlignment="center" verticalAlignment="center" v-if="!mainReady">
+         <ActivityIndicator :busy="mainAction" width="300" height="300"/>
+      </StackLayout>
 
-       <Button row="0" col="0" rowSpan="3" colSpan="3" class="btn btn-primary" text="Toggle Page Load" v-show="appLoading"
-       @tap="togglePageLoad"></Button>
+       <!-- hide main components until loaded mainReady = true-->
 
-       -->
+       
 
        <!-- main components to show once loaded - appLoading = false -->
+
 
       <Image
         src="~/assets/images/BD_reg_white_bg.png"
         class="topLogo"
-        stretch="aspectFit"
+        height="60"
         row="0"
         col="0"
-        colSpan="1"
-        height="60"
+        colSpan="2"
+        stretch="aspectFit"
+        v-if="mainReady"
       />
-      <Button row="0" col="1" class="btn btn-primary" text="getdata" @tap="getData"></Button>
-      <Button row="0" col="2" class="btn btn-primary" text="Logout" @tap="logout"></Button>
+
+      
+      
+      <Button row="0" col="2" class="btn btn-primary" text="Logout" @tap="logout" v-if="mainReady"></Button>
 
       <!-- main components all on top of each other, since only 1 will be visible at any given time -->
-
-      <ActivityIndicator row="1" col="0" colSpan="3" :busy="activity" v-show="activity"/>
 
       <ScrollView
         orientation="vertical"
         row="1"
         col="0"
         colSpan="3"
-        v-show="'AddressBook' === currentComponent"
+        v-show="'AddressBook' === currentComponent & mainReady"
       >
         <ListView for="item in localdata" height="800">
           <v-template>
@@ -65,7 +68,7 @@
 
       <!--Noticeboard page -->
 
-    <Stacklayout row="1" col="0" colSpan="3" v-show="'Noticeboard' === currentComponent">
+    <Stacklayout row="1" col="0" colSpan="3" v-show="'Noticeboard' === currentComponent & mainReady">
       <FlexboxLayout justifyContent="center" alignItems="center" verticalAlignment="middle">
         <Label :text="'fa-plus' | fonticon" class="fas plusIcon" @tap="addPostMod"/>
       </FlexboxLayout>
@@ -92,7 +95,7 @@
       <!--Alerts page -->
 
       <ScrollView orientation="vertical" row="1" col="0" colSpan="3"
-        v-show="'Alerts' === currentComponent">
+        v-show="'Alerts' === currentComponent & mainReady">
         <StackLayout backgroundColor="#3c495e" orientation="horizontal">
         </StackLayout>
       </ScrollView>
@@ -104,6 +107,7 @@
         :text="'fa-address-card' | fonticon"
         row="2"
         col="0"
+        v-show="mainReady"
       />
       <Button
         :class="navigationButtonClasses('Noticeboard')"
@@ -111,6 +115,7 @@
         :text="'fa-newspaper' | fonticon"
         row="2"
         col="1"
+        v-show="mainReady"
       />
       <Button
         :class="navigationButtonClasses('Alerts')"
@@ -118,6 +123,7 @@
         :text="'fa-bell' | fonticon"
         row="2"
         col="2"
+        v-show="mainReady"
       />
     </GridLayout>
   </Page>
@@ -141,7 +147,8 @@ export default {
 
       //Home & Modal Page data
 
-      appLoading: true,
+      mainReady: false,
+      mainAction:true,
       toSearch: false,
       searchQuery: "defaultSearch",
       currentComponent: "AddressBook",
@@ -164,16 +171,16 @@ export default {
   },
   methods: {
     logout() {
-      this.$backendService.logout();
-      this.$navigateTo(Login, {
+      this.mainReady = false;
+      setTimeout(() => {
+        this.$backendService.logout();
+        this.$navigateTo(Login, {
         clearHistory: true
-      });
+        });
+      }, 2000)
     },
     toggleAct() {
       this.activity = !this.activity;
-      },
-    togglePageLoad() {
-      this.appLoading = !this.appLoading;
       },
     showDetailPageModally(item) {
       this.$showModal(ProfModal, {
@@ -464,7 +471,8 @@ export default {
     setTimeout(() => {
       vm.getData()
       console.log("inside mounted command")
-      }, 5000)
+      vm.mainReady=true
+      }, 3000)
   },
 
   created() {
@@ -488,7 +496,7 @@ export default {
             response.kinvey
         );
       })
-  }
+    }
 };
 </script>
 
