@@ -45,7 +45,7 @@
         </StackLayout>
 
         <!-- Submit Post -->
-        <StackLayout height="10%" horizontalAlignment="center" verticalAlignment="center" class="">
+        <StackLayout height="10%" horizontalAlignment="center" verticalAlignment="center" class="" @tap="sendEmail">
             <Label :text="'fa-paper-plane' | fonticon" class="fas labelCent plane"/>
             <Label class="skilReqModIconText" text="Make Contact"/>
         </StackLayout>
@@ -61,7 +61,7 @@ var dialogs = require("tns-core-modules/ui/dialogs");
 
 export default {
     props: ["profpic","userposting","post_title","post_content","eng_sci","medical","corporate","time_add","seen"
-    , "no_seen"],
+    , "no_seen","email"],
     data: function () {
       return {
           profpic: this.profpic,
@@ -73,10 +73,54 @@ export default {
           corporate: this.corporate,
           time_add: this.time_add,
           seen: this.seen,
-          no_seen: this.no_seen
+          no_seen: this.no_seen,
+          email:this.email,
+
+
+          //active user data
+          activeUserName: "",
+          activeUserEmail:""
+
       }
     },
     methods: {
+        sendEmail() {
+        
+        //connect with Kinvey
+            
+        var vm = this;
+            
+        var client = Kinvey.init({
+            appKey: "kid_S1Gok7ARr",
+            appSecret: "430e2c4f39c240e6970bd5683bf9cc09"
+        });
+        
+        // get name & username(email) of active user and store locally
+      
+
+        const user_fn = Kinvey.User.getActiveUser(client).data.first_name;
+        const user_ln = Kinvey.User.getActiveUser(client).data.last_name;
+        this.activeUserName = user_fn + " " + user_ln;
+        this.activeUserEmail = Kinvey.User.getActiveUser(client).username;
+
+        console.log("send email to:"+this.email)
+
+        // send email
+
+        email.compose({
+        subject: "Perth Biodesign Alumni Query about: "+ vm.post_title +" from: " + vm.activeUserName,
+        body: "",
+        to: ["addemail@hotmail.com"],
+        cc: [],
+        bcc: [],
+        attachments:"",
+        }).then(
+            function() {
+            console.log("Successfully sent email to Alumni");
+            }, function(err) {
+            console.log("Error in email plugin: " + err);
+            });
+        }
     },
 
     created() {

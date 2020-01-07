@@ -195,7 +195,7 @@ export default {
       console.log("Modal blog page posted by: ")
       this.$showModal(AddPostModal, {
         props: {}
-      })
+      }).then(this.getData);
     },
 
     viewPostMod(item){
@@ -212,7 +212,8 @@ export default {
           corporate: item.corporate,
           time_add: item.time_add,
           seen: item.seen,
-          no_seen: item.seen
+          no_seen: item.seen,
+          email:item.email
         }
       })
     },
@@ -345,6 +346,8 @@ export default {
 
       var vm = this;
       vm.activity = true;
+      this.localposts = [];
+      this.localdata = [];
 
       // Establish Kinvey datastore connection with collection "members"
 
@@ -454,15 +457,6 @@ export default {
         whiteSkill: component === false
       });
     },
-    filterList: function() {
-      if (item.name === "defaultSearch") {
-        return localdata;
-      } else {
-        data.filter(item => {
-          return item.name.includes(this.searchQuery);
-        });
-      }
-    }
   },
 
   mounted () {
