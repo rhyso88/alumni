@@ -1,7 +1,7 @@
 <template>
   <Page actionBarHidden="true">
 
-    <GridLayout rows="70,auto ,*, auto" columns="*, *, *">
+    <GridLayout rows="70,auto ,*, auto" columns="*, *, *" @swipe="onSwipe">
 
       <StackLayout horizontalAlignment="center" verticalAlignment="center" v-if="!mainReady">
          <ActivityIndicator :busy="mainAction" width="300" height="300"/>
@@ -31,8 +31,8 @@
 
       <!-- main components all on top of each other, since only 1 will be visible at any given time -->
 
-      <StackLayout row="1" col="0" colSpan="3" v-show="'AddressBook' === currentComponent & mainReady">
-        <SearchBar hint="Search Alumni..." v-model="searchAlumni" @textChange="filterAlumni" />
+      <StackLayout row="1" col="0" colSpan="3" v-show="'AddressBook' === currentComponent & mainReady" class="listBorders">
+        <SearchBar hint="Search Alumni..." v-model="searchAlumni" @textChange="filterAlumni"/>
       </StackLayout>
 
 
@@ -42,6 +42,7 @@
         col="0"
         colSpan="3"
         v-show="'AddressBook' === currentComponent & mainReady"
+        class="listBorders"
       >
 
         <ListView for="item in filteredAlumni" height="800">
@@ -160,6 +161,7 @@ var dialogs = require("tns-core-modules/ui/dialogs");
 import ProfModal from "./ProfModal";
 import ViewPostModal from "./ViewPostModal";
 import AddPostModal from "./AddPostModal";
+const SwipeDirection = require("tns-core-modules/ui/gestures").SwipeDirection;
 
 // rest of Vue code
 
@@ -298,6 +300,43 @@ export default {
           email:item.email
         }
       })
+    },
+
+    onSwipe(args) {
+
+      var vm = this
+
+      if (args.direction == SwipeDirection.left & "AddressBook" === this.currentComponent & this.mainReady ) {
+        vm.currentComponent = 'Noticeboard'
+        }
+      else if (args.direction == SwipeDirection.left & "Noticeboard" === this.currentComponent & this.mainReady) {
+        vm.currentComponent = 'Alerts'
+      }
+      else if (args.direction == SwipeDirection.right & "Alerts" === this.currentComponent & this.mainReady) {
+        vm.currentComponent = 'Noticeboard'
+      }
+      else if (args.direction == SwipeDirection.right & "Noticeboard" === this.currentComponent & this.mainReady) {
+        vm.currentComponent = 'AddressBook'
+      }
+      else {
+        //nothing
+      }
+
+      /*
+
+
+      let direction =
+        args.direction == SwipeDirection.left & "AddressBook" === this.currentComponent & this.mainReady
+          ? this.currentComponent == 'Noticeboard'
+            : args.direction == SwipeDirection.left & "Noticeboard" === this.currentComponent & this.mainReady
+              ? this.currentComponent == 'Alerts'
+                : args.direction == SwipeDirection.right & "Alerts" === this.currentComponent & this.mainReady
+                    ? this.currentComponent == 'Noticeboard'
+                      : if (args.direction == SwipeDirection.right & "Noticeboard" === this.currentComponent & this.mainReady){this.currentComponent == 'AddressBook'};
+                //console.log("You performed a " + direction + " swipe")
+      
+      */
+
     },
 
     onItemTap: function(event) {
@@ -632,6 +671,14 @@ export default {
 }
 .padBoxMarg {
   padding-top:10;
+}
+
+.listBorders {
+    border-color:#073267; 
+    border-width: 1;
+    border-radius:15;
+    /*width:95%;*/
+    /* background: #eeeeee; */
 }
 
 </style>
