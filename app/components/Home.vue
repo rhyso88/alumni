@@ -72,8 +72,11 @@
       <FlexboxLayout justifyContent="center" alignItems="center" verticalAlignment="middle">
         <Label :text="'fa-plus' | fonticon" class="fas plusIcon" @tap="addPostMod"/>
       </FlexboxLayout>
+      <StackLayout>
+        <SearchBar hint="Search Noticeboard..." v-model="searchNotice" @textChange="filterList" />
+      </StackLayout>
       <ScrollView orientation="vertical">
-        <ListView for="item in localposts" height="800">
+        <ListView for="item in filteredPost" height="800">
           <v-template>
             <Gridlayout rows="*,*" columns="auto,*,auto" @tap="viewPostMod(item)">
                 <Image row="0" col="0" rowSpan="2" :src="item.profpic" stretch="aspectFill" class="postImg pictureBack"/>
@@ -82,7 +85,7 @@
                 <Label row="0" col="2" :text="item.time_add" class="dateViewPost" style="text-align:center;" />
                 <FlexboxLayout row="1" col="2" justifyContent="flex-end" alignItems="center" verticalAlignment="middle" class="dateViewPost"> 
                   <Label :text="'fa-eye' | fonticon" class="fas" v-if="item.seen"/> 
-                  <Label :text="'fa-eye-slash' | fonticon" class="fas" v-else />
+                  <Label :text="'fa-eye-slash' | fonticon" class="fas" v-else/>
                   <Label :text="item.no_seen"/>
                 </FlexboxLayout>
             </Gridlayout>
@@ -97,6 +100,19 @@
       <ScrollView orientation="vertical" row="1" col="0" colSpan="3"
         v-show="'Alerts' === currentComponent & mainReady">
         <StackLayout backgroundColor="#3c495e" orientation="horizontal">
+          <ListView for="item in filteredPost" height="800">
+          <v-template>
+            <StackLayout @tap="viewPostMod(item)">
+                  <Image row="0" col="0" rowSpan="2" :src="item.profpic" stretch="aspectFill" class="postImg pictureBack"/>
+                  <Label row="0" col="1" :text="item.userposting" class="userPoster"/>
+                  <Label row="1" col="1" :text="item.post_title" class="userPoster"/>
+                  <Label row="0" col="2" :text="item.time_add" class="dateViewPost" style="text-align:center;" />
+                  <Label :text="'fa-eye' | fonticon" class="fas" v-if="item.seen"/> 
+                  <Label :text="'fa-eye-slash' | fonticon" class="fas" v-else />
+                  <Label :text="item.no_seen"/>
+            </StackLayout>
+          </v-template>
+        </ListView>
         </StackLayout>
       </ScrollView>
 
@@ -156,10 +172,12 @@ export default {
       localdata: [],
       todelete: "_id of object you want to delete will go here",
       activity: false,
+      searchNotice:"",
 
       //Post page data
       
       localposts:[],
+      filteredPost:[],
 
       //Checkbox test
       fircheck: false,
@@ -182,6 +200,41 @@ export default {
     toggleAct() {
       this.activity = !this.activity;
       },
+    filterList() {
+      
+      var vm = this;
+
+      if (vm.searchNotice === "") {
+          // console.log("nothing to search!!!")
+          vm.filteredPost = vm.localposts
+          }
+      else {
+
+      // vm.filteredPost = [];
+      // console.log("Text changed now to:"+ this.searchNotice);
+
+      // var outcome = this.siftList("lookingforRhys",this.searchNotice);
+
+      // console.log(outcome)
+
+      var filteredNoticeboard = vm.localposts.filter(obj => {
+        return vm.siftList(obj.userposting,vm.searchNotice) || vm.siftList(obj.post_title,vm.searchNotice);
+      });
+
+      vm.filteredPost = filteredNoticeboard;
+
+      //console.log("Local post array contains following:" + this.localposts)
+
+      // console.log(JSON.stringify(filteredNoticeboard))
+
+      }
+
+    },
+
+    siftList(text,query) {
+        return text.toLowerCase().indexOf(query.toLowerCase()) >= 0
+    },
+
     showDetailPageModally(item) {
       this.$showModal(ProfModal, {
         props: {
@@ -353,8 +406,8 @@ export default {
 
       var vm = this;
       vm.activity = true;
-      this.localposts = [];
       this.localdata = [];
+      this.localposts = [];
 
       // Establish Kinvey datastore connection with collection "members"
 
@@ -399,6 +452,7 @@ export default {
       })
       .then(function(){
         vm.activity = false
+        vm.filteredPost = vm.localposts
       })
       .catch(function(error) {
         console.log(
