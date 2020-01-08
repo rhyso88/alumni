@@ -2,7 +2,7 @@
     <Page actionBarHidden="true">
         <FlexboxLayout class="page">
             <StackLayout class="form">
-                <Image class="logo" src="~/assets/images/BD_reg_stacked.png" stretch="aspectFit"></Image>
+                <Image class="logo" src="~/assets/login_image/BD_reg_stacked.png" stretch="aspectFit" height="200"></Image>
                 <Label class="header" text="Alumni Login"></Label>
 
                 <GridLayout rows="auto, auto, auto">

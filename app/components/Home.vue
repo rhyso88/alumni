@@ -15,7 +15,7 @@
 
 
       <Image
-        src="~/assets/images/BD_reg_white_bg.png"
+        src="~/assets/header_image/BD_reg_trans.png"
         class="topLogo"
         height="60"
         row="0"
@@ -304,6 +304,8 @@ export default {
 
     onSwipe(args) {
 
+      // Swipe gestures to move between tabs
+
       var vm = this
 
       if (args.direction == SwipeDirection.left & "AddressBook" === this.currentComponent & this.mainReady ) {
@@ -321,22 +323,6 @@ export default {
       else {
         //nothing
       }
-
-      /*
-
-
-      let direction =
-        args.direction == SwipeDirection.left & "AddressBook" === this.currentComponent & this.mainReady
-          ? this.currentComponent == 'Noticeboard'
-            : args.direction == SwipeDirection.left & "Noticeboard" === this.currentComponent & this.mainReady
-              ? this.currentComponent == 'Alerts'
-                : args.direction == SwipeDirection.right & "Alerts" === this.currentComponent & this.mainReady
-                    ? this.currentComponent == 'Noticeboard'
-                      : if (args.direction == SwipeDirection.right & "Noticeboard" === this.currentComponent & this.mainReady){this.currentComponent == 'AddressBook'};
-                //console.log("You performed a " + direction + " swipe")
-      
-      */
-
     },
 
     onItemTap: function(event) {
