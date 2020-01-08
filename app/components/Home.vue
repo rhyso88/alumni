@@ -1,7 +1,7 @@
 <template>
   <Page actionBarHidden="true">
 
-    <GridLayout rows="70, *, auto" columns="*, *, *">
+    <GridLayout rows="70,auto ,*, auto" columns="*, *, *">
 
       <StackLayout horizontalAlignment="center" verticalAlignment="center" v-if="!mainReady">
          <ActivityIndicator :busy="mainAction" width="300" height="300"/>
@@ -31,14 +31,20 @@
 
       <!-- main components all on top of each other, since only 1 will be visible at any given time -->
 
+      <StackLayout row="1" col="0" colSpan="3" v-show="'AddressBook' === currentComponent & mainReady">
+        <SearchBar hint="Search Alumni..." v-model="searchAlumni" @textChange="filterAlumni" />
+      </StackLayout>
+
+
       <ScrollView
         orientation="vertical"
-        row="1"
+        row="2"
         col="0"
         colSpan="3"
         v-show="'AddressBook' === currentComponent & mainReady"
       >
-        <ListView for="item in localdata" height="800">
+
+        <ListView for="item in filteredAlumni" height="800">
           <v-template>
             <GridLayout rows="*" columns="auto,*,auto,auto,auto" @tap="showDetailPageModally(item)">
               <Image row="0" col="0" :src="item.src" class="thumb img-circle" stretch="aspectFill"/>
@@ -68,7 +74,7 @@
 
       <!--Noticeboard page -->
 
-    <Stacklayout row="1" col="0" colSpan="3" v-show="'Noticeboard' === currentComponent & mainReady">
+    <Stacklayout row="2" col="0" colSpan="3" v-show="'Noticeboard' === currentComponent & mainReady">
       <FlexboxLayout justifyContent="center" alignItems="center" verticalAlignment="middle">
         <Label :text="'fa-plus' | fonticon" class="fas plusIcon" @tap="addPostMod"/>
       </FlexboxLayout>
@@ -97,7 +103,7 @@
 
       <!--Alerts page -->
 
-      <ScrollView orientation="vertical" row="1" col="0" colSpan="3"
+      <ScrollView orientation="vertical" row="2" col="0" colSpan="3"
         v-show="'Alerts' === currentComponent & mainReady">
         <StackLayout backgroundColor="#3c495e" orientation="horizontal">
           <ListView for="item in filteredPost" height="800">
@@ -121,7 +127,7 @@
         :class="navigationButtonClasses('AddressBook')"
         @tap="currentComponent = 'AddressBook'"
         :text="'fa-address-card' | fonticon"
-        row="2"
+        row="3"
         col="0"
         v-show="mainReady"
       />
@@ -129,7 +135,7 @@
         :class="navigationButtonClasses('Noticeboard')"
         @tap="currentComponent = 'Noticeboard'"
         :text="'fa-newspaper' | fonticon"
-        row="2"
+        row="3"
         col="1"
         v-show="mainReady"
       />
@@ -137,7 +143,7 @@
         :class="navigationButtonClasses('Alerts')"
         @tap="currentComponent = 'Alerts'"
         :text="'fa-bell' | fonticon"
-        row="2"
+        row="3"
         col="2"
         v-show="mainReady"
       />
@@ -172,18 +178,14 @@ export default {
       localdata: [],
       todelete: "_id of object you want to delete will go here",
       activity: false,
-      searchNotice:"",
+      searchAlumni:"",
+      filteredAlumni:[],
+      
 
       //Post page data
-      
+      searchNotice:"",
       localposts:[],
       filteredPost:[],
-
-      //Checkbox test
-      fircheck: false,
-      seccheck: false,
-      thircheck: false
-
 
     };
   },
@@ -200,6 +202,26 @@ export default {
     toggleAct() {
       this.activity = !this.activity;
       },
+
+    filterAlumni() {
+      
+      var vm = this;
+
+      if (vm.searchAlumni === "") {
+          vm.filteredAlumni = vm.localdata
+          }
+      else {
+
+      var filteredAddress = vm.localdata.filter(obj => {
+        return vm.siftList(obj.name,vm.searchAlumni) || vm.siftList(obj.occupation,vm.searchAlumni);
+      });
+
+      vm.filteredAlumni = filteredAddress;
+
+      }
+
+    },
+
     filterList() {
       
       var vm = this;
@@ -428,6 +450,7 @@ export default {
           console.log("Error getting members data:" + error);
         }
       )
+      .then(vm.filteredAlumni = vm.localdata)
       .then(function(pass){
 
       // Get post data from 'posts' collection
