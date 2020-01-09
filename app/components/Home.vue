@@ -25,6 +25,7 @@
         v-if="mainReady"
       />
 
+
       
       
       <Button row="0" col="2" class="btn btn-primary" text="Logout" @tap="logout" v-if="mainReady"></Button>
@@ -32,7 +33,8 @@
       <!-- main components all on top of each other, since only 1 will be visible at any given time -->
 
       <StackLayout row="1" col="0" colSpan="3" v-show="'AddressBook' === currentComponent & mainReady" class="listBorders">
-        <SearchBar hint="Search Alumni..." v-model="searchAlumni" @textChange="filterAlumni"/>
+        <SearchBar hint="Search Alumni..." v-model="searchAlumni" @textChange="filterAlumni" @submit="dismissKeyboard"
+          ref="alumSearchBar"/>
       </StackLayout>
 
 
@@ -80,7 +82,8 @@
         <Label :text="'fa-plus' | fonticon" class="fas plusIcon" @tap="addPostMod"/>
       </FlexboxLayout>
       <StackLayout>
-        <SearchBar hint="Search Noticeboard..." v-model="searchNotice" @textChange="filterList" />
+        <SearchBar hint="Search Noticeboard..." v-model="searchNotice" @textChange="filterList" @submit="dismissKeyboard" 
+          ref="noticeboardSearchBar"/>
       </StackLayout>
       <ScrollView orientation="vertical">
         <ListView for="item in filteredPost" height="800">
@@ -205,12 +208,20 @@ export default {
       this.activity = !this.activity;
       },
 
+    dismissKeyboard() {
+      this.$refs.alumSearchBar.nativeView.dismissSoftInput()
+      this.$refs.noticeboardSearchBar.nativeView.dismissSoftInput()
+    },
+
     filterAlumni() {
       
       var vm = this;
 
       if (vm.searchAlumni === "") {
           vm.filteredAlumni = vm.localdata
+          // vm.dismissKeyboard
+          this.$refs.alumSearchBar.nativeView.dismissSoftInput()
+          console.log("dismiss keyboard now")
           }
       else {
 
@@ -231,6 +242,9 @@ export default {
       if (vm.searchNotice === "") {
           // console.log("nothing to search!!!")
           vm.filteredPost = vm.localposts
+          // vm.dismissKeyboard
+          this.$refs.noticeboardSearchBar.nativeView.dismissSoftInput()
+          console.log("dismiss keyboard now")
           }
       else {
 
