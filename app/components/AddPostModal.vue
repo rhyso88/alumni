@@ -1,64 +1,76 @@
 <template>
   <Page>
-    <StackLayout class="borderTesting" height="100%" horizontalAlignment="center" verticalAlignment="center"  >
-        <!-- Portrait Photo & Name -->
 
-        <StackLayout height="30%" class="">
-            <Image :src="profpic" stretch="aspectFill" class="profilePic" ></Image>
-            <Label :text="userposting" color="#000" fontSize="23" fontWeight="bold" class="labelCent"/>
-        </StackLayout>
+    <!-- Set boundaries for gridlayout - needs these to ensure rendering as planned -->
 
-        <!-- Information about Alumni -->
-        <StackLayout height="60%" width="100%" class="" horizontalAlignment="center">
+    <StackLayout class="borderTesting" height="100%" width="100%">
 
-                <!-- Post Title **Limit to 15 characters ** -->
-                <Label text="Topic: " class="titleText" style="text-align:center;" fontWeight="bold"
-                    textDecoration="underline"/>
-                <StackLayout class="textFieldBord" verticalAlignment="center">
-                    <TextField v-model="post_title" hint="Enter post title <30 characters..." 
-                    class="fieldText" textWrap="true" maxLength="30"/>
-                </StackLayout>
+    <!-- Set gridlayout which keeps portrait at top, and submit at bottom -->
 
-                <!-- Post Skills Required -->
-                <Label text="Skills Required: " class="titleText" style="text-align:center;" fontWeight="bold"
-                    textDecoration="underline"/>
-                <FlexboxLayout class="textFieldBord" alignItems="center" justifyContent="center">
-                    <StackLayout class="" @tap="toggleEngSci">
-                        <Label class="fas skilReqModIcon" :text="'fa-tools' | fonticon" color="#53beb1"/>
-                        <Label class="skilReqModIconText" text="Eng/Science" textWrap="true"/>
-                        <Label class="fas skilReqYes" :text="'fa-check-circle' | fonticon"  v-if="eng_sci"/> 
-                        <Label class="fas skilReqNo" :text="'fa-times-circle' | fonticon"  v-else />
+        <GridLayout rows="auto,*,auto" columns="*" class="borderTesting">
+
+            <!-- Portrait Photo & Name -->
+
+            <StackLayout row="0" col="0" horizontalAlignment="center" verticalAlignment="center" 
+                class="borderTesting">
+                <Image :src="profpic" stretch="aspectFill" class="profilePic" verticalAlignment="center" ></Image>
+                <Label :text="userposting" color="#000" fontSize="23" fontWeight="bold" class="labelCent" verticalAlignment="center"/>
+            </StackLayout>
+
+            <!-- Topic/Skills Required & Query -->
+            <StackLayout row="1" col="0" class="borderTesting" horizontalAlignment="center" 
+                height="100%" width="100%">
+
+                    <!-- Post Title **Limit to 15 characters ** -->
+                    <Label text="Topic: " class="titleText" style="text-align:center;" fontWeight="bold"
+                        textDecoration="underline"/>
+                    <StackLayout class="textFieldBord" verticalAlignment="center">
+                        <TextField v-model="post_title" hint="Enter post title <30 characters..." 
+                        class="fieldText removeBlueUnderline" textWrap="true" maxLength="30"/>
                     </StackLayout>
-                    <StackLayout class="" @tap="toggleMedical">
-                        <Label class="fas skilReqModIcon" :text="'fa-stethoscope' | fonticon" color="#d16a6e"/>
-                        <Label class="skilReqModIconText" text="Medicine" textWrap="true"/>
-                        <Label class="fas skilReqYes" :text="'fa-check-circle' | fonticon" v-if="medical"/> 
-                        <Label class="fas skilReqNo" :text="'fa-times-circle' | fonticon" v-else />
+
+                    <!-- Post Skills Required -->
+                    <Label text="Skills Required: " class="titleText" style="text-align:center;" fontWeight="bold"
+                        textDecoration="underline"/>
+                    <FlexboxLayout class="textFieldBord" alignItems="center" justifyContent="center">
+                        <StackLayout class="" @tap="toggleEngSci">
+                            <Label class="fas skilReqModIcon" :text="'fa-tools' | fonticon" color="#53beb1"/>
+                            <Label class="skilReqModIconText" text="Eng/Science" textWrap="true"/>
+                            <Label class="fas skilReqYes" :text="'fa-check-circle' | fonticon"  v-if="eng_sci"/> 
+                            <Label class="fas skilReqNo" :text="'fa-times-circle' | fonticon"  v-else />
+                        </StackLayout>
+                        <StackLayout class="" @tap="toggleMedical">
+                            <Label class="fas skilReqModIcon" :text="'fa-stethoscope' | fonticon" color="#d16a6e"/>
+                            <Label class="skilReqModIconText" text="Medicine" textWrap="true"/>
+                            <Label class="fas skilReqYes" :text="'fa-check-circle' | fonticon" v-if="medical"/> 
+                            <Label class="fas skilReqNo" :text="'fa-times-circle' | fonticon" v-else />
+                        </StackLayout>
+                        <StackLayout class="" @tap="toggleCorporate">
+                            <Label class="fas skilReqModIcon" :text="'fa-briefcase' | fonticon" color="#55a3bb"/>
+                            <Label class="skilReqModIconText" text="Corporate" textWrap="true"/>
+                            <Label class="fas skilReqYes" :text="'fa-check-circle' | fonticon" v-if="corporate"/> 
+                            <Label class="fas skilReqNo" :text="'fa-times-circle' | fonticon" v-else />
+                        </StackLayout>
+                    </FlexboxLayout>
+
+                    <!-- Post Content **Limit to 100 characters - <50 words** -->
+                    <Label text="Need Help With: " class="titleText" style="text-align:center;" fontWeight="bold" 
+                        textDecoration="underline"/>
+                    <StackLayout class="textFieldBord">
+                        <TextView v-model="post_content" hint="Enter a short query <360 characters..." class="fieldText removeBlueUnderline" 
+                            textWrap="true" maxLength="360" height="170"/>
                     </StackLayout>
-                    <StackLayout class="" @tap="toggleCorporate">
-                        <Label class="fas skilReqModIcon" :text="'fa-briefcase' | fonticon" color="#55a3bb"/>
-                        <Label class="skilReqModIconText" text="Corporate" textWrap="true"/>
-                        <Label class="fas skilReqYes" :text="'fa-check-circle' | fonticon"  v-if="corporate"/> 
-                        <Label class="fas skilReqNo" :text="'fa-times-circle' | fonticon"  v-else />
-                    </StackLayout>
-                </FlexboxLayout>
 
-                <!-- Post Content **Limit to 100 characters - <50 words** -->
-                <Label text="Need Help With: " class="titleText" style="text-align:center;" fontWeight="bold" 
-                    textDecoration="underline"/>
-                <StackLayout class="textFieldBord">
-                    <TextView v-model="post_content" hint="Enter a short query <360 characters..." class="fieldText" 
-                        textWrap="true" maxLength="360"/>
-                </StackLayout>
+            </StackLayout>
 
-        </StackLayout>
-
-        <!-- Submit Post -->
-        <StackLayout height="10%" horizontalAlignment="center" verticalAlignment="center" class="" @tap="addPost">
-            <Label :text="'fa-pencil-alt' | fonticon" class="fas labelCent pencil"/>
-            <Label class="skilReqModIconText" text="Add Post"/>
-        </StackLayout>
-
+            <!-- Submit Post -->
+            <StackLayout row="2" col="0" horizontalAlignment="center" verticalAlignment="center" class="borderTesting" 
+                @tap="addPost">
+                <Label :text="'fa-pencil-alt' | fonticon" class="fas labelCent pencil"/>
+                <Label class="skilReqModIconText" text="Add Post"/>
+            </StackLayout>
+        
+        </GridLayout>
     </StackLayout>
   </Page>
 </template>
@@ -243,8 +255,8 @@ export default {
 	text-align: center;
 	font-size: 14;
     color:#000;
-    margin-left: 10;
-    margin-right: 10;
+    margin-left: 15;
+    margin-right: 15;
     margin-bottom: 5;
 }
 
@@ -252,17 +264,13 @@ export default {
     text-align: center;
     color:#A5D6A7;
     font-size: 20;
+    margin-bottom: 10;
 }
 .skilReqNo{
     text-align: center;
     color:#EF9A9A;
     font-size: 20;
-}
-
-
-.borderTesting{
-    border-color:#073267; 
-	border-width: 1;
+    margin-bottom: 10;
 }
 
 .pencil{
@@ -296,6 +304,17 @@ export default {
     border-radius:15;
     width:90%;
     background: #eeeeee;
+}
+
+.borderTesting{
+    border-color:#073267; 
+	border-width: 1;
+    /*background: #6f7cec;*/
+}
+
+.removeBlueUnderline {
+    /*color: #eeeeee;*/
+    border-width: 0;
 }
 
 </style>

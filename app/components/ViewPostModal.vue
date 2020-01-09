@@ -47,7 +47,7 @@
         <!-- Submit Post -->
         <StackLayout height="10%" horizontalAlignment="center" verticalAlignment="center" class="" @tap="sendEmail">
             <Label :text="'fa-paper-plane' | fonticon" class="fas labelCent plane"/>
-            <Label class="skilReqModIconText" text="Make Contact"/>
+            <Label class="planeLabel" text="Make Contact"/>
         </StackLayout>
 
     </StackLayout>
@@ -185,6 +185,15 @@ export default {
 .plane{
     color: #073267;
     font-size: 35;
+    margin-top: 10;
+    
+}
+
+.planeLabel{
+    margin-bottom: 10;
+    text-align: center;
+	font-size: 14;
+    color:#000;
 }
 
 .titleText {
