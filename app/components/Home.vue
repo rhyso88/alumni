@@ -13,26 +13,15 @@
 
        <!-- main components to show once loaded - appLoading = false -->
 
-
-      <Image
-        src="~/assets/header_image/BD_reg_trans.png"
-        class="topLogo"
-        height="60"
-        row="0"
-        col="0"
-        colSpan="2"
-        stretch="aspectFit"
-        v-if="mainReady"
-      />
-
-
-      
-      
-      <Button row="0" col="2" class="btn btn-primary" text="Logout" @tap="logout" v-if="mainReady"></Button>
+      <Gridlayout row="0" col="0" colSpan="3" rows="*" columns="2*,*" class="borderBottom">
+        <Image src="~/assets/header_image/BD_reg_trans.png" class="topLogo" height="60" row="0" col="0"
+          stretch="aspectFit" v-if="mainReady"/>
+        <Button row="0" col="1" class="btn btn-primary" text="Logout" @tap="logout" v-if="mainReady"></Button>
+      </Gridlayout>
 
       <!-- main components all on top of each other, since only 1 will be visible at any given time -->
 
-      <StackLayout row="1" col="0" colSpan="3" v-show="'AddressBook' === currentComponent & mainReady" class="listBorders">
+      <StackLayout row="1" col="0" colSpan="3" v-show="'AddressBook' === currentComponent & mainReady" class="searchBar">
         <SearchBar hint="Search Alumni..." v-model="searchAlumni" @textChange="filterAlumni" @submit="dismissKeyboard"
           ref="alumSearchBar"/>
       </StackLayout>
@@ -75,29 +64,36 @@
         </ListView>
       </ScrollView>
 
-      <!--Noticeboard page -->
+      <!--Noticeboard page  - define the size of the rows using a stack (allows child gridlayout to work well) -->
 
-    <Stacklayout row="2" col="0" colSpan="3" v-show="'Noticeboard' === currentComponent & mainReady">
-      <FlexboxLayout justifyContent="center" alignItems="center" verticalAlignment="middle">
-        <Label :text="'fa-plus' | fonticon" class="fas plusIcon" @tap="addPostMod"/>
-      </FlexboxLayout>
-      <StackLayout>
-        <SearchBar hint="Search Noticeboard..." v-model="searchNotice" @textChange="filterList" @submit="dismissKeyboard" 
-          ref="noticeboardSearchBar"/>
-      </StackLayout>
+    <Stacklayout row="2" col="0" colSpan="3" height="100%" width="100%" v-show="'Noticeboard' === currentComponent & mainReady">
+      <GridLayout rows="auto" columns="*,auto" class="noticeBackground borderBottom">
+        <GridLayout col="0" height="40" rows="*" columns="auto,*,auto" @tap="dismissKeyboard" class="searchBarBack">
+          <Label col="0" :text="'fa-search' | fonticon" class="fas searchIcons"/>
+          <TextView col="1" hint="Search Noticeboard..." v-model="searchNotice" 
+              @textChange="filterList" 
+              @submit="dismissKeyboard" 
+              ref="noticeboardSearchBar"
+              maxLength="30"
+              width="100%"
+              class="removeBlueUnderline"/>
+          <Label col="2" :text="'fa-times' | fonticon" class="fas searchIcons"/>
+        </GridLayout>
+        <Label col="1" :text="'fa-plus' | fonticon" class="fas plusIcon" @tap="addPostMod"/>
+      </Gridlayout>
       <ScrollView orientation="vertical">
         <ListView for="item in filteredPost" height="800">
           <v-template>
-            <Gridlayout rows="*,*" columns="auto,*,auto" @tap="viewPostMod(item)">
-                <Image row="0" col="0" rowSpan="2" :src="item.profpic" stretch="aspectFill" class="postImg pictureBack"/>
-                <Label row="0" col="1" :text="item.userposting" class="userPoster"/>
-                <Label row="1" col="1" :text="item.post_title" class="userPoster"/>
-                <Label row="0" col="2" :text="item.time_add" class="dateViewPost" style="text-align:center;" />
-                <FlexboxLayout row="1" col="2" justifyContent="flex-end" alignItems="center" verticalAlignment="middle" class="dateViewPost"> 
-                  <Label :text="'fa-eye' | fonticon" class="fas" v-if="item.seen"/> 
-                  <Label :text="'fa-eye-slash' | fonticon" class="fas" v-else/>
-                  <Label :text="item.no_seen"/>
-                </FlexboxLayout>
+            <Gridlayout height="75" width="100%" rows="*,*" columns="auto,*,auto" @tap="viewPostMod(item)">
+                <Image row="0" col="0" rowSpan="2" :src="item.profpic" stretch="aspectFill" class="postImg"/>
+                <Label row="0" col="1" :text="item.post_title" class="postTitle" fontWeight="bold"/>
+                <Label row="1" col="1" :text="item.userposting" class="userPosting"/>
+                <Label row="0" col="2" :text="item.time_add"  fontAttributes="Italic" style="text-align:right;"/>
+                <GridLayout row="1" col="2" rows="*" columns="*,auto" horizontalAlignment="right">
+                  <Label col="0" :text="'fa-eye' | fonticon" class="fas" v-if="item.seen" color="#2196F3"/> 
+                  <Label col="1" :text="'fa-eye-slash' | fonticon" class="fas" v-else/>
+                  <Label col="1" :text="item.no_seen"/>
+                </GridLayout>
             </Gridlayout>
           </v-template>
         </ListView>
@@ -128,30 +124,29 @@
       </ScrollView>
 
       <!-- Bottom navigation -->
-      <Button
-        :class="navigationButtonClasses('AddressBook')"
-        @tap="currentComponent = 'AddressBook'"
-        :text="'fa-address-card' | fonticon"
-        row="3"
-        col="0"
-        v-show="mainReady"
-      />
-      <Button
-        :class="navigationButtonClasses('Noticeboard')"
-        @tap="currentComponent = 'Noticeboard'"
-        :text="'fa-newspaper' | fonticon"
-        row="3"
-        col="1"
-        v-show="mainReady"
-      />
-      <Button
-        :class="navigationButtonClasses('Alerts')"
-        @tap="currentComponent = 'Alerts'"
-        :text="'fa-bell' | fonticon"
-        row="3"
-        col="2"
-        v-show="mainReady"
-      />
+      <GridLayout row="3" col="0" colSpan="3" rows="auto" columns="*,*,*" v-show="mainReady" class="borderTop">
+        <Button
+          :class="navigationButtonClasses('AddressBook')"
+          @tap="currentComponent = 'AddressBook'"
+          :text="'fa-address-card' | fonticon"
+          col="0"
+          v-show="mainReady"
+        />
+        <Button
+          :class="navigationButtonClasses('Noticeboard')"
+          @tap="currentComponent = 'Noticeboard'"
+          :text="'fa-newspaper' | fonticon"
+          col="1"
+          v-show="mainReady"
+        />
+        <Button
+          :class="navigationButtonClasses('Alerts')"
+          @tap="currentComponent = 'Alerts'"
+          :text="'fa-bell' | fonticon"
+          col="2"
+          v-show="mainReady"
+        />
+      </GridLayout>
     </GridLayout>
   </Page>
 </template>
@@ -624,8 +619,10 @@ export default {
 
 .postImg{
   width: 60;
-	height: 60;
-	border-radius:30;
+	/*height: 60;*/
+  border-radius:100;
+  border-color:#073267; 
+  border-width: 1;
 }
 
 .postFriendName{
@@ -641,20 +638,25 @@ export default {
 	font-size: 15;
 }
 
-.pictureBack {
-  background-color:#BBDEFB;
+.userPosting {
+  font-size: 13;
+  margin-left:5;
 }
 
-.userPoster {
-  background-color: #E1BEE7;
-}
-
-.dateViewPost {
-  background-color: #FFCDD2;
+.postTitle {
+  font-size: 17;
+  text-decoration: underline;
+  margin-left:5;
 }
 
 .plusIcon {
   font-size:30;
+  margin-left: 10;
+  margin-right:10;
+  border-color:#073267; 
+  border-width: 1;
+  border-radius:30;
+  padding: 15;
 }
 .padBoxMarg {
   padding-top:10;
@@ -671,6 +673,66 @@ export default {
 .alertPadding{
 	padding-top: 30;
   padding-bottom: 30;
+}
+
+.borderTesting{
+  border-color:#073267; 
+	border-width: 1;
+  /*background: #6f7cec;*/
+}
+
+.searchBar {
+  border-color:#073267; 
+	border-width: 1;
+  border-radius:15;
+  margin-left: 10;
+}
+
+.noticeBackground {
+  background: #eeeeee;
+}
+
+.removeBlueUnderline {
+    /*color: #eeeeee;*/
+    border-width: 0;
+}
+
+.searchBarBack {
+    background: #FFFFFF;
+    border-color:#073267; 
+    border-width: 1;
+    border-radius:15;
+    margin-left: 10;
+}
+
+.borderTopBottom {
+  border-color:#073267;
+  border-width: 1;
+  border-right-width:0;
+  border-left-width:0;
+}
+
+.borderTop {
+  border-color:#073267;
+  border-width: 1;
+  border-right-width:0;
+  border-left-width:0;
+  border-bottom-width: 0;
+}
+
+.borderBottom {
+  border-color:#073267;
+  border-width: 1;
+  border-right-width:0;
+  border-left-width:0;
+  border-top-width: 0;
+}
+
+
+.searchIcons {
+  margin-right: 10;
+  margin-left: 10;
+  font-size:20;
 }
 
 </style>
