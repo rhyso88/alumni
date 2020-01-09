@@ -109,21 +109,22 @@
 
       <ScrollView orientation="vertical" row="2" col="0" colSpan="3"
         v-show="'Alerts' === currentComponent & mainReady">
-        <StackLayout backgroundColor="#3c495e" orientation="horizontal">
-          <ListView for="item in filteredPost" height="800">
-          <v-template>
-            <StackLayout @tap="viewPostMod(item)">
-                  <Image row="0" col="0" rowSpan="2" :src="item.profpic" stretch="aspectFill" class="postImg pictureBack"/>
-                  <Label row="0" col="1" :text="item.userposting" class="userPoster"/>
-                  <Label row="1" col="1" :text="item.post_title" class="userPoster"/>
-                  <Label row="0" col="2" :text="item.time_add" class="dateViewPost" style="text-align:center;" />
-                  <Label :text="'fa-eye' | fonticon" class="fas" v-if="item.seen"/> 
-                  <Label :text="'fa-eye-slash' | fonticon" class="fas" v-else />
-                  <Label :text="item.no_seen"/>
-            </StackLayout>
-          </v-template>
-        </ListView>
-        </StackLayout>
+            <ScrollView scrollBarIndicatorVisible="false">
+                <StackLayout>
+                  <GridLayout rows="*" columns="*">
+                    <Image stretch="aspectFit"
+                      src="https://user-images.githubusercontent.com/58616842/72029025-8df4e280-32bf-11ea-8e85-ab09a8f7a0c5.png"/>
+                  </GridLayout>
+                  <GridLayout rows="*" columns="*">
+                    <Image stretch="aspectFit"
+                      src="https://user-images.githubusercontent.com/58616842/72029055-a36a0c80-32bf-11ea-9c84-db9c7985ea0a.png"/>
+                  </GridLayout>
+                  <GridLayout rows="*" columns="*">
+                    <Image stretch="aspectFit"
+                      src="https://user-images.githubusercontent.com/58616842/72029071-af55ce80-32bf-11ea-8201-11d9314a3147.png"></Image>
+                  </GridLayout>
+                </StackLayout>
+            </ScrollView>
       </ScrollView>
 
       <!-- Bottom navigation -->
@@ -219,7 +220,6 @@ export default {
 
       if (vm.searchAlumni === "") {
           vm.filteredAlumni = vm.localdata
-          // vm.dismissKeyboard
           this.$refs.alumSearchBar.nativeView.dismissSoftInput()
           console.log("dismiss keyboard now")
           }
@@ -232,7 +232,6 @@ export default {
       vm.filteredAlumni = filteredAddress;
 
       }
-
     },
 
     filterList() {
@@ -240,20 +239,11 @@ export default {
       var vm = this;
 
       if (vm.searchNotice === "") {
-          // console.log("nothing to search!!!")
           vm.filteredPost = vm.localposts
-          // vm.dismissKeyboard
           this.$refs.noticeboardSearchBar.nativeView.dismissSoftInput()
           console.log("dismiss keyboard now")
           }
       else {
-
-      // vm.filteredPost = [];
-      // console.log("Text changed now to:"+ this.searchNotice);
-
-      // var outcome = this.siftList("lookingforRhys",this.searchNotice);
-
-      // console.log(outcome)
 
       var filteredNoticeboard = vm.localposts.filter(obj => {
         return vm.siftList(obj.userposting,vm.searchNotice) || vm.siftList(obj.post_title,vm.searchNotice);
@@ -261,12 +251,9 @@ export default {
 
       vm.filteredPost = filteredNoticeboard;
 
-      //console.log("Local post array contains following:" + this.localposts)
-
       // console.log(JSON.stringify(filteredNoticeboard))
 
       }
-
     },
 
     siftList(text,query) {
@@ -679,6 +666,11 @@ export default {
     border-radius:15;
     /*width:95%;*/
     /* background: #eeeeee; */
+}
+
+.alertPadding{
+	padding-top: 30;
+  padding-bottom: 30;
 }
 
 </style>
