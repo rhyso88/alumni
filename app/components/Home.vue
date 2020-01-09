@@ -1,72 +1,68 @@
 <template>
   <Page actionBarHidden="true">
 
-    <GridLayout rows="70,auto ,*, auto" columns="*, *, *" @swipe="onSwipe">
+    <GridLayout rows="70,*, auto" columns="*, *, *" @swipe="onSwipe">
 
-      <StackLayout horizontalAlignment="center" verticalAlignment="center" v-if="!mainReady">
-         <ActivityIndicator :busy="mainAction" width="300" height="300"/>
+    <!-- hide main components until loaded mainReady = true-->
+
+      <StackLayout row="0" col="0" rowSpan="3" colSpan="3" v-if="!mainReady">
+         <ActivityIndicator :busy="mainAction" width="300" height="300" horizontalAlignment="center" verticalAlignment="center"/>
       </StackLayout>
 
-       <!-- hide main components until loaded mainReady = true-->
+    <!-- Top Bar -->
 
-       
-
-       <!-- main components to show once loaded - appLoading = false -->
-
-      <Gridlayout row="0" col="0" colSpan="3" rows="*" columns="2*,*" class="borderBottom">
+      <Gridlayout row="0" col="0" colSpan="3" rows="*" columns="2*,*" class="borderBottom" v-if="mainReady">
         <Image src="~/assets/header_image/BD_reg_trans.png" class="topLogo" height="60" row="0" col="0"
           stretch="aspectFit" v-if="mainReady"/>
         <Button row="0" col="1" class="btn btn-primary" text="Logout" @tap="logout" v-if="mainReady"></Button>
       </Gridlayout>
 
-      <!-- main components all on top of each other, since only 1 will be visible at any given time -->
+    <!-- main components all on top of each other, since only 1 will be visible at any given time -->
 
-      <StackLayout row="1" col="0" colSpan="3" v-show="'AddressBook' === currentComponent & mainReady" class="searchBar">
-        <SearchBar hint="Search Alumni..." v-model="searchAlumni" @textChange="filterAlumni" @submit="dismissKeyboard"
-          ref="alumSearchBar"/>
-      </StackLayout>
+    <!-- activity indicator will appear when 'activity' is true - which is when contacting Kinvey server getdata -->
 
+    <ActivityIndicator row="1" col="0" colSpan="3" :busy="activity" width="300" height="300" 
+      horizontalAlignment="center" verticalAlignment="center"/>
 
-      <ScrollView
-        orientation="vertical"
-        row="2"
-        col="0"
-        colSpan="3"
-        v-show="'AddressBook' === currentComponent & mainReady"
-        class="listBorders"
-      >
-
-        <ListView for="item in filteredAlumni" height="800">
+      <!-- Addressbook Page -->
+    
+     <Stacklayout row="1" col="0" colSpan="3" height="100%" width="100%" v-show="'AddressBook' === currentComponent & mainReady & !activity">
+      <GridLayout rows="auto" columns="*,auto" class="noticeBackground borderBottom">
+        <GridLayout col="0" height="40" rows="*" columns="auto,*,auto" @tap="dismissKeyboard" class="searchBarBack">
+          <Label col="0" :text="'fa-search' | fonticon" class="fas searchIcons"/>
+          <TextView col="1" hint="Search Alumni..." v-model="searchAlumni" 
+              @textChange="filterAlumni"
+              @submit="dismissKeyboard"
+              ref="alumSearchBar"
+              maxLength="30"
+              width="100%"
+              class="removeBlueUnderline"/>
+          <Label col="2" :text="'fa-times' | fonticon" class="fas searchIcons" @tap="clearText"/>
+        </GridLayout>
+        <Label col="1" :text="'fa-filter' | fonticon" class="fas filterIcon"/>
+      </Gridlayout>
+      <ScrollView orientation="vertical">
+        <ListView for="item in filteredAlumni" height="600">
           <v-template>
-            <GridLayout rows="*" columns="auto,*,auto,auto,auto" @tap="showDetailPageModally(item)">
-              <Image row="0" col="0" :src="item.src" class="thumb img-circle" stretch="aspectFill"/>
-              <Label row="0" col="1" :text="item.name" />
-              <Label
-                row="0"
-                col="2"
-                :class="iconColWhite(item.eng_sci)"
-                :text="'fa-tools' | fonticon"
-              />
-              <Label
-                row="0"
-                col="3"
-                :class="iconColWhite(item.medical)"
-                :text="'fa-stethoscope' | fonticon"
-              />
-              <Label
-                row="0"
-                col="4"
-                :class="iconColWhite(item.corporate)"
-                :text="'fa-briefcase' | fonticon"
-              />
-            </GridLayout>
+            <Gridlayout height="75" width="100%" rows="*" columns="auto,*,auto,auto,auto" 
+              @tap="showDetailPageModally(item)">
+                <Image row="0" col="0" :src="item.src" class="thumb img-circle" stretch="aspectFill"/>
+                <Label row="0" col="1" :text="item.name" />
+                <Label row="0" col="2" class="fas skillIcons" :text="'fa-tools' | fonticon" v-if="item.eng_sci" color="#53beb1"/>
+                <Label row="0" col="2" class="fas skillIcons" :text="'fa-tools' | fonticon" v-else color ="white"/>
+                <Label row="0" col="3" class="fas skillIcons" :text="'fa-stethoscope' | fonticon" v-if="item.medical" color="#55a3bb"/>
+                <Label row="0" col="3" class="fas skillIcons" :text="'fa-stethoscope' | fonticon" v-else color ="white"/>
+                <Label row="0" col="4" class="fas skillIcons" :text="'fa-briefcase' | fonticon" v-if="item.corporate" color="#d16a6e"/>
+                <Label row="0" col="4" class="fas skillIcons" :text="'fa-briefcase' | fonticon" v-else color ="white"/>
+            </Gridlayout>
           </v-template>
         </ListView>
       </ScrollView>
+    </Stacklayout>
+    
+    <!--Noticeboard page  - define the size of the rows using a stack (allows child gridlayout to work well) -->
 
-      <!--Noticeboard page  - define the size of the rows using a stack (allows child gridlayout to work well) -->
-
-    <Stacklayout row="2" col="0" colSpan="3" height="100%" width="100%" v-show="'Noticeboard' === currentComponent & mainReady">
+    <Stacklayout row="1" col="0" colSpan="3" height="100%" width="100%" v-show="'Noticeboard' === currentComponent & mainReady & !activity">
       <GridLayout rows="auto" columns="*,auto" class="noticeBackground borderBottom">
         <GridLayout col="0" height="40" rows="*" columns="auto,*,auto" @tap="dismissKeyboard" class="searchBarBack">
           <Label col="0" :text="'fa-search' | fonticon" class="fas searchIcons"/>
@@ -77,12 +73,12 @@
               maxLength="30"
               width="100%"
               class="removeBlueUnderline"/>
-          <Label col="2" :text="'fa-times' | fonticon" class="fas searchIcons"/>
+          <Label col="2" :text="'fa-times' | fonticon" class="fas searchIcons" @tap="clearText"/>
         </GridLayout>
         <Label col="1" :text="'fa-plus' | fonticon" class="fas plusIcon" @tap="addPostMod"/>
       </Gridlayout>
       <ScrollView orientation="vertical">
-        <ListView for="item in filteredPost" height="800">
+        <ListView for="item in filteredPost" height="600">
           <v-template>
             <Gridlayout height="75" width="100%" rows="*,*" columns="auto,*,auto" @tap="viewPostMod(item)">
                 <Image row="0" col="0" rowSpan="2" :src="item.profpic" stretch="aspectFill" class="postImg"/>
@@ -103,8 +99,8 @@
 
       <!--Alerts page -->
 
-      <ScrollView orientation="vertical" row="2" col="0" colSpan="3"
-        v-show="'Alerts' === currentComponent & mainReady">
+      <ScrollView orientation="vertical" row="1" col="0" colSpan="3"
+        v-show="'Alerts' === currentComponent & mainReady & !activity">
             <ScrollView scrollBarIndicatorVisible="false">
                 <StackLayout>
                   <GridLayout rows="*" columns="*">
@@ -124,7 +120,7 @@
       </ScrollView>
 
       <!-- Bottom navigation -->
-      <GridLayout row="3" col="0" colSpan="3" rows="auto" columns="*,*,*" v-show="mainReady" class="borderTop">
+      <GridLayout row="2" col="0" colSpan="3" rows="auto" columns="*,*,*" v-show="mainReady" class="borderTop">
         <Button
           :class="navigationButtonClasses('AddressBook')"
           @tap="currentComponent = 'AddressBook'"
@@ -272,7 +268,7 @@ export default {
       });
     },
     addPostMod(){
-      console.log("Modal blog page posted by: ")
+      // console.log("Modal blog page posted by: ")
       this.$showModal(AddPostModal, {
         props: {}
       }).then(this.getData);
@@ -280,9 +276,10 @@ export default {
 
     viewPostMod(item){
       console.log("Modal view of the following users post:  "+ item.userposting)
-      // **ON ENTRY - increase view count**//
+      this.addSeen(item);
       this.$showModal(ViewPostModal, {
         props: {
+          _id: item._id,
           profpic: item.profpic,
           userposting: item.userposting,
           post_title: item.post_title,
@@ -296,6 +293,68 @@ export default {
           email:item.email
         }
       })
+    },
+
+    addSeen(item) {
+
+      //establish connection to Kinvey
+
+      var vm = this;
+
+      const dataStore = Kinvey.DataStore.collection(
+        "posts", 
+        Kinvey.DataStoreType.Auto
+      );
+
+      //get current seen number, and increase by 1
+
+      const seenOld = parseInt(item.no_seen,10);
+      const seenNew = seenOld + 1;
+
+      console.log("id returned from Kinvey:" + item._id);
+      console.log("new seen count: " + seenNew);
+
+      // add increased "seen count" 
+
+      const entAdd = {
+        _id: item._id, 
+        //new stuff
+        seen: true,
+        no_seen: seenNew,
+        //old stuff
+        profpic: item.profpic,
+        userposting: item.userposting,
+        post_title: item.post_title,
+        post_content: item.post_content,
+        eng_sci: item.eng_sci,
+        medical: item.medical,
+        corporate: item.corporate,
+        time_add: item.time_add,
+        email:item.email
+      };
+
+      //increase local seen count
+
+      function checkPos(pos) {
+        return pos._id === item._id;
+      }
+
+      var ind = vm.localposts.findIndex(checkPos);
+      console.log("Found the index: " + ind)
+      vm.localposts[ind].no_seen = seenNew;
+      vm.localposts[ind].seen = true;
+    
+      //increase remote seen count
+
+      const promise = dataStore
+        .save(entAdd)
+        .then(function(entity) {
+          // vm.getData();
+          console.log("Added seen data to Kinvey");
+        })
+        .catch(function(error) {
+          console.log("Error with number of times seen method:" + error);
+        });
     },
 
     onSwipe(args) {
@@ -319,6 +378,11 @@ export default {
       else {
         //nothing
       }
+    },
+
+    clearText () {
+      this.searchNotice = ""
+      this.searchAlumni = ""
     },
 
     onItemTap: function(event) {
@@ -555,15 +619,20 @@ export default {
         purple: component === this.currentComponent
       });
     },
+
+    /*
+
     iconColWhite() {
       return component => ({
         fas: true,
         skillIcons: true,
         whiteSkill: component === false
       });
-    },
-  },
+    }
 
+    */
+  },
+  
   mounted () {
     var vm = this;
     setTimeout(() => {
@@ -596,9 +665,11 @@ export default {
       })
     }
 };
+
 </script>
 
 <style scoped>
+
 .nav-btn {
   color: #9d95b4;
   margin: 20;
@@ -653,21 +724,30 @@ export default {
   font-size:30;
   margin-left: 10;
   margin-right:10;
+  margin-top: 5;
+  margin-bottom: 5;
   border-color:#073267; 
   border-width: 1;
   border-radius:30;
   padding: 15;
-}
-.padBoxMarg {
-  padding-top:10;
+  background:#C5302C;
 }
 
-.listBorders {
-    border-color:#073267; 
-    border-width: 1;
-    border-radius:15;
-    /*width:95%;*/
-    /* background: #eeeeee; */
+.filterIcon {
+  font-size:30;
+  margin-left: 10;
+  margin-right:10;
+  margin-top: 5;
+  margin-bottom: 5;
+  border-color:#073267; 
+  border-width: 1;
+  border-radius:30;
+  padding: 15;
+  background:#EA80FC;
+}
+
+.padBoxMarg {
+  padding-top:10;
 }
 
 .alertPadding{
@@ -727,7 +807,6 @@ export default {
   border-left-width:0;
   border-top-width: 0;
 }
-
 
 .searchIcons {
   margin-right: 10;

@@ -3,22 +3,22 @@
 
     <!-- Set boundaries for gridlayout - needs these to ensure rendering as planned -->
 
-    <StackLayout class="borderTesting" height="100%" width="100%">
+    <StackLayout class="" height="100%" width="100%">
 
     <!-- Set gridlayout which keeps portrait at top, and submit at bottom -->
 
-        <GridLayout rows="auto,*,auto" columns="*" class="borderTesting">
+        <GridLayout rows="auto,*,auto" columns="*" class="">
 
             <!-- Portrait Photo & Name -->
 
             <StackLayout row="0" col="0" horizontalAlignment="center" verticalAlignment="center" 
-                class="borderTesting">
+                class="">
                 <Image :src="profpic" stretch="aspectFill" class="profilePic" verticalAlignment="center" ></Image>
                 <Label :text="userposting" color="#000" fontSize="23" fontWeight="bold" class="labelCent" verticalAlignment="center"/>
             </StackLayout>
 
             <!-- Topic/Skills Required & Query -->
-            <StackLayout row="1" col="0" class="borderTesting" horizontalAlignment="center" 
+            <StackLayout row="1" col="0" class="" horizontalAlignment="center" 
                 height="100%" width="100%">
 
                     <!-- Post Title **Limit to 15 characters ** -->
@@ -64,7 +64,7 @@
             </StackLayout>
 
             <!-- Submit Post -->
-            <StackLayout row="2" col="0" horizontalAlignment="center" verticalAlignment="center" class="borderTesting" 
+            <StackLayout row="2" col="0" horizontalAlignment="center" verticalAlignment="center" class="" 
                 @tap="addPost">
                 <Label :text="'fa-pencil-alt' | fonticon" class="fas labelCent pencil"/>
                 <Label class="skilReqModIconText" text="Add Post"/>

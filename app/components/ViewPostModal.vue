@@ -60,10 +60,11 @@ import * as Kinvey from "kinvey-nativescript-sdk";
 var dialogs = require("tns-core-modules/ui/dialogs");
 
 export default {
-    props: ["profpic","userposting","post_title","post_content","eng_sci","medical","corporate","time_add","seen"
+    props: ["_id","profpic","userposting","post_title","post_content","eng_sci","medical","corporate","time_add","seen"
     , "no_seen","email"],
     data: function () {
       return {
+          _id: this._id,
           profpic: this.profpic,
           userposting: this.userposting,
           post_title: this.post_title,
@@ -121,27 +122,6 @@ export default {
             console.log("Error in email plugin: " + err);
             });
         }
-    },
-
-    created() {
-
-        /*
-
-        var vm = this;
-        var client = Kinvey.init({
-            appKey: "kid_S1Gok7ARr",
-            appSecret: "430e2c4f39c240e6970bd5683bf9cc09"
-            });
-        
-        // Get current users name and portrait to attach to post
-        
-        vm.profpic = Kinvey.User.getActiveUser(client).data.portrait
-        const user_fn = Kinvey.User.getActiveUser(client).data.first_name;
-        const user_ln = Kinvey.User.getActiveUser(client).data.last_name;
-        vm.userposting = user_fn + " " + user_ln;
-
-        */
-
     }
 };
 </script>
