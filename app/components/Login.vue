@@ -1,6 +1,6 @@
 <template>
     <Page actionBarHidden="true">
-        <FlexboxLayout class="page">
+        <FlexboxLayout class="page" ref="mainLogin">
             <StackLayout class="form">
                 <Image class="logo" src="~/assets/login_image/BD_reg_stacked.png" stretch="aspectFit" height="200"></Image>
                 <Label class="header" text="Alumni Login"></Label>
@@ -78,10 +78,18 @@
 
                 this.processing = true;
                 if (this.isLoggingIn) {
-                    this.login();
+                    this.login2();
                 } else {
                     this.register();
                 }
+            },
+
+            login2() {
+                let element = this.$refs.mainLogin.nativeView
+                var vm = this
+                element.animate({ opacity: 0, duration:1000})
+                    .then(function () { return vm.login(); })
+                    .catch(function (e) {console.log("login2 error :"+ e.message);});
             },
 
             login() {
@@ -89,7 +97,12 @@
                     .login(this.user)
                     .then(() => {
                         this.processing = false;
-                        this.$navigateTo(Home, { clearHistory: true });
+                        this.$navigateTo(Home, { clearHistory: true, 
+                        transition: {
+                            name:'fade',
+                            duration: 200
+                            }
+                        });
                     })
                     .catch(() => {
                         this.processing = false;

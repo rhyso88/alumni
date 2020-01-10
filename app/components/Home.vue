@@ -1,20 +1,25 @@
 <template>
   <Page actionBarHidden="true">
+  
 
-    <GridLayout rows="70,*, auto" columns="*, *, *" @swipe="onSwipe">
+<StackLayout height="100%" width="100%">
+    <GridLayout rows="*" columns="*" v-show="!mainReady">
+         <!--<ActivityIndicator busy=true width="300" height="300" horizontalAlignment="center" verticalAlignment="center"/>-->
+         <Image ref="waiting" src="~/assets/login_image/BD_reg_stacked.png" class="topLogo intro" height="100" row="0" col="0"
+          stretch="aspectFit" horizontalAlignment="center" verticalAlignment="center"/>
+    </GridLayout>
+
+    <GridLayout rows="70,*, auto" columns="*, *, *" @swipe="onSwipe" v-show="mainReady" ref="mainPages">
 
     <!-- hide main components until loaded mainReady = true-->
 
-      <StackLayout row="0" col="0" rowSpan="3" colSpan="3" v-if="!mainReady">
-         <ActivityIndicator :busy="mainAction" width="300" height="300" horizontalAlignment="center" verticalAlignment="center"/>
-      </StackLayout>
-
     <!-- Top Bar -->
 
-      <Gridlayout row="0" col="0" colSpan="3" rows="*" columns="2*,*" class="borderBottom" v-if="mainReady">
-        <Image src="~/assets/header_image/BD_reg_trans.png" class="topLogo" height="60" row="0" col="0"
+      <Gridlayout row="0" col="0" colSpan="3" rows="*" columns="*,*,*" class="borderBottom navBackground" v-show="mainReady">
+        <Image ref="fadeNow" src="~/assets/header_v2/BD_rev_transp.png" class="topLogo" height="60" row="0" col="0"
           stretch="aspectFit" v-if="mainReady"/>
-        <Button row="0" col="1" class="btn btn-primary" text="Logout" @tap="logout" v-if="mainReady"></Button>
+        <Button row="0" col="1" class="btn btn-primary" text="Logout" @tap="logout" v-show="mainReady"></Button>
+        <Button row="0" col="2" class="btn btn-primary" text="Logout2" @tap="logout2" v-show="mainReady"></Button>-->
       </Gridlayout>
 
     <!-- main components all on top of each other, since only 1 will be visible at any given time -->
@@ -27,7 +32,7 @@
       <!-- Addressbook Page -->
     
      <Stacklayout row="1" col="0" colSpan="3" height="100%" width="100%" v-show="'AddressBook' === currentComponent & mainReady & !activity">
-      <GridLayout rows="auto" columns="*,auto" class="noticeBackground borderBottom">
+      <GridLayout rows="auto" columns="*,auto" class="noticeBackground borderBottom borderAll">
         <GridLayout col="0" height="40" rows="*" columns="auto,*,auto" @tap="dismissKeyboard" class="searchBarBack">
           <Label col="0" :text="'fa-search' | fonticon" class="fas searchIcons"/>
           <TextView col="1" hint="Search Alumni..." v-model="searchAlumni" 
@@ -46,13 +51,13 @@
           <v-template>
             <Gridlayout height="75" width="100%" rows="*" columns="auto,*,auto,auto,auto" 
               @tap="showDetailPageModally(item)">
-                <Image row="0" col="0" :src="item.src" class="thumb img-circle" stretch="aspectFill"/>
-                <Label row="0" col="1" :text="item.name" />
-                <Label row="0" col="2" class="fas skillIcons" :text="'fa-tools' | fonticon" v-if="item.eng_sci" color="#53beb1"/>
+                <Image row="0" col="0" :src="item.src" class="postImg" stretch="aspectFill"/>
+                <Label row="0" col="1" :text="item.name" class="alumniTitle"/>
+                <Label row="0" col="2" class="fas skillIcons" :text="'fa-tools' | fonticon" v-if="item.eng_sci"/>
                 <Label row="0" col="2" class="fas skillIcons" :text="'fa-tools' | fonticon" v-else color ="white"/>
-                <Label row="0" col="3" class="fas skillIcons" :text="'fa-stethoscope' | fonticon" v-if="item.medical" color="#55a3bb"/>
+                <Label row="0" col="3" class="fas skillIcons" :text="'fa-stethoscope' | fonticon" v-if="item.medical"/>
                 <Label row="0" col="3" class="fas skillIcons" :text="'fa-stethoscope' | fonticon" v-else color ="white"/>
-                <Label row="0" col="4" class="fas skillIcons" :text="'fa-briefcase' | fonticon" v-if="item.corporate" color="#d16a6e"/>
+                <Label row="0" col="4" class="fas skillIcons" :text="'fa-briefcase' | fonticon" v-if="item.corporate"/>
                 <Label row="0" col="4" class="fas skillIcons" :text="'fa-briefcase' | fonticon" v-else color ="white"/>
             </Gridlayout>
           </v-template>
@@ -63,7 +68,7 @@
     <!--Noticeboard page  - define the size of the rows using a stack (allows child gridlayout to work well) -->
 
     <Stacklayout row="1" col="0" colSpan="3" height="100%" width="100%" v-show="'Noticeboard' === currentComponent & mainReady & !activity">
-      <GridLayout rows="auto" columns="*,auto" class="noticeBackground borderBottom">
+      <GridLayout rows="auto" columns="*,auto" class="noticeBackground borderBottom borderAll">
         <GridLayout col="0" height="40" rows="*" columns="auto,*,auto" @tap="dismissKeyboard" class="searchBarBack">
           <Label col="0" :text="'fa-search' | fonticon" class="fas searchIcons"/>
           <TextView col="1" hint="Search Noticeboard..." v-model="searchNotice" 
@@ -99,7 +104,7 @@
 
       <!--Alerts page -->
 
-      <ScrollView orientation="vertical" row="1" col="0" colSpan="3"
+      <ScrollView orientation="vertical" row="1" col="0" colSpan="3" class="borderAll"
         v-show="'Alerts' === currentComponent & mainReady & !activity">
             <ScrollView scrollBarIndicatorVisible="false">
                 <StackLayout>
@@ -120,7 +125,7 @@
       </ScrollView>
 
       <!-- Bottom navigation -->
-      <GridLayout row="2" col="0" colSpan="3" rows="auto" columns="*,*,*" v-show="mainReady" class="borderTop">
+      <GridLayout row="2" col="0" colSpan="3" rows="auto" columns="*,*,*" v-show="mainReady" class="borderTop navBackground">
         <Button
           :class="navigationButtonClasses('AddressBook')"
           @tap="currentComponent = 'AddressBook'"
@@ -144,6 +149,7 @@
         />
       </GridLayout>
     </GridLayout>
+  </StackLayout>
   </Page>
 </template>
 
@@ -177,6 +183,7 @@ export default {
       activity: false,
       searchAlumni:"",
       filteredAlumni:[],
+      viewMainPages:false,
       
 
       //Post page data
@@ -188,13 +195,75 @@ export default {
   },
   methods: {
     logout() {
-      this.mainReady = false;
+      // this.fadeLogOut()
       setTimeout(() => {
+        this.mainReady = false;
         this.$backendService.logout();
-        this.$navigateTo(Login, {
-        clearHistory: true
+        this.$navigateTo(Login, {clearHistory: true, 
+          transition: {
+            name:'fade',
+            duration: 200
+          }
         });
-      }, 2000)
+      }, 3000)
+    },
+
+    logout2() {
+      let element = this.$refs.mainPages.nativeView
+      var vm = this
+      element.animate({ opacity: 0, duration:1000})
+        .then(function () { return vm.mainReady = false; })
+        .then(function () { return vm.$backendService.logout(); })
+        .then(function () { return vm.$navigateTo
+          (Login, {
+                    clearHistory: true , 
+                    transition: {name:'fade',duration: 200}
+                  }
+          ); 
+        })
+        .catch(function (e) {
+          console.log("logout2 error :"+ e.message);
+        });
+      },
+
+    fadeOther() {
+    let element = this.$refs.fadeNow.nativeView
+     element.animate({
+        opacity: 0,
+        duration: 3000,
+        iterations: 1
+      });
+    },
+
+    whileWait() {
+      let pic = this.$refs.waiting.nativeView
+      console.log("In startup animation")
+      pic.animate({
+        opacity: 0,
+        duration: 3000,
+        iterations: Number.POSITIVE_INFINITY
+      });
+    },
+
+    fadeLogOut() {
+    let element = this.$refs.mainPages.nativeView
+     element.animate({
+        opacity: 0,
+        duration: 3000,
+        iterations: 1
+      });
+    },
+
+    tryAnim() {
+      let pic = this.$refs.fadeNow.nativeView
+      pic.opacity = 0.5
+      console.log("In oritingal animation "+ pic)
+      pic.animate({
+        opacity: 0,
+        duration: 1000,
+        iterations: Number.POSITIVE_INFINITY
+      });
+
     },
     toggleAct() {
       this.activity = !this.activity;
@@ -622,15 +691,16 @@ export default {
 
     /*
 
-    iconColWhite() {
-      return component => ({
-        fas: true,
-        skillIcons: true,
-        whiteSkill: component === false
+    entryView() {
+      var vm = this
+      return () => ({
+        appear: this.viewMainPages === true,
+        disappear: this.viewMainPages === false
       });
-    }
+    },
 
     */
+
   },
   
   mounted () {
@@ -671,10 +741,15 @@ export default {
 <style scoped>
 
 .nav-btn {
-  color: #9d95b4;
+  color: white;
+  background-color: #073267;
   margin: 20;
   font-size: 30;
   padding: 10;
+}
+
+.navBackground {
+  background-color: #073267;
 }
 
 .actioncol {
@@ -682,8 +757,8 @@ export default {
 }
 
 .purple {
-  background-color: #073267;
-  color: white;
+  background-color: white;
+  color: #073267;
   font-size: 30;
   border-radius: 10;
 }
@@ -692,7 +767,7 @@ export default {
   width: 60;
 	/*height: 60;*/
   border-radius:100;
-  border-color:#073267; 
+  border-color:#000000;
   border-width: 1;
 }
 
@@ -720,6 +795,11 @@ export default {
   margin-left:5;
 }
 
+.alumniTitle {
+  font-size: 15;
+  margin-left:5;
+}
+
 .plusIcon {
   font-size:30;
   margin-left: 10;
@@ -743,7 +823,7 @@ export default {
   border-width: 1;
   border-radius:30;
   padding: 15;
-  background:#EA80FC;
+  background:#C5302C;
 }
 
 .padBoxMarg {
@@ -786,14 +866,14 @@ export default {
 }
 
 .borderTopBottom {
-  border-color:#073267;
+  border-color:#000000;
   border-width: 1;
   border-right-width:0;
   border-left-width:0;
 }
 
 .borderTop {
-  border-color:#073267;
+  border-color:#000000;
   border-width: 1;
   border-right-width:0;
   border-left-width:0;
@@ -801,17 +881,53 @@ export default {
 }
 
 .borderBottom {
-  border-color:#073267;
+  border-color: #000000;
   border-width: 1;
   border-right-width:0;
   border-left-width:0;
   border-top-width: 0;
 }
 
+.borderAll{
+  border-color: #000000;
+  border-width: 1;
+}
+
+
 .searchIcons {
   margin-right: 10;
   margin-left: 10;
   font-size:20;
 }
+
+
+
+.intro {
+  animation-name: appear;
+  animation-duration: 1s;
+  animation-fill-mode:forwards;
+  animation-iteration-count: infinite;
+}
+
+@keyframes appear {
+  from {opacity: 0; transform: scale(1,1)}
+  to {opacity: 1; transform: scale(2,2)}
+}
+
+.appear {
+  animation-name: example2;
+  animation-duration: 3s;
+  animation-fill-mode:forwards;
+  animation-iteration-count: 1;
+  animation-delay: 2.8s;
+  
+}
+
+@keyframes example2 {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+
 
 </style>
