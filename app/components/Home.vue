@@ -1,155 +1,151 @@
 <template>
   <Page actionBarHidden="true">
-  
+    <StackLayout height="100%" width="100%">
 
-<StackLayout height="100%" width="100%">
-    <GridLayout rows="*" columns="*" v-show="!mainReady">
-         <!--<ActivityIndicator busy=true width="300" height="300" horizontalAlignment="center" verticalAlignment="center"/>-->
-         <Image ref="waiting" src="~/assets/login_image/BD_reg_stacked.png" class="topLogo intro" height="100" row="0" col="0"
-          stretch="aspectFit" horizontalAlignment="center" verticalAlignment="center"/>
-    </GridLayout>
+      <!--Loading Stage - show this -->
 
-    <GridLayout rows="70,*, auto" columns="*, *, *" @swipe="onSwipe" v-show="mainReady" ref="mainPages">
-
-    <!-- hide main components until loaded mainReady = true-->
-
-    <!-- Top Bar -->
-
-      <Gridlayout row="0" col="0" colSpan="3" rows="*" columns="*,*,*" class="borderBottom navBackground" v-show="mainReady">
-        <Image ref="fadeNow" src="~/assets/header_v2/BD_rev_transp.png" class="topLogo" height="60" row="0" col="0"
-          stretch="aspectFit" v-if="mainReady"/>
-        <Button row="0" col="1" class="btn btn-primary" text="Logout" @tap="logout" v-show="mainReady"></Button>
-        <Button row="0" col="2" class="btn btn-primary" text="Logout2" @tap="logout2" v-show="mainReady"></Button>-->
+      <Gridlayout rows="*" columns="*" v-show="!mainReady">
+          <Image col="0" row="0" ref="waiting" src="~/assets/login_image/BD_reg_stacked.png" class="" height="100"
+            stretch="aspectFit" horizontalAlignment="center" verticalAlignment="center"/>
       </Gridlayout>
 
-    <!-- main components all on top of each other, since only 1 will be visible at any given time -->
+      <!-- Main Components - Row 1 all on top of each other, using v-show to display them -->
 
-    <!-- activity indicator will appear when 'activity' is true - which is when contacting Kinvey server getdata -->
+      <GridLayout rows="50, *, 49" columns="*, *, *" @swipe="onSwipe" v-show="mainReady" ref="mainPages">
 
-    <ActivityIndicator row="1" col="0" colSpan="3" :busy="activity" width="300" height="300" 
-      horizontalAlignment="center" verticalAlignment="center"/>
+        <!-- Top Bar - Row 0 -->
 
-      <!-- Addressbook Page -->
-    
-     <Stacklayout row="1" col="0" colSpan="3" height="100%" width="100%" v-show="'AddressBook' === currentComponent & mainReady & !activity">
-      <GridLayout rows="auto" columns="*,auto" class="noticeBackground borderBottom borderAll">
-        <GridLayout col="0" height="40" rows="*" columns="auto,*,auto" @tap="dismissKeyboard" class="searchBarBack">
-          <Label col="0" :text="'fa-search' | fonticon" class="fas searchIcons"/>
-          <TextView col="1" hint="Search Alumni..." v-model="searchAlumni" 
-              @textChange="filterAlumni"
-              @submit="dismissKeyboard"
-              ref="alumSearchBar"
-              maxLength="30"
-              width="100%"
-              class="removeBlueUnderline"/>
-          <Label col="2" :text="'fa-times' | fonticon" class="fas searchIcons" @tap="clearText"/>
+        <Gridlayout row="0" col="0" colSpan="3" rows="*" columns="*" class="borderBottom navBackground">
+          <Image row="0" col="0" src="~/assets/header_v2/BD_rev_transp.png" stretch="aspectFit" @tap="logout"
+            class="navBarImage"/>
+        </Gridlayout>
+
+        <!-- activity indicator will appear when 'activity' is true - which is when contacting Kinvey server getdata -->
+
+        <ActivityIndicator row="1" col="0" colSpan="3" :busy="activity" width="300" height="300" 
+          horizontalAlignment="center" verticalAlignment="center"/>
+
+        <!-- Addressbook Page -->
+      
+      <Stacklayout row="1" col="0" colSpan="3" height="100%" width="100%" v-show="'AddressBook' === currentComponent & mainReady & !activity">
+        <GridLayout rows="auto" columns="*,auto" class="noticeBackground borderBottom borderAll">
+          <GridLayout col="0" height="40" rows="*" columns="auto,*,auto" @tap="dismissKeyboard" class="searchBarBack">
+            <Label col="0" :text="'fa-search' | fonticon" class="fas searchIcons"/>
+            <TextView col="1" hint="Search Alumni..." v-model="searchAlumni" 
+                @textChange="filterAlumni"
+                @submit="dismissKeyboard"
+                ref="alumSearchBar"
+                maxLength="30"
+                width="100%"
+                class="removeBlueUnderline"/>
+            <Label col="2" :text="'fa-times' | fonticon" class="fas searchIcons" @tap="clearText"/>
+          </GridLayout>
+          <Label col="1" :text="'fa-filter' | fonticon" class="fas filterIcon"/>
+        </Gridlayout>
+        <ScrollView orientation="vertical">
+          <ListView for="item in filteredAlumni" height="600">
+            <v-template>
+              <Gridlayout height="75" width="100%" rows="*" columns="auto,*,auto,auto,auto" 
+                @tap="showDetailPageModally(item)">
+                  <Image row="0" col="0" :src="item.src" class="postImg" stretch="aspectFill"/>
+                  <Label row="0" col="1" :text="item.name" class="alumniTitle"/>
+                  <Label row="0" col="2" class="fas skillIcons" :text="'fa-tools' | fonticon" v-if="item.eng_sci"/>
+                  <Label row="0" col="2" class="fas skillIcons" :text="'fa-tools' | fonticon" v-else color ="white"/>
+                  <Label row="0" col="3" class="fas skillIcons" :text="'fa-stethoscope' | fonticon" v-if="item.medical"/>
+                  <Label row="0" col="3" class="fas skillIcons" :text="'fa-stethoscope' | fonticon" v-else color ="white"/>
+                  <Label row="0" col="4" class="fas skillIcons" :text="'fa-briefcase' | fonticon" v-if="item.corporate"/>
+                  <Label row="0" col="4" class="fas skillIcons" :text="'fa-briefcase' | fonticon" v-else color ="white"/>
+              </Gridlayout>
+            </v-template>
+          </ListView>
+        </ScrollView>
+      </Stacklayout>
+      
+      <!--Noticeboard page  - define the size of the rows using a stack (allows child gridlayout to work well) -->
+
+      <Stacklayout row="1" col="0" colSpan="3" height="100%" width="100%" v-show="'Noticeboard' === currentComponent & mainReady & !activity">
+        <GridLayout rows="auto" columns="*,auto" class="noticeBackground borderBottom borderAll">
+          <GridLayout col="0" height="40" rows="*" columns="auto,*,auto" @tap="dismissKeyboard" class="searchBarBack">
+            <Label col="0" :text="'fa-search' | fonticon" class="fas searchIcons"/>
+            <TextView col="1" hint="Search Noticeboard..." v-model="searchNotice" 
+                @textChange="filterList" 
+                @submit="dismissKeyboard" 
+                ref="noticeboardSearchBar"
+                maxLength="30"
+                width="100%"
+                class="removeBlueUnderline"/>
+            <Label col="2" :text="'fa-times' | fonticon" class="fas searchIcons" @tap="clearText"/>
+          </GridLayout>
+          <Label col="1" :text="'fa-plus' | fonticon" class="fas plusIcon" @tap="addPostMod"/>
+        </Gridlayout>
+        <ScrollView orientation="vertical">
+          <ListView for="item in filteredPost" height="600">
+            <v-template>
+              <Gridlayout height="75" width="100%" rows="*,*" columns="auto,*,auto" @tap="viewPostMod(item)">
+                  <Image row="0" col="0" rowSpan="2" :src="item.profpic" stretch="aspectFill" class="postImg"/>
+                  <Label row="0" col="1" :text="item.post_title" class="postTitle" fontWeight="bold"/>
+                  <Label row="1" col="1" :text="item.userposting" class="userPosting"/>
+                  <Label row="0" col="2" :text="item.time_add"  fontAttributes="Italic" style="text-align:right;"/>
+                  <GridLayout row="1" col="2" rows="*" columns="*,auto" horizontalAlignment="right">
+                    <Label col="0" :text="'fa-eye' | fonticon" class="fas" v-if="item.seen" color="#2196F3"/> 
+                    <Label col="1" :text="'fa-eye-slash' | fonticon" class="fas" v-else/>
+                    <Label col="1" :text="item.no_seen"/>
+                  </GridLayout>
+              </Gridlayout>
+            </v-template>
+          </ListView>
+        </ScrollView>
+      </Stacklayout>
+
+
+        <!--Alerts page -->
+
+        <ScrollView orientation="vertical" row="1" col="0" colSpan="3" class="borderAll"
+          v-show="'Alerts' === currentComponent & mainReady & !activity">
+              <ScrollView scrollBarIndicatorVisible="false">
+                  <StackLayout>
+                    <GridLayout rows="*" columns="*">
+                      <Image stretch="aspectFit"
+                        src="https://user-images.githubusercontent.com/58616842/72029025-8df4e280-32bf-11ea-8e85-ab09a8f7a0c5.png"/>
+                    </GridLayout>
+                    <GridLayout rows="*" columns="*">
+                      <Image stretch="aspectFit"
+                        src="https://user-images.githubusercontent.com/58616842/72029055-a36a0c80-32bf-11ea-9c84-db9c7985ea0a.png"/>
+                    </GridLayout>
+                    <GridLayout rows="*" columns="*">
+                      <Image stretch="aspectFit"
+                        src="https://user-images.githubusercontent.com/58616842/72029071-af55ce80-32bf-11ea-8201-11d9314a3147.png"></Image>
+                    </GridLayout>
+                  </StackLayout>
+              </ScrollView>
+        </ScrollView>
+
+        <!-- Bottom navigation -->
+        <GridLayout row="2" col="0" colSpan="3" rows="*" columns="*,*,*" v-show="mainReady" class="borderTop navBackground">
+          <Button
+            :class="navigationButtonClasses('AddressBook')"
+            @tap="currentComponent = 'AddressBook'"
+            :text="'fa-address-card' | fonticon"
+            col="0"
+            v-show="mainReady"
+          />
+          <Button
+            :class="navigationButtonClasses('Noticeboard')"
+            @tap="currentComponent = 'Noticeboard'"
+            :text="'fa-newspaper' | fonticon"
+            col="1"
+            v-show="mainReady"
+          />
+          <Button
+            :class="navigationButtonClasses('Alerts')"
+            @tap="currentComponent = 'Alerts'"
+            :text="'fa-bell' | fonticon"
+            col="2"
+            v-show="mainReady"
+          />
         </GridLayout>
-        <Label col="1" :text="'fa-filter' | fonticon" class="fas filterIcon"/>
-      </Gridlayout>
-      <ScrollView orientation="vertical">
-        <ListView for="item in filteredAlumni" height="600">
-          <v-template>
-            <Gridlayout height="75" width="100%" rows="*" columns="auto,*,auto,auto,auto" 
-              @tap="showDetailPageModally(item)">
-                <Image row="0" col="0" :src="item.src" class="postImg" stretch="aspectFill"/>
-                <Label row="0" col="1" :text="item.name" class="alumniTitle"/>
-                <Label row="0" col="2" class="fas skillIcons" :text="'fa-tools' | fonticon" v-if="item.eng_sci"/>
-                <Label row="0" col="2" class="fas skillIcons" :text="'fa-tools' | fonticon" v-else color ="white"/>
-                <Label row="0" col="3" class="fas skillIcons" :text="'fa-stethoscope' | fonticon" v-if="item.medical"/>
-                <Label row="0" col="3" class="fas skillIcons" :text="'fa-stethoscope' | fonticon" v-else color ="white"/>
-                <Label row="0" col="4" class="fas skillIcons" :text="'fa-briefcase' | fonticon" v-if="item.corporate"/>
-                <Label row="0" col="4" class="fas skillIcons" :text="'fa-briefcase' | fonticon" v-else color ="white"/>
-            </Gridlayout>
-          </v-template>
-        </ListView>
-      </ScrollView>
-    </Stacklayout>
-    
-    <!--Noticeboard page  - define the size of the rows using a stack (allows child gridlayout to work well) -->
-
-    <Stacklayout row="1" col="0" colSpan="3" height="100%" width="100%" v-show="'Noticeboard' === currentComponent & mainReady & !activity">
-      <GridLayout rows="auto" columns="*,auto" class="noticeBackground borderBottom borderAll">
-        <GridLayout col="0" height="40" rows="*" columns="auto,*,auto" @tap="dismissKeyboard" class="searchBarBack">
-          <Label col="0" :text="'fa-search' | fonticon" class="fas searchIcons"/>
-          <TextView col="1" hint="Search Noticeboard..." v-model="searchNotice" 
-              @textChange="filterList" 
-              @submit="dismissKeyboard" 
-              ref="noticeboardSearchBar"
-              maxLength="30"
-              width="100%"
-              class="removeBlueUnderline"/>
-          <Label col="2" :text="'fa-times' | fonticon" class="fas searchIcons" @tap="clearText"/>
-        </GridLayout>
-        <Label col="1" :text="'fa-plus' | fonticon" class="fas plusIcon" @tap="addPostMod"/>
-      </Gridlayout>
-      <ScrollView orientation="vertical">
-        <ListView for="item in filteredPost" height="600">
-          <v-template>
-            <Gridlayout height="75" width="100%" rows="*,*" columns="auto,*,auto" @tap="viewPostMod(item)">
-                <Image row="0" col="0" rowSpan="2" :src="item.profpic" stretch="aspectFill" class="postImg"/>
-                <Label row="0" col="1" :text="item.post_title" class="postTitle" fontWeight="bold"/>
-                <Label row="1" col="1" :text="item.userposting" class="userPosting"/>
-                <Label row="0" col="2" :text="item.time_add"  fontAttributes="Italic" style="text-align:right;"/>
-                <GridLayout row="1" col="2" rows="*" columns="*,auto" horizontalAlignment="right">
-                  <Label col="0" :text="'fa-eye' | fonticon" class="fas" v-if="item.seen" color="#2196F3"/> 
-                  <Label col="1" :text="'fa-eye-slash' | fonticon" class="fas" v-else/>
-                  <Label col="1" :text="item.no_seen"/>
-                </GridLayout>
-            </Gridlayout>
-          </v-template>
-        </ListView>
-      </ScrollView>
-    </Stacklayout>
-
-
-      <!--Alerts page -->
-
-      <ScrollView orientation="vertical" row="1" col="0" colSpan="3" class="borderAll"
-        v-show="'Alerts' === currentComponent & mainReady & !activity">
-            <ScrollView scrollBarIndicatorVisible="false">
-                <StackLayout>
-                  <GridLayout rows="*" columns="*">
-                    <Image stretch="aspectFit"
-                      src="https://user-images.githubusercontent.com/58616842/72029025-8df4e280-32bf-11ea-8e85-ab09a8f7a0c5.png"/>
-                  </GridLayout>
-                  <GridLayout rows="*" columns="*">
-                    <Image stretch="aspectFit"
-                      src="https://user-images.githubusercontent.com/58616842/72029055-a36a0c80-32bf-11ea-9c84-db9c7985ea0a.png"/>
-                  </GridLayout>
-                  <GridLayout rows="*" columns="*">
-                    <Image stretch="aspectFit"
-                      src="https://user-images.githubusercontent.com/58616842/72029071-af55ce80-32bf-11ea-8201-11d9314a3147.png"></Image>
-                  </GridLayout>
-                </StackLayout>
-            </ScrollView>
-      </ScrollView>
-
-      <!-- Bottom navigation -->
-      <GridLayout row="2" col="0" colSpan="3" rows="auto" columns="*,*,*" v-show="mainReady" class="borderTop navBackground">
-        <Button
-          :class="navigationButtonClasses('AddressBook')"
-          @tap="currentComponent = 'AddressBook'"
-          :text="'fa-address-card' | fonticon"
-          col="0"
-          v-show="mainReady"
-        />
-        <Button
-          :class="navigationButtonClasses('Noticeboard')"
-          @tap="currentComponent = 'Noticeboard'"
-          :text="'fa-newspaper' | fonticon"
-          col="1"
-          v-show="mainReady"
-        />
-        <Button
-          :class="navigationButtonClasses('Alerts')"
-          @tap="currentComponent = 'Alerts'"
-          :text="'fa-bell' | fonticon"
-          col="2"
-          v-show="mainReady"
-        />
       </GridLayout>
-    </GridLayout>
-  </StackLayout>
+    </StackLayout>
   </Page>
 </template>
 
@@ -901,7 +897,7 @@ export default {
 }
 
 
-
+/*
 .intro {
   animation-name: appear;
   animation-duration: 1s;
@@ -913,6 +909,7 @@ export default {
   from {opacity: 0; transform: scale(1,1)}
   to {opacity: 1; transform: scale(2,2)}
 }
+*/
 
 .appear {
   animation-name: example2;
@@ -926,6 +923,10 @@ export default {
 @keyframes example2 {
   from {opacity: 0;}
   to {opacity: 1;}
+}
+
+.navBarImage {
+  margin-bottom: 10;
 }
 
 

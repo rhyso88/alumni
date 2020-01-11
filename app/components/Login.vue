@@ -78,7 +78,7 @@
 
                 this.processing = true;
                 if (this.isLoggingIn) {
-                    this.login2();
+                    this.login();
                 } else {
                     this.register();
                 }
