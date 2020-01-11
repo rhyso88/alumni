@@ -5,13 +5,10 @@
   "author": "rhys daniel",
   "license": "MIT",
   "nativescript": {
-    "id": "com.rhysdaniel1988.loginv3",
+    "id": "com.rhysdaniel1988.biodesignalumni",
     "templateVersion": "v2",
     "tns-android": {
       "version": "6.0.0"
-    },
-    "tns-ios": {
-      "version": "6.2.0"
     }
   },
   "dependencies": {

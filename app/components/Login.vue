@@ -94,7 +94,7 @@
             login2() {
                 let element = this.$refs.mainLogin.nativeView
                 var vm = this
-                element.animate({ opacity: 0, duration:1000})
+                element.animate({ opacity: 0, duration:300})
                     .then(function () { return vm.transitionWait = true; })
                     .then(function () { return vm.login(); })
                     .catch(function (e) {console.log("login2 error :"+ e.message);});
