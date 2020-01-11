@@ -27,75 +27,75 @@
 
         <!-- Addressbook Page -->
       
-      <Stacklayout row="1" col="0" colSpan="3" height="100%" width="100%" v-show="'AddressBook' === currentComponent & mainReady & !activity">
-        <GridLayout rows="auto" columns="*,auto" class="noticeBackground borderBottom borderAll">
-          <GridLayout col="0" height="40" rows="*" columns="auto,*,auto" @tap="dismissKeyboard" class="searchBarBack">
-            <Label col="0" :text="'fa-search' | fonticon" class="fas searchIcons"/>
-            <TextView col="1" hint="Search Alumni..." v-model="searchAlumni" 
-                @textChange="filterAlumni"
-                @submit="dismissKeyboard"
-                ref="alumSearchBar"
-                maxLength="30"
-                width="100%"
-                class="removeBlueUnderline"/>
-            <Label col="2" :text="'fa-times' | fonticon" class="fas searchIcons" @tap="clearText"/>
-          </GridLayout>
-          <Label col="1" :text="'fa-filter' | fonticon" class="fas filterIcon"/>
-        </Gridlayout>
-        <ScrollView orientation="vertical">
-          <ListView for="item in filteredAlumni" height="600">
-            <v-template>
-              <Gridlayout height="75" width="95%" rows="*" columns="auto,*,auto,auto,auto" 
-                @tap="showDetailPageModally(item)">
-                  <Image row="0" col="0" :src="item.src" class="postImg" stretch="aspectFill"/>
-                  <Label row="0" col="1" :text="item.name" class="alumniTitle"/>
-                  <Label row="0" col="2" class="fas skillIcons" :text="'fa-tools' | fonticon" v-if="item.eng_sci"/>
-                  <Label row="0" col="2" class="fas skillIcons" :text="'fa-tools' | fonticon" v-else color ="white"/>
-                  <Label row="0" col="3" class="fas skillIcons" :text="'fa-stethoscope' | fonticon" v-if="item.medical"/>
-                  <Label row="0" col="3" class="fas skillIcons" :text="'fa-stethoscope' | fonticon" v-else color ="white"/>
-                  <Label row="0" col="4" class="fas skillIcons" :text="'fa-briefcase' | fonticon" v-if="item.corporate"/>
-                  <Label row="0" col="4" class="fas skillIcons" :text="'fa-briefcase' | fonticon" v-else color ="white"/>
-              </Gridlayout>
-            </v-template>
-          </ListView>
-        </ScrollView>
-      </Stacklayout>
+        <Stacklayout row="1" col="0" colSpan="3" height="100%" width="100%" v-show="'AddressBook' === currentComponent & mainReady & !activity">
+          <GridLayout rows="auto" columns="*,auto" class="noticeBackground borderBottom borderAll">
+            <GridLayout col="0" height="40" rows="*" columns="auto,*,auto" @tap="dismissKeyboard" class="searchBarBack">
+              <Label col="0" :text="'fa-search' | fonticon" class="fas searchIcons"/>
+              <TextView col="1" hint="Search Alumni..." v-model="searchAlumni" 
+                  @textChange="filterAlumni"
+                  @submit="dismissKeyboard"
+                  ref="alumSearchBar"
+                  maxLength="30"
+                  width="100%"
+                  class="removeBlueUnderline"/>
+              <Label col="2" :text="'fa-times' | fonticon" class="fas searchIcons" @tap="clearText"/>
+            </GridLayout>
+            <Label col="1" :text="'fa-filter' | fonticon" class="fas filterIcon"/>
+          </Gridlayout>
+          <ScrollView orientation="vertical">
+            <ListView for="item in filteredAlumni" height="600">
+              <v-template>
+                <Gridlayout height="75" width="95%" rows="*" columns="auto,*,auto,auto,auto" 
+                  @tap="showDetailPageModally(item)">
+                    <Image row="0" col="0" :src="item.src" class="postImg" stretch="aspectFill"/>
+                    <Label row="0" col="1" :text="item.name" class="alumniTitle"/>
+                    <Label row="0" col="2" class="fas skillIcons" :text="'fa-tools' | fonticon" v-if="item.eng_sci"/>
+                    <Label row="0" col="2" class="fas skillIcons" :text="'fa-tools' | fonticon" v-else color ="white"/>
+                    <Label row="0" col="3" class="fas skillIcons" :text="'fa-stethoscope' | fonticon" v-if="item.medical"/>
+                    <Label row="0" col="3" class="fas skillIcons" :text="'fa-stethoscope' | fonticon" v-else color ="white"/>
+                    <Label row="0" col="4" class="fas skillIcons" :text="'fa-briefcase' | fonticon" v-if="item.corporate"/>
+                    <Label row="0" col="4" class="fas skillIcons" :text="'fa-briefcase' | fonticon" v-else color ="white"/>
+                </Gridlayout>
+              </v-template>
+            </ListView>
+          </ScrollView>
+        </Stacklayout>
       
-      <!--Noticeboard page  - define the size of the rows using a stack (allows child gridlayout to work well) -->
+        <!--Noticeboard page  - define the size of the rows using a stack (allows child gridlayout to work well) -->
 
-      <Stacklayout row="1" col="0" colSpan="3" height="100%" width="100%" v-show="'Noticeboard' === currentComponent & mainReady & !activity">
-        <GridLayout rows="auto" columns="*,auto" class="noticeBackground borderBottom borderAll">
-          <GridLayout col="0" height="40" rows="*" columns="auto,*,auto" @tap="dismissKeyboard" class="searchBarBack">
-            <Label col="0" :text="'fa-search' | fonticon" class="fas searchIcons"/>
-            <TextView col="1" hint="Search Noticeboard..." v-model="searchNotice" 
-                @textChange="filterList" 
-                @submit="dismissKeyboard" 
-                ref="noticeboardSearchBar"
-                maxLength="30"
-                width="100%"
-                class="removeBlueUnderline"/>
-            <Label col="2" :text="'fa-times' | fonticon" class="fas searchIcons" @tap="clearText"/>
-          </GridLayout>
-          <Label col="1" :text="'fa-edit' | fonticon" class="fas plusIcon" @tap="addPostMod"/>
-        </Gridlayout>
-        <ScrollView orientation="vertical">
-          <ListView for="item in filteredPost" height="700">
-            <v-template>
-              <Gridlayout height="75" width="95%" rows="*,*" columns="auto,*,auto" @tap="viewPostMod(item)">
-                  <Image row="0" col="0" rowSpan="2" :src="item.profpic" stretch="aspectFit" class="postImg"/>
-                  <Label row="0" col="1" :text="item.post_title" class="postTitle" fontWeight="bold"/>
-                  <Label row="1" col="1" :text="item.userposting" class="userPosting"/>
-                  <Label row="0" col="2" :text="item.time_add"  fontAttributes="Italic" style="text-align:right;"/>
-                  <GridLayout row="1" col="2" rows="*" columns="*,auto" horizontalAlignment="right">
-                    <Label col="0" :text="'fa-eye' | fonticon" class="fas" v-if="item.seen" color="#2196F3"/> 
-                    <Label col="1" :text="'fa-eye-slash' | fonticon" class="fas" v-else/>
-                    <Label col="1" :text="item.no_seen"/>
-                  </GridLayout>
-              </Gridlayout>
-            </v-template>
-          </ListView>
-        </ScrollView>
-      </Stacklayout>
+        <Stacklayout row="1" col="0" colSpan="3" height="100%" width="100%" v-show="'Noticeboard' === currentComponent & mainReady & !activity">
+          <GridLayout rows="auto" columns="*,auto" class="noticeBackground borderBottom borderAll">
+            <GridLayout col="0" height="40" rows="*" columns="auto,*,auto" @tap="dismissKeyboard" class="searchBarBack">
+              <Label col="0" :text="'fa-search' | fonticon" class="fas searchIcons"/>
+              <TextView col="1" hint="Search Noticeboard..." v-model="searchNotice" 
+                  @textChange="filterList" 
+                  @submit="dismissKeyboard" 
+                  ref="noticeboardSearchBar"
+                  maxLength="30"
+                  width="100%"
+                  class="removeBlueUnderline"/>
+              <Label col="2" :text="'fa-times' | fonticon" class="fas searchIcons" @tap="clearText"/>
+            </GridLayout>
+            <Label col="1" :text="'fa-edit' | fonticon" class="fas plusIcon" @tap="addPostMod"/>
+          </Gridlayout>
+          <ScrollView orientation="vertical">
+            <ListView for="item in filteredPost" height="700">
+              <v-template>
+                <Gridlayout height="75" width="95%" rows="*,*" columns="auto,*,auto" @tap="viewPostMod(item)">
+                    <Image row="0" col="0" rowSpan="2" :src="item.profpic" stretch="aspectFit" class="postImg"/>
+                    <Label row="0" col="1" :text="item.post_title" class="postTitle" fontWeight="bold"/>
+                    <Label row="1" col="1" :text="item.userposting" class="userPosting"/>
+                    <Label row="0" col="2" :text="item.time_add"  fontAttributes="Italic" style="text-align:right;"/>
+                    <GridLayout row="1" col="2" rows="*" columns="*,auto" horizontalAlignment="right">
+                      <Label col="0" :text="'fa-eye' | fonticon" class="fas" v-if="item.seen" color="#2196F3"/> 
+                      <Label col="1" :text="'fa-eye-slash' | fonticon" class="fas" v-else/>
+                      <Label col="1" :text="item.no_seen"/>
+                    </GridLayout>
+                </Gridlayout>
+              </v-template>
+            </ListView>
+          </ScrollView>
+        </Stacklayout>
 
 
         <!--Alerts page -->
@@ -202,22 +202,37 @@ export default {
     },
 
     logout2() {
-      let element = this.$refs.mainPages.nativeView
+
       var vm = this
-      element.animate({ opacity: 0, duration:1000})
-        .then(function () { return vm.mainReady = false; })
-        .then(function () { return vm.$backendService.logout(); })
-        .then(function () { return vm.$navigateTo
-          (Login, {
-                    clearHistory: true , 
-                    transition: {name:'fade',duration: 500}
-                  }
-          ); 
+
+      dialogs
+        .confirm({
+          title: "Logout",
+          message: "Are you sure you want to logout?",
+          okButtonText: "Yes",
+          cancelButtonText: "No"
         })
-        .catch(function (e) {
-          console.log("logout2 error :"+ e.message);
-        });
-      },
+        .then(function(result) {
+          console.log("Inside logout with result returned: " + result)
+          if (result) {
+            let element = vm.$refs.mainPages.nativeView
+            element.animate({ opacity: 0, duration:1000})
+              .then(function () { return vm.mainReady = false; })
+              .then(function () { return vm.$backendService.logout(); })
+              .then(function () { return vm.$navigateTo
+                (Login, {
+                  clearHistory: true , 
+                  transition: {name:'fade',duration: 500}
+                  }
+                ); 
+              })
+              .catch(function (e) {
+              console.log("logout2 error :"+ e.message);
+              });
+            }
+          }
+        )
+    },
 
     fadeOther() {
     let element = this.$refs.fadeNow.nativeView

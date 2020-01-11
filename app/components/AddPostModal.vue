@@ -111,13 +111,19 @@ export default {
         // create a variable to hold 'this' so it can used inside of other function scopes
 
         var vm = this;
-        // vm.activity = true;
+
+        //Screen data input crudely
+
+        if (!vm.post_title || !vm.post_content) {
+            vm.alert("Please provide a post title and a post content");
+            return;
+        }
 
         // confirm if user wants to update data to Kinvey Server
 
         dialogs
             .confirm({
-            title: "Add Alumni Post",
+            title: "Add New Post",
             message: "Do you want to add this post to the Alumni Noticeboard?",
             okButtonText: "Yes",
             cancelButtonText: "No"
