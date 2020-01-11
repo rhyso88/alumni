@@ -1,5 +1,5 @@
 <template>
-    <Page actionBarHidden="true">
+    <Page actionBarHidden="true" backgroundSpanUnderStatusBar="true">
         <FlexboxLayout class="page" ref="mainLogin">
             <StackLayout class="form">
                 <Image class="logo" src="~/assets/login_image/BD_reg_stacked.png" stretch="aspectFit" height="200"></Image>

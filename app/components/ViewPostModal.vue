@@ -194,7 +194,7 @@ export default {
 }
 
 .textFieldBord {
-    border-color:#073267; 
+    border-color:#000;
     border-width: 1;
     border-radius:15;
     width:90%;

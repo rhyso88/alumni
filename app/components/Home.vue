@@ -45,7 +45,7 @@
         <ScrollView orientation="vertical">
           <ListView for="item in filteredAlumni" height="600">
             <v-template>
-              <Gridlayout height="75" width="100%" rows="*" columns="auto,*,auto,auto,auto" 
+              <Gridlayout height="75" width="95%" rows="*" columns="auto,*,auto,auto,auto" 
                 @tap="showDetailPageModally(item)">
                   <Image row="0" col="0" :src="item.src" class="postImg" stretch="aspectFill"/>
                   <Label row="0" col="1" :text="item.name" class="alumniTitle"/>
@@ -76,12 +76,12 @@
                 class="removeBlueUnderline"/>
             <Label col="2" :text="'fa-times' | fonticon" class="fas searchIcons" @tap="clearText"/>
           </GridLayout>
-          <Label col="1" :text="'fa-plus' | fonticon" class="fas plusIcon" @tap="addPostMod"/>
+          <Label col="1" :text="'fa-edit' | fonticon" class="fas plusIcon" @tap="addPostMod"/>
         </Gridlayout>
         <ScrollView orientation="vertical">
-          <ListView for="item in filteredPost" height="600">
+          <ListView for="item in filteredPost" height="700">
             <v-template>
-              <Gridlayout height="75" width="100%" rows="*,*" columns="auto,*,auto" @tap="viewPostMod(item)">
+              <Gridlayout height="75" width="95%" rows="*,*" columns="auto,*,auto" @tap="viewPostMod(item)">
                   <Image row="0" col="0" rowSpan="2" :src="item.profpic" stretch="aspectFit" class="postImg"/>
                   <Label row="0" col="1" :text="item.post_title" class="postTitle" fontWeight="bold"/>
                   <Label row="1" col="1" :text="item.userposting" class="userPosting"/>
@@ -820,29 +820,35 @@ export default {
 }
 
 .plusIcon {
-  font-size:30;
+  font-size:20;
   margin-left: 10;
   margin-right:10;
   margin-top: 5;
   margin-bottom: 5;
-  border-color:#073267; 
+  border-color:#000000;
   border-width: 1;
   border-radius:30;
-  padding: 15;
-  background:#C5302C;
+  /*Padding special - asymetric object*/
+  padding-left: 12;
+  padding-right: 9;
+  padding-bottom: 13;
+  padding-top:10;
+  background:#073267;
+  color:#FFFFFF;
 }
 
 .filterIcon {
-  font-size:30;
+  font-size:20;
   margin-left: 10;
   margin-right:10;
   margin-top: 5;
   margin-bottom: 5;
-  border-color:#073267; 
+  border-color:#000000;
   border-width: 1;
   border-radius:30;
-  padding: 15;
-  background:#C5302C;
+  padding: 12;
+  background:#073267;
+  color:#FFFFFF;
 }
 
 .padBoxMarg {
@@ -861,7 +867,7 @@ export default {
 }
 
 .searchBar {
-  border-color:#073267; 
+  border-color:#000000;
 	border-width: 1;
   border-radius:15;
   margin-left: 10;
@@ -878,7 +884,7 @@ export default {
 
 .searchBarBack {
     background: #FFFFFF;
-    border-color:#073267; 
+    border-color:#000000;
     border-width: 1;
     border-radius:15;
     margin-left: 10;
@@ -961,6 +967,10 @@ export default {
 
 .alertBackGround {
   background: #eeeeee;
+}
+
+.rightSideList {
+  margin-right: 10;
 }
 
 </style>
