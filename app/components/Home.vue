@@ -5,7 +5,7 @@
       <!--Loading Stage - show this -->
 
       <Gridlayout rows="*" columns="*" v-show="!mainReady">
-          <Image col="0" row="0" ref="waiting" src="~/assets/login_image/BD_reg_stacked.png" class="" height="100"
+          <Image col="0" row="0" ref="waiting" src="~/assets/login_image/BD_reg_stacked.png" class="intro" height="100"
             stretch="aspectFit" horizontalAlignment="center" verticalAlignment="center"/>
       </Gridlayout>
 
@@ -16,7 +16,7 @@
         <!-- Top Bar - Row 0 -->
 
         <Gridlayout row="0" col="0" colSpan="3" rows="*" columns="*" class="borderBottom navBackground">
-          <Image row="0" col="0" src="~/assets/header_v2/BD_rev_transp.png" stretch="aspectFit" @tap="logout"
+          <Image row="0" col="0" src="~/assets/header_v2/BD_rev_transp.png" stretch="aspectFit" @tap="logout2"
             class="navBarImage"/>
         </Gridlayout>
 
@@ -189,14 +189,13 @@ export default {
   },
   methods: {
     logout() {
-      // this.fadeLogOut()
       setTimeout(() => {
         this.mainReady = false;
         this.$backendService.logout();
         this.$navigateTo(Login, {clearHistory: true, 
           transition: {
             name:'fade',
-            duration: 200
+            duration: 500
           }
         });
       }, 3000)
@@ -211,7 +210,7 @@ export default {
         .then(function () { return vm.$navigateTo
           (Login, {
                     clearHistory: true , 
-                    transition: {name:'fade',duration: 200}
+                    transition: {name:'fade',duration: 500}
                   }
           ); 
         })
@@ -932,20 +931,6 @@ export default {
   font-size:20;
 }
 
-
-/*
-.intro {
-  animation-name: appear;
-  animation-duration: 1s;
-  animation-fill-mode:forwards;
-  animation-iteration-count: infinite;
-}
-
-@keyframes appear {
-  from {opacity: 0; transform: scale(1,1)}
-  to {opacity: 1; transform: scale(2,2)}
-}
-*/
 
 .appear {
   animation-name: example2;

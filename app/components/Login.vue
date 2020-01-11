@@ -1,50 +1,56 @@
 <template>
-    <Page actionBarHidden="true" backgroundSpanUnderStatusBar="true">
-        <FlexboxLayout class="page" ref="mainLogin">
-            <StackLayout class="form">
-                <Image class="logo" src="~/assets/login_image/BD_reg_stacked.png" stretch="aspectFit" height="200"></Image>
-                <Label class="header" text="Alumni Login"></Label>
+    <Page actionBarHidden="true">
+        <StackLayout height="100%" width="100%" horizontalAlignment="center" verticalAlignment="center">
 
-                <GridLayout rows="auto, auto, auto">
-                    <StackLayout row="0" class="input-field">
-                        <TextField class="input" hint="Email" :isEnabled="!processing"
-                            keyboardType="email" autocorrect="false"
-                            autocapitalizationType="none" v-model="user.email"
-                            returnKeyType="next" @returnPress="focusPassword"></TextField>
-                        <StackLayout class="hr-light"></StackLayout>
-                    </StackLayout>
+             <!--Loading Stage - show this -->
 
-                    <StackLayout row="1" class="input-field">
-                        <TextField class="input" ref="password" :isEnabled="!processing"
-                            hint="Password" secure="true" v-model="user.password"
-                            :returnKeyType="isLoggingIn ? 'done' : 'next'"
-                            @returnPress="focusConfirmPassword"></TextField>
-                        <StackLayout class="hr-light"></StackLayout>
-                    </StackLayout>
+            <Gridlayout rows="*" columns="*" v-show="transitionWait">
+                <Image col="0" row="0" ref="waiting" src="~/assets/login_image/BD_reg_stacked.png" class="intro" height="100"
+                    stretch="aspectFit" horizontalAlignment="center" verticalAlignment="center"/>
+            </Gridlayout>
 
-                    <StackLayout row="2" v-show="!isLoggingIn" class="input-field">
-                        <TextField class="input" ref="confirmPassword" :isEnabled="!processing"
-                            hint="Confirm password" secure="true" v-model="user.confirmPassword"
-                            returnKeyType="done"></TextField>
-                        <StackLayout class="hr-light"></StackLayout>
-                    </StackLayout>
+            <!-- Otherwise show main page below -->
 
-                    <ActivityIndicator rowSpan="3" :busy="processing"></ActivityIndicator>
-                </GridLayout>
+            <FlexboxLayout class="page" ref="mainLogin" v-show="!transitionWait">
+                <StackLayout class="form">
+                    <Image class="logo" src="~/assets/login_image/BD_reg_stacked.png" stretch="aspectFit" height="200"></Image>
+                    <Label class="header" text="Alumni Login"></Label>
 
-                <Button :text="isLoggingIn ? 'Log In' : 'Sign Up'" :isEnabled="!processing"
-                    @tap="submit" class="btn btn-primary m-t-20"></Button>
-                <Label *v-show="isLoggingIn" text="Forgot your password?"
-                    class="login-label" @tap="forgotPassword()"></Label>
-            </StackLayout>
+                    <GridLayout rows="auto, auto, auto">
+                        <StackLayout row="0" class="input-field">
+                            <TextField class="input" hint="Email" :isEnabled="!processing"
+                                keyboardType="email" autocorrect="false"
+                                autocapitalizationType="none" v-model="user.email"
+                                returnKeyType="next" @returnPress="focusPassword"></TextField>
+                            <StackLayout class="hr-light"></StackLayout>
+                        </StackLayout>
 
-            <Label class="login-label sign-up-label" @tap="toggleForm">
-                <FormattedString>
-                    <Span :text="isLoggingIn ? 'Don’t have an account? ' : 'Back to Login'"></Span>
-                    <Span :text="isLoggingIn ? 'Sign up' : ''" class="bold"></Span>
-                </FormattedString>
-            </Label>
-        </FlexboxLayout>
+                        <StackLayout row="1" class="input-field">
+                            <TextField class="input" ref="password" :isEnabled="!processing"
+                                hint="Password" secure="true" v-model="user.password"
+                                :returnKeyType="isLoggingIn ? 'done' : 'next'"
+                                @returnPress="focusConfirmPassword"></TextField>
+                            <StackLayout class="hr-light"></StackLayout>
+                        </StackLayout>
+
+                        <StackLayout row="2" v-show="!isLoggingIn" class="input-field">
+                            <TextField class="input" ref="confirmPassword" :isEnabled="!processing"
+                                hint="Confirm password" secure="true" v-model="user.confirmPassword"
+                                returnKeyType="done"></TextField>
+                            <StackLayout class="hr-light"></StackLayout>
+                        </StackLayout>
+
+                        <ActivityIndicator rowSpan="3" :busy="processing"></ActivityIndicator>
+                    </GridLayout>
+
+                    <Button :text="isLoggingIn ? 'Log In' : 'Sign Up'" :isEnabled="!processing"
+                        @tap="submit" class="btn btn-primary m-t-20"></Button>
+                    <Label *v-show="isLoggingIn" text="Forgot your password?"
+                        class="login-label" @tap="forgotPassword()"></Label>
+                </StackLayout>
+
+            </FlexboxLayout>
+        </StackLayout>
     </Page>
 </template>
 
@@ -54,6 +60,7 @@
     export default {
         data() {
             return {
+                transitionWait: false,
                 isLoggingIn: true,
                 processing: false,
                 user: {
@@ -78,7 +85,7 @@
 
                 this.processing = true;
                 if (this.isLoggingIn) {
-                    this.login();
+                    this.login2();
                 } else {
                     this.register();
                 }
@@ -88,6 +95,7 @@
                 let element = this.$refs.mainLogin.nativeView
                 var vm = this
                 element.animate({ opacity: 0, duration:1000})
+                    .then(function () { return vm.transitionWait = true; })
                     .then(function () { return vm.login(); })
                     .catch(function (e) {console.log("login2 error :"+ e.message);});
             },
@@ -100,7 +108,7 @@
                         this.$navigateTo(Home, { clearHistory: true, 
                         transition: {
                             name:'fade',
-                            duration: 200
+                            duration: 500
                             }
                         });
                     })
