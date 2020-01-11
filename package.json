@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@nativescript/theme": "^2.2.1",
+    "@nstudio/nativescript-cardview": "^1.0.0",
     "atob": "^2.1.2",
     "kinvey-nativescript-sdk": "^4.2.5",
     "nativescript-email": "^1.5.5",

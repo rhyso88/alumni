@@ -82,7 +82,7 @@
           <ListView for="item in filteredPost" height="600">
             <v-template>
               <Gridlayout height="75" width="100%" rows="*,*" columns="auto,*,auto" @tap="viewPostMod(item)">
-                  <Image row="0" col="0" rowSpan="2" :src="item.profpic" stretch="aspectFill" class="postImg"/>
+                  <Image row="0" col="0" rowSpan="2" :src="item.profpic" stretch="aspectFit" class="postImg"/>
                   <Label row="0" col="1" :text="item.post_title" class="postTitle" fontWeight="bold"/>
                   <Label row="1" col="1" :text="item.userposting" class="userPosting"/>
                   <Label row="0" col="2" :text="item.time_add"  fontAttributes="Italic" style="text-align:right;"/>
@@ -100,25 +100,20 @@
 
         <!--Alerts page -->
 
-        <ScrollView orientation="vertical" row="1" col="0" colSpan="3" class="borderAll"
+        <StackLayout row="1" col="0" colSpan="3" height="100%" width="100%" class="alertBackGround"
           v-show="'Alerts' === currentComponent & mainReady & !activity">
-              <ScrollView scrollBarIndicatorVisible="false">
-                  <StackLayout>
-                    <GridLayout rows="*" columns="*">
-                      <Image stretch="aspectFit"
-                        src="https://user-images.githubusercontent.com/58616842/72029025-8df4e280-32bf-11ea-8e85-ab09a8f7a0c5.png"/>
-                    </GridLayout>
-                    <GridLayout rows="*" columns="*">
-                      <Image stretch="aspectFit"
-                        src="https://user-images.githubusercontent.com/58616842/72029055-a36a0c80-32bf-11ea-9c84-db9c7985ea0a.png"/>
-                    </GridLayout>
-                    <GridLayout rows="*" columns="*">
-                      <Image stretch="aspectFit"
-                        src="https://user-images.githubusercontent.com/58616842/72029071-af55ce80-32bf-11ea-8201-11d9314a3147.png"></Image>
-                    </GridLayout>
+          <ScrollView orientation="vertical">
+              <ListView for="item in localAlerts" height="700" separatorColor="transparent" >
+                <v-template>
+                  <StackLayout height="500" width="95%">
+                    <card-view elevation="40" radius="1">
+                      <Image :src="item.src"  width="100%" stretch="aspectFit"/>
+                    </card-view>
                   </StackLayout>
-              </ScrollView>
-        </ScrollView>
+                </v-template>
+              </ListView>
+          </ScrollView>`
+        </StackLayout>
 
         <!-- Bottom navigation -->
         <GridLayout row="2" col="0" colSpan="3" rows="*" columns="*,*,*" v-show="mainReady" class="borderTop navBackground">
@@ -186,6 +181,9 @@ export default {
       searchNotice:"",
       localposts:[],
       filteredPost:[],
+
+      //Alert page data
+      localAlerts:[]
 
     };
   },
@@ -580,6 +578,7 @@ export default {
       vm.activity = true;
       this.localdata = [];
       this.localposts = [];
+      this.localAlerts = [];
 
       // Establish Kinvey datastore connection with collection "members"
 
@@ -624,8 +623,32 @@ export default {
       )
       })
       .then(function(){
-        vm.activity = false
         vm.filteredPost = vm.localposts
+      })
+      .then(function(pass){
+
+      // Get alert data from 'news' collection
+
+      const postStore = Kinvey.DataStore.collection(
+        "news",
+        Kinvey.DataStoreType.Auto
+      );
+
+      // Store alert data locally
+
+      postStore.find().then(
+        items => {
+          items.forEach(item => {
+            vm.localAlerts.push(item);
+          });
+        },
+        error => {
+          console.log("Error found retrieving alerts/news: " + error);
+        }
+      )
+      })
+      .then(function(){
+        vm.activity = false
       })
       .catch(function(error) {
         console.log(
@@ -889,6 +912,13 @@ export default {
   border-width: 1;
 }
 
+.noBorder{
+  border-right-width:0;
+  border-left-width:0;
+  border-top-width: 0;
+  border-bottom-width: 0;
+}
+
 
 .searchIcons {
   margin-right: 10;
@@ -929,6 +959,8 @@ export default {
   margin-bottom: 10;
 }
 
-
+.alertBackGround {
+  background: #eeeeee;
+}
 
 </style>
