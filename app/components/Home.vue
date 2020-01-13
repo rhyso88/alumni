@@ -28,22 +28,22 @@
         <!-- Addressbook Page -->
       
         <Stacklayout row="1" col="0" colSpan="3" height="100%" width="100%" v-show="'AddressBook' === currentComponent & mainReady & !activity">
-          <GridLayout rows="auto" columns="*,auto" class="noticeBackground borderBottom borderAll">
-            <GridLayout col="0" height="40" rows="*" columns="auto,*,auto" @tap="dismissKeyboard" class="searchBarBack">
-              <Label col="0" :text="'fa-search' | fonticon" class="fas searchIcons"/>
-              <TextView col="1" hint="Search Alumni..." v-model="searchAlumni" 
-                  @textChange="filterAlumni"
-                  @submit="dismissKeyboard"
-                  ref="alumSearchBar"
-                  maxLength="30"
-                  width="100%"
-                  class="removeBlueUnderline"/>
-              <Label col="2" :text="'fa-times' | fonticon" class="fas searchIcons" @tap="clearText"/>
-            </GridLayout>
-            <Label col="1" :text="'fa-filter' | fonticon" class="fas filterIcon"/>
-          </Gridlayout>
           <ScrollView orientation="vertical">
-            <ListView for="item in filteredAlumni" height="600">
+            <GridLayout rows="auto" columns="*,auto" class="noticeBackground borderBottom borderAll">
+              <GridLayout col="0" height="40" rows="*" columns="auto,*,auto" @tap="dismissKeyboard" class="searchBarBack">
+                <Label col="0" :text="'fa-search' | fonticon" class="fas searchIcons"/>
+                <TextView col="1" hint="Search Alumni..." v-model="searchAlumni" 
+                    @textChange="filterAlumni"
+                    @submit="dismissKeyboard"
+                    ref="alumSearchBar"
+                    maxLength="30"
+                    width="100%"
+                    class="removeBlueUnderline"/>
+                <Label col="2" :text="'fa-times' | fonticon" class="fas searchIcons" @tap="clearText"/>
+              </GridLayout>
+              <Label col="1" :text="'fa-filter' | fonticon" class="fas filterIcon"/>
+            </Gridlayout>
+            <ListView for="item in filteredAlumni" height="700">
               <v-template>
                 <Gridlayout height="75" width="95%" rows="*" columns="auto,*,auto,auto,auto" 
                   @tap="showDetailPageModally(item)">
@@ -64,21 +64,21 @@
         <!--Noticeboard page  - define the size of the rows using a stack (allows child gridlayout to work well) -->
 
         <Stacklayout row="1" col="0" colSpan="3" height="100%" width="100%" v-show="'Noticeboard' === currentComponent & mainReady & !activity">
-          <GridLayout rows="auto" columns="*,auto" class="noticeBackground borderBottom borderAll">
-            <GridLayout col="0" height="40" rows="*" columns="auto,*,auto" @tap="dismissKeyboard" class="searchBarBack">
-              <Label col="0" :text="'fa-search' | fonticon" class="fas searchIcons"/>
-              <TextView col="1" hint="Search Noticeboard..." v-model="searchNotice" 
-                  @textChange="filterList" 
-                  @submit="dismissKeyboard" 
-                  ref="noticeboardSearchBar"
-                  maxLength="30"
-                  width="100%"
-                  class="removeBlueUnderline"/>
-              <Label col="2" :text="'fa-times' | fonticon" class="fas searchIcons" @tap="clearText"/>
-            </GridLayout>
-            <Label col="1" :text="'fa-edit' | fonticon" class="fas plusIcon" @tap="addPostMod"/>
-          </Gridlayout>
           <ScrollView orientation="vertical">
+            <GridLayout rows="auto" columns="*,auto" class="noticeBackground borderBottom borderAll">
+              <GridLayout col="0" height="40" rows="*" columns="auto,*,auto" @tap="dismissKeyboard" class="searchBarBack">
+                <Label col="0" :text="'fa-search' | fonticon" class="fas searchIcons"/>
+                <TextView col="1" hint="Search Noticeboard..." v-model="searchNotice" 
+                    @textChange="filterList" 
+                    @submit="dismissKeyboard" 
+                    ref="noticeboardSearchBar"
+                    maxLength="30"
+                    width="100%"
+                    class="removeBlueUnderline"/>
+                <Label col="2" :text="'fa-times' | fonticon" class="fas searchIcons" @tap="clearText"/>
+              </GridLayout>
+              <Label col="1" :text="'fa-edit' | fonticon" class="fas plusIcon" @tap="addPostMod"/>
+            </Gridlayout>
             <ListView for="item in filteredPost" height="700">
               <v-template>
                 <Gridlayout height="75" width="95%" rows="*,*" columns="auto,*,auto" @tap="viewPostMod(item)">
@@ -798,7 +798,7 @@ export default {
 
 .postImg{
   width: 60;
-	/*height: 60;*/
+	height: 60;
   border-radius:100;
   border-color:#000000;
   border-width: 1;

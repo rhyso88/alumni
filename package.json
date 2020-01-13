@@ -1,14 +1,17 @@
 {
   "name": "loginv3",
   "version": "1.0.0",
-  "description": "3rd attempt at login nativescript vue",
+  "description": "Medical innovation networking app for Biodesign Australia",
   "author": "rhys daniel",
   "license": "MIT",
   "nativescript": {
     "id": "com.rhysdaniel1988.biodesignalumni",
     "templateVersion": "v2",
     "tns-android": {
-      "version": "6.0.0"
+      "version": "6.2.0"
+    },
+    "tns-ios": {
+      "version": "6.2.0"
     }
   },
   "dependencies": {
