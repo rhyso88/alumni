@@ -11,13 +11,13 @@
 
       <!-- Main Components - Row 1 all on top of each other, using v-show to display them -->
 
-      <GridLayout rows="50, *, 49" columns="*, *, *" @swipe="onSwipe" v-show="mainReady" ref="mainPages">
+      <GridLayout :rows="navHeight + ',*, 49'" columns="*, *, *" @swipe="onSwipe" v-show="mainReady" ref="mainPages">
 
         <!-- Top Bar - Row 0 -->
 
         <Gridlayout row="0" col="0" colSpan="3" rows="*" columns="*" class="borderBottom navBackground">
           <Image row="0" col="0" src="~/assets/header_v2/BD_rev_transp.png" stretch="aspectFit" @tap="logout2"
-            class="navBarImage"/>
+            class="navBarImage" android:style="margin-top:10;"/>
         </Gridlayout>
 
         <!-- activity indicator will appear when 'activity' is true - which is when contacting Kinvey server getdata -->
@@ -28,10 +28,9 @@
         <!-- Addressbook Page -->
       
         <Stacklayout row="1" col="0" colSpan="3" height="100%" width="100%" v-show="'AddressBook' === currentComponent & mainReady & !activity">
-          <ScrollView orientation="vertical">
             <GridLayout rows="auto" columns="*,auto" class="noticeBackground borderBottom borderAll">
               <GridLayout col="0" height="40" rows="*" columns="auto,*,auto" @tap="dismissKeyboard" class="searchBarBack">
-                <Label col="0" :text="'fa-search' | fonticon" class="fas searchIcons"/>
+                <Label col="0" :text="'fa-search' | fonticon" class="fas searchIcons" horizontalAlignment="center" verticalAlignment="center"/>
                 <TextView col="1" hint="Search Alumni..." v-model="searchAlumni" 
                     @textChange="filterAlumni"
                     @submit="dismissKeyboard"
@@ -39,7 +38,7 @@
                     maxLength="30"
                     width="100%"
                     class="removeBlueUnderline"/>
-                <Label col="2" :text="'fa-times' | fonticon" class="fas searchIcons" @tap="clearText"/>
+                <Label col="2" :text="'fa-times' | fonticon" class="fas searchIcons" @tap="clearText" horizontalAlignment="center" verticalAlignment="center"/>
               </GridLayout>
               <Label col="1" :text="'fa-filter' | fonticon" class="fas filterIcon"/>
             </Gridlayout>
@@ -58,16 +57,14 @@
                 </Gridlayout>
               </v-template>
             </ListView>
-          </ScrollView>
         </Stacklayout>
       
         <!--Noticeboard page  - define the size of the rows using a stack (allows child gridlayout to work well) -->
 
         <Stacklayout row="1" col="0" colSpan="3" height="100%" width="100%" v-show="'Noticeboard' === currentComponent & mainReady & !activity">
-          <ScrollView orientation="vertical">
             <GridLayout rows="auto" columns="*,auto" class="noticeBackground borderBottom borderAll">
               <GridLayout col="0" height="40" rows="*" columns="auto,*,auto" @tap="dismissKeyboard" class="searchBarBack">
-                <Label col="0" :text="'fa-search' | fonticon" class="fas searchIcons"/>
+                <Label col="0" :text="'fa-search' | fonticon" class="fas searchIcons" horizontalAlignment="center" verticalAlignment="center"/>
                 <TextView col="1" hint="Search Noticeboard..." v-model="searchNotice" 
                     @textChange="filterList" 
                     @submit="dismissKeyboard" 
@@ -75,7 +72,7 @@
                     maxLength="30"
                     width="100%"
                     class="removeBlueUnderline"/>
-                <Label col="2" :text="'fa-times' | fonticon" class="fas searchIcons" @tap="clearText"/>
+                <Label col="2" :text="'fa-times' | fonticon" class="fas searchIcons" @tap="clearText" horizontalAlignment="center" verticalAlignment="center"/>
               </GridLayout>
               <Label col="1" :text="'fa-edit' | fonticon" class="fas plusIcon" @tap="addPostMod"/>
             </Gridlayout>
@@ -94,7 +91,6 @@
                 </Gridlayout>
               </v-template>
             </ListView>
-          </ScrollView>
         </Stacklayout>
 
 
@@ -102,8 +98,7 @@
 
         <StackLayout row="1" col="0" colSpan="3" height="100%" width="100%" class="alertBackGround"
           v-show="'Alerts' === currentComponent & mainReady & !activity">
-          <ScrollView orientation="vertical">
-              <ListView for="item in localAlerts" height="700" separatorColor="transparent" >
+            <ListView for="item in localAlerts" height="700" separatorColor="transparent" >
                 <v-template>
                   <StackLayout height="500" width="95%">
                     <card-view elevation="40" radius="1">
@@ -111,8 +106,7 @@
                     </card-view>
                   </StackLayout>
                 </v-template>
-              </ListView>
-          </ScrollView>`
+          </ListView>
         </StackLayout>
 
         <!-- Bottom navigation -->
@@ -155,6 +149,17 @@ import ViewPostModal from "./ViewPostModal";
 import AddPostModal from "./AddPostModal";
 const SwipeDirection = require("tns-core-modules/ui/gestures").SwipeDirection;
 
+
+//required to color android status bar
+import * as app from 'tns-core-modules/application'
+import * as platform from 'tns-core-modules/platform'
+import * as color from 'tns-core-modules/color'
+
+//required to hide android keyboard
+import * as utils from "utils/utils";
+import { isIOS, isAndroid } from "platform";
+import * as frame from "ui/frame";
+
 // rest of Vue code
 
 export default {
@@ -188,6 +193,19 @@ export default {
     };
   },
   methods: {
+    navColorChange() {
+      if (app.android && platform.device.sdkVersion >= "21") {
+          const window = app.android.foregroundActivity.getWindow();
+          window.setStatusBarColor(new color.Color("#073267").android);
+      }
+    },
+    navColorChangeWhite() {
+      if (app.android && platform.device.sdkVersion >= "21") {
+          const window = app.android.foregroundActivity.getWindow();
+          window.setStatusBarColor(new color.Color("#FFFFFF").android);
+      }
+    },
+
     logout() {
       setTimeout(() => {
         this.mainReady = false;
@@ -213,10 +231,11 @@ export default {
           cancelButtonText: "No"
         })
         .then(function(result) {
-          console.log("Inside logout with result returned: " + result)
+          // console.log("Inside logout with result returned: " + result)
           if (result) {
             let element = vm.$refs.mainPages.nativeView
             element.animate({ opacity: 0, duration:1000})
+              .then(function () { return vm.navColorChangeWhite(); })
               .then(function () { return vm.mainReady = false; })
               .then(function () { return vm.$backendService.logout(); })
               .then(function () { return vm.$navigateTo
@@ -721,19 +740,14 @@ export default {
         purple: component === this.currentComponent
       });
     },
-
-    /*
-
-    entryView() {
-      var vm = this
-      return () => ({
-        appear: this.viewMainPages === true,
-        disappear: this.viewMainPages === false
-      });
-    },
-
-    */
-
+    navHeight() {
+      if(app.android) {
+        return "60"
+      }
+      else {
+        return "50"
+      }
+    }
   },
   
   mounted () {
@@ -742,6 +756,7 @@ export default {
       vm.getData()
       console.log("inside mounted command")
       vm.mainReady=true
+      vm.navColorChange()
       }, 3000)
   },
 

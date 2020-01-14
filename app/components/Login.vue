@@ -1,5 +1,5 @@
 <template>
-    <Page actionBarHidden="true">
+    <Page actionBarHidden="true" @loaded="pageLoaded">
         <StackLayout height="100%" width="100%" horizontalAlignment="center" verticalAlignment="center">
 
              <!--Loading Stage - show this -->
@@ -17,15 +17,15 @@
                     <Label class="header" text="Alumni Login"></Label>
 
                     <GridLayout rows="auto, auto, auto">
-                        <StackLayout row="0" class="input-field">
+                        <StackLayout row="0" class="input-field" @tap="dismissKeyboard">
                             <TextField class="input" hint="Email" :isEnabled="!processing"
-                                keyboardType="email" autocorrect="false"
+                                keyboardType="email" autocorrect="false" ref="username"
                                 autocapitalizationType="none" v-model="user.email"
                                 returnKeyType="next" @returnPress="focusPassword"></TextField>
                             <StackLayout class="hr-light"></StackLayout>
                         </StackLayout>
 
-                        <StackLayout row="1" class="input-field">
+                        <StackLayout row="1" class="input-field" @tap="dismissKeyboard">
                             <TextField class="input" ref="password" :isEnabled="!processing"
                                 hint="Password" secure="true" v-model="user.password"
                                 :returnKeyType="isLoggingIn ? 'done' : 'next'"
@@ -57,6 +57,11 @@
 <script>
     import Home from "./Home";
 
+    //required to color android status bar
+    import * as app from 'tns-core-modules/application'
+    import * as platform from 'tns-core-modules/platform'
+    import * as color from 'tns-core-modules/color'
+
     export default {
         data() {
             return {
@@ -71,6 +76,16 @@
             };
         },
         methods: {
+            pageLoaded() {
+                if (app.android && platform.device.sdkVersion >= "21") {
+                    const window = app.android.foregroundActivity.getWindow();
+                    window.setStatusBarColor(new color.Color("#FFFFFF").android);
+                }
+            },
+            dismissKeyboard() {
+                this.$refs.username.nativeView.dismissSoftInput()
+                this.$refs.password.nativeView.dismissSoftInput()
+            },
             toggleForm() {
                 this.isLoggingIn = !this.isLoggingIn;
             },
@@ -146,7 +161,7 @@
             forgotPassword() {
                 prompt({
                     title: "Forgot Password",
-                    message: "Enter the email address you used to register for APP NAME to reset your password.",
+                    message: "Enter the email address (your username) linked to your account",
                     inputType: "email",
                     defaultText: "",
                     okButtonText: "Ok",

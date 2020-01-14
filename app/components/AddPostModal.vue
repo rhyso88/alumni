@@ -24,9 +24,9 @@
                     <!-- Post Title **Limit to 15 characters ** -->
                     <Label text="Topic: " class="titleText" style="text-align:center;" fontWeight="bold"
                         textDecoration="underline"/>
-                    <StackLayout class="textFieldBord" verticalAlignment="center">
+                    <StackLayout class="textFieldBord" verticalAlignment="center" @tap="dismissKeyboard">
                         <TextField v-model="post_title" hint="Enter post title <30 characters..." 
-                        class="fieldText removeBlueUnderline" textWrap="true" maxLength="30"/>
+                        class="fieldText removeBlueUnderline" textWrap="true" maxLength="30" ref="titleEntry"/>
                     </StackLayout>
 
                     <!-- Post Skills Required -->
@@ -56,9 +56,9 @@
                     <!-- Post Content **Limit to 100 characters - <50 words** -->
                     <Label text="Need Help With: " class="titleText" style="text-align:center;" fontWeight="bold" 
                         textDecoration="underline"/>
-                    <StackLayout class="textFieldBord">
+                    <StackLayout class="textFieldBord" @tap="dismissKeyboard">
                         <TextView v-model="post_content" hint="Enter a short query <360 characters..." class="fieldText removeBlueUnderline" 
-                            textWrap="true" maxLength="360" height="170"/>
+                            textWrap="true" maxLength="360" height="170" ref="helpEntry"/>
                     </StackLayout>
 
             </StackLayout>
@@ -98,6 +98,10 @@ export default {
       }
     },
     methods: {
+        dismissKeyboard() {
+            this.$refs.titleEntry.nativeView.dismissSoftInput()
+            this.$refs.helpEntry.nativeView.dismissSoftInput()
+        },
         toggleEngSci() {
             this.eng_sci = !this.eng_sci;
         },
@@ -144,8 +148,6 @@ export default {
                 // Loop through local dataStore, to create an object in Kinvey format
                 // Once a suitable object is created, save it to the Kinvey server
 
-                // vm.localdata.forEach(item => {
-                // console.log("Item name and occupation"+ count + item.name + item.occupation);
                 var saveObject = {
                     profpic: vm.profpic,
                     userposting: vm.userposting,
@@ -201,11 +203,11 @@ export default {
         // yyyy format, need to get final 2 numbers, so convert to string
 
             let year = today.getFullYear().toString(); 
-            console.log("year: "+ year)
+            // console.log("year: "+ year)
             let first = year[2];
             let sec = year[3];
             const twoYear = first + sec;
-            console.log("shaped down version: "+ twoYear);
+            // console.log("shaped down version: "+ twoYear);
 
         // get month, add 1 as returns from 0-11, convert to 2 digit, then convert to string
 
@@ -216,7 +218,7 @@ export default {
             else {
                 var twoMonth = month.String();
             }
-            console.log("month: "+ twoMonth);
+            // console.log("month: "+ twoMonth);
 
         //get day, put in 2 digit format and convert to string
 
@@ -228,12 +230,12 @@ export default {
                 var twoDay = day.toString();
 
             }
-            console.log("day: " +twoDay)
+            // console.log("day: " +twoDay)
 
         // combine to the format wanted
 
             var combineDate = twoDay+ "/" + twoMonth+ "/" + twoYear
-            console.log(combineDate)
+            // console.log(combineDate)
             vm.time_add = twoDay + "/" + twoMonth + "/" + twoYear;
 
     }
