@@ -1,7 +1,7 @@
 {
   "name": "loginv3",
   "version": "1.0.0",
-  "description": "Medical innovation networking app for Biodesign Australia",
+  "description": "Medical innovation networking app for Biodesign Australia. Version 2 fixed bugs including keyboard dismiss, modal view, dimension differences, button shadow, forgot password.",
   "author": "rhys daniel",
   "license": "MIT",
   "nativescript": {

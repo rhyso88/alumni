@@ -34,3 +34,21 @@ Vue.registerElement(
 new Vue({
   render: h => h("frame", [h(backendService.isLoggedIn() ? routes.home : routes.login)])
 }).$start();
+
+/*
+
+//Vue instance alternate (to control frame properties) ** didn't work **
+
+import Login from './components/Login';
+
+new Vue({
+  template: `
+    <Frame actionBarVisibility="never">
+      <Login/>
+    </Frame>`,
+  components: {
+    Login
+  }
+}).$start();
+
+*/

@@ -1,5 +1,5 @@
 <template>
-    <Page actionBarHidden="true" @loaded="pageLoaded">
+    <Page backgroundSpanUnderStatusBar="true" actionBarHidden="true" class="page-layout" @loaded="pageLoaded">
         <StackLayout height="100%" width="100%" horizontalAlignment="center" verticalAlignment="center">
 
              <!--Loading Stage - show this -->
@@ -11,15 +11,14 @@
 
             <!-- Otherwise show main page below -->
 
-            <FlexboxLayout class="page" ref="mainLogin" v-show="!transitionWait">
-                <StackLayout class="form">
+                <StackLayout class="form page anim-fade-in" ref="mainLogin" v-show="!transitionWait">
                     <Image class="logo" src="~/assets/login_image/BD_reg_stacked.png" stretch="aspectFit" height="200"></Image>
                     <Label class="header" text="Alumni Login"></Label>
 
                     <GridLayout rows="auto, auto, auto">
                         <StackLayout row="0" class="input-field" @tap="dismissKeyboard">
                             <TextField class="input" hint="Email" :isEnabled="!processing"
-                                keyboardType="email" autocorrect="false" ref="username"
+                                keyboardType="email" autocorrect="false" ref="username" width="250"
                                 autocapitalizationType="none" v-model="user.email"
                                 returnKeyType="next" @returnPress="focusPassword"></TextField>
                             <StackLayout class="hr-light"></StackLayout>
@@ -27,16 +26,16 @@
 
                         <StackLayout row="1" class="input-field" @tap="dismissKeyboard">
                             <TextField class="input" ref="password" :isEnabled="!processing"
-                                hint="Password" secure="true" v-model="user.password"
+                                hint="Password" secure="true" v-model="user.password" width="250"
                                 :returnKeyType="isLoggingIn ? 'done' : 'next'"
-                                @returnPress="focusConfirmPassword"></TextField>
+                                @returnPress="focusConfirmPassword" horizontalAlignment="center"></TextField>
                             <StackLayout class="hr-light"></StackLayout>
                         </StackLayout>
 
                         <StackLayout row="2" v-show="!isLoggingIn" class="input-field">
                             <TextField class="input" ref="confirmPassword" :isEnabled="!processing"
                                 hint="Confirm password" secure="true" v-model="user.confirmPassword"
-                                returnKeyType="done"></TextField>
+                                returnKeyType="done" horizontalAlignment="center"></TextField>
                             <StackLayout class="hr-light"></StackLayout>
                         </StackLayout>
 
@@ -46,10 +45,9 @@
                     <Button :text="isLoggingIn ? 'Log In' : 'Sign Up'" :isEnabled="!processing"
                         @tap="submit" class="btn btn-primary m-t-20"></Button>
                     <Label *v-show="isLoggingIn" text="Forgot your password?"
-                        class="login-label" @tap="forgotPassword()"></Label>
+                        class="login-label" @tap="forgotPassword()" horizontalAlignment="center"></Label>
                 </StackLayout>
 
-            </FlexboxLayout>
         </StackLayout>
     </Page>
 </template>
@@ -61,6 +59,7 @@
     import * as app from 'tns-core-modules/application'
     import * as platform from 'tns-core-modules/platform'
     import * as color from 'tns-core-modules/color'
+    import * as page from 'ui/page'
 
     export default {
         data() {
@@ -224,7 +223,6 @@
     }
 
     .header {
-        horizontal-align: center;
         font-size: 25;
         font-weight: 600;
         margin-bottom: 70;
@@ -238,7 +236,6 @@
 
     .input {
         font-size: 18;
-        placeholder-color: #A8A8A8;
     }
 
     .input:disabled {
@@ -248,10 +245,10 @@
 
     .btn-primary {
         margin: 30 5 15 5;
+        z-index:0; /* Removes shadow around android buttons */
     }
 
     .login-label {
-        horizontal-align: center;
         color: #A8A8A8;
         font-size: 16;
     }
@@ -263,4 +260,51 @@
     .bold {
         color: #000000;
     }
+
+    /* Below for sorting out splash screen to login page transition */
+
+    
+    .page-layout {
+        background-color: #ffffff;
+        animation-name: intro-background-intro;
+        animation-duration: 6;
+        animation-fill-mode: forwards;
+        animation-iteration-count: 1;
+        animation-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+
+    @keyframes intro-background-intro {
+        0% {        
+            background-color: white;
+        }
+        20%{
+            background-color: white;
+        }
+        100% {
+            background-color: white;
+        }
+    }
+    
+
+    .anim-fade-in{    
+        animation-name: intro-element-intro;
+        animation-duration: 2;
+        animation-fill-mode: forwards;
+        animation-iteration-count: 1;
+        animation-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);    
+    
+    }
+    @keyframes intro-element-intro {
+        0% {
+            opacity:0;
+            transform: translate(0, 1000);
+            animation-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+        100% {
+            opacity:1;
+            animation-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1); 
+            transform: translate(0, 0) ;        
+        }
+    }
+
 </style>

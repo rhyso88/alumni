@@ -1,57 +1,65 @@
 <template>
-  <Page>
-    <StackLayout class="" height="100%" horizontalAlignment="center" verticalAlignment="center" >
-        <!-- Portrait Photo & Name -->
+    <Page>
 
-        <StackLayout height="30%" class="">
-            <Image :src="profpic" stretch="aspectFill" class="profilePic" ></Image>
-            <Label :text="userposting" color="#000" fontSize="23" fontWeight="bold" class="labelCent"/>
-        </StackLayout>
+        <!-- Set boundaries for gridlayout - needs these to ensure rendering as planned -->
+    
+        <StackLayout class="" height="100%" width="100%">
+        
+        <!-- Set gridlayout which keeps portrait at top, and submit at bottom -->
 
-        <!-- Information about Alumni -->
-        <StackLayout height="60%" width="100%" class="" horizontalAlignment="center">
-            
-                <!-- Post Title **Limit to 15 characters ** -->
-                <Label text="Topic:" class="titleText" style="text-align:center;" fontWeight="bold" 
-                    textDecoration="underline"/>
-                <StackLayout class="textFieldBord" verticalAlignment="center">
-                    <Label :text="post_title" class="fieldText" textWrap="true"/>
+            <GridLayout rows="auto,*,auto" columns="*" class="">
+
+                <!-- Portrait Photo & Name -->
+
+                <StackLayout row="0" col="0" horizontalAlignment="center" verticalAlignment="center" class="">
+                    <Image :src="profpic" stretch="aspectFill" class="profilePic" verticalAlignment="center"></Image>
+                    <Label :text="userposting" color="#000" fontSize="23" fontWeight="bold" class="labelCent" verticalAlignment="center"/>
                 </StackLayout>
 
-                <!-- Post Skills Required -->
-                <Label text="Skills Required: " class="titleText" style="text-align:center;" fontWeight="bold" 
-                    textDecoration="underline"/>
-                <FlexboxLayout class="textFieldBord" alignItems="center" justifyContent="center">
-                    <StackLayout class="" v-if="eng_sci">
-                        <Label class="fas skilReqModIcon" :text="'fa-tools' | fonticon" color="#53beb1"/>
-                        <Label class="skilReqModIconText" text="Eng/Science" textWrap="true"/>
-                    </StackLayout>
-                    <StackLayout class="" v-if="medical">
-                        <Label class="fas skilReqModIcon" :text="'fa-stethoscope' | fonticon" color="#55a3bb"/>
-                        <Label class="skilReqModIconText" text="Medicine" textWrap="true"/>
-                    </StackLayout>
-                    <StackLayout class="" v-if="corporate">
-                        <Label class="fas skilReqModIcon" :text="'fa-briefcase' | fonticon" color="#d16a6e"/>
-                        <Label class="skilReqModIconText" text="Corporate" textWrap="true"/>
-                    </StackLayout>
-                </FlexboxLayout>
+                <!-- Information about Post -->
+                 <StackLayout row="1" col="0" class="" horizontalAlignment="center" height="100%" width="100%">
+                    
+                        <!-- Post Title **Limit to 15 characters ** -->
+                        <Label text="Topic:" class="titleText" style="text-align:center;" fontWeight="bold" 
+                            textDecoration="underline"/>
+                        <StackLayout class="textFieldBord" verticalAlignment="center">
+                            <Label :text="post_title" class="fieldText" textWrap="true"/>
+                        </StackLayout>
 
-                <!-- Post Content **Limit to 100 characters - <50 words** -->
-                <Label text="Need Help With: " class="titleText" style="text-align:center;" fontWeight="bold" textDecoration="underline"/>
-                <StackLayout class="textFieldBord">
-                    <Label :text="post_content" class="fieldText" textWrap="true"/>
+                        <!-- Post Skills Required -->
+                        <Label text="Skills Required: " class="titleText" style="text-align:center;" fontWeight="bold" 
+                            textDecoration="underline"/>
+                        <FlexboxLayout class="textFieldBord" alignItems="center" justifyContent="center">
+                            <StackLayout class="" v-if="eng_sci">
+                                <Label class="fas skilReqModIcon" :text="'fa-tools' | fonticon" color="#53beb1"/>
+                                <Label class="skilReqModIconText" text="Eng/Science" textWrap="true"/>
+                            </StackLayout>
+                            <StackLayout class="" v-if="medical">
+                                <Label class="fas skilReqModIcon" :text="'fa-stethoscope' | fonticon" color="#55a3bb"/>
+                                <Label class="skilReqModIconText" text="Medicine" textWrap="true"/>
+                            </StackLayout>
+                            <StackLayout class="" v-if="corporate">
+                                <Label class="fas skilReqModIcon" :text="'fa-briefcase' | fonticon" color="#d16a6e"/>
+                                <Label class="skilReqModIconText" text="Corporate" textWrap="true"/>
+                            </StackLayout>
+                        </FlexboxLayout>
+
+                        <!-- Post Content **Limit to 100 characters - <50 words** -->
+                        <Label text="Need Help With: " class="titleText" style="text-align:center;" fontWeight="bold" textDecoration="underline"/>
+                        <StackLayout class="textFieldBord">
+                            <Label :text="post_content" class="fieldText" textWrap="true"/>
+                        </StackLayout>
+
                 </StackLayout>
 
+                <!-- Make Contact -->
+                <StackLayout row="2" col="0" horizontalAlignment="center" verticalAlignment="center" class="" @tap="sendEmail">
+                    <Label :text="'fa-paper-plane' | fonticon" class="fas labelCent plane"/>
+                    <Label class="planeLabel" text="Make Contact"/>
+                </StackLayout>
+            </GridLayout>
         </StackLayout>
-
-        <!-- Submit Post -->
-        <StackLayout height="10%" horizontalAlignment="center" verticalAlignment="center" class="" @tap="sendEmail">
-            <Label :text="'fa-paper-plane' | fonticon" class="fas labelCent plane"/>
-            <Label class="planeLabel" text="Make Contact"/>
-        </StackLayout>
-
-    </StackLayout>
-  </Page>
+    </Page>
 </template>
 
 <script>

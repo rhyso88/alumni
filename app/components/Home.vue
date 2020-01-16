@@ -188,7 +188,10 @@ export default {
       filteredPost:[],
 
       //Alert page data
-      localAlerts:[]
+      localAlerts:[],
+
+      //Modal page android setting (default is false for Iphone - non full screen modal)
+      androidModal: false
 
     };
   },
@@ -349,6 +352,7 @@ export default {
 
     showDetailPageModally(item) {
       this.$showModal(ProfModal, {
+        fullscreen: this.androidModal,
         props: {
           name: item.name,
           occupation: item.occupation,
@@ -366,6 +370,7 @@ export default {
     addPostMod(){
       // console.log("Modal blog page posted by: ")
       this.$showModal(AddPostModal, {
+        fullscreen: this.androidModal,
         props: {}
       }).then(this.getData);
     },
@@ -374,6 +379,7 @@ export default {
       console.log("Modal view of the following users post:  "+ item.userposting)
       this.addSeen(item);
       this.$showModal(ViewPostModal, {
+        fullscreen: this.androidModal,
         props: {
           _id: item._id,
           profpic: item.profpic,
@@ -470,6 +476,9 @@ export default {
       }
       else if (args.direction == SwipeDirection.right & "Noticeboard" === this.currentComponent & this.mainReady) {
         vm.currentComponent = 'AddressBook'
+      }
+      else if (args.direction == SwipeDirection.down & this.mainReady) {
+        $modal.close
       }
       else {
         //nothing
@@ -757,6 +766,8 @@ export default {
       console.log("inside mounted command")
       vm.mainReady=true
       vm.navColorChange()
+      if (isAndroid)
+        {vm.androidModal = true;}
       }, 3000)
   },
 
@@ -794,6 +805,7 @@ export default {
   margin: 20;
   font-size: 30;
   padding: 10;
+  z-index:0; /* Removes shadow around android buttons */
 }
 
 .navBackground {

@@ -2,6 +2,7 @@
 // @see https://docs.nativescript.org/ui/theme
 @import '~@nativescript/theme/core';
 @import '~@nativescript/theme/blue';
+//@import '~@nativescript/theme/core.light.css';
 
 // Override variables here
 
@@ -28,6 +29,7 @@
 
 .sendEmailIcon {
 	font-size: 40;
+	z-index:0; /* Removes shadow around android buttons */
 }
 
 .pageHome {
