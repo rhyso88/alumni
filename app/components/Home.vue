@@ -160,6 +160,7 @@ import * as utils from "utils/utils";
 import { isIOS, isAndroid } from "platform";
 import * as frame from "ui/frame";
 
+
 // rest of Vue code
 
 export default {
@@ -304,6 +305,29 @@ export default {
       this.$refs.noticeboardSearchBar.nativeView.dismissSoftInput()
     },
 
+   /*
+
+    dismissKeyboard() {
+        if (isIOS) {
+        utils.ios.getter(UIApplication, UIApplication.sharedApplication)
+            .keyWindow
+            .endEditing(true);
+        }
+        if (isAndroid) {
+          const dialogFragment = app.android
+              .foregroundActivity
+              .getFragmentManager()
+              .findFragmentByTag("dialog");
+          if (dialogFragment) {
+              utils.ad.dismissSoftInput(dialogFragment.getDialog().getCurrentFocus());
+          } else {
+              utils.ad.dismissSoftInput();
+          }
+      }
+    },
+
+    */
+
     filterAlumni() {
       
       var vm = this;
@@ -311,7 +335,7 @@ export default {
       if (vm.searchAlumni === "") {
           vm.filteredAlumni = vm.localdata
           this.$refs.alumSearchBar.nativeView.dismissSoftInput()
-          console.log("dismiss keyboard now")
+          // console.log("dismiss keyboard now")
           }
       else {
 
@@ -331,7 +355,7 @@ export default {
       if (vm.searchNotice === "") {
           vm.filteredPost = vm.localposts
           this.$refs.noticeboardSearchBar.nativeView.dismissSoftInput()
-          console.log("dismiss keyboard now")
+          // console.log("dismiss keyboard now")
           }
       else {
 
