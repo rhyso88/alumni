@@ -787,7 +787,6 @@ export default {
     var vm = this;
     setTimeout(() => {
       vm.getData()
-      console.log("inside mounted command")
       vm.mainReady=true
       vm.navColorChange()
       if (isAndroid)

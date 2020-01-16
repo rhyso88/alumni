@@ -1,17 +1,18 @@
 <template>
     <Page backgroundSpanUnderStatusBar="true" actionBarHidden="true" class="page-layout" @loaded="pageLoaded">
-        <StackLayout height="100%" width="100%" horizontalAlignment="center" verticalAlignment="center">
+        <StackLayout height="100%" width="100%">
 
              <!--Loading Stage - show this -->
 
-            <Gridlayout rows="*" columns="*" v-show="transitionWait">
+            <Gridlayout rows="*" columns="*" v-show="transitionWait" class="borderTest">
                 <Image col="0" row="0" ref="waiting" src="~/assets/login_image/BD_reg_stacked.png" class="intro" height="100"
                     stretch="aspectFit" horizontalAlignment="center" verticalAlignment="center"/>
             </Gridlayout>
 
-            <!-- Otherwise show main page below -->
-
-                <StackLayout class="form page anim-fade-in" ref="mainLogin" v-show="!transitionWait">
+            <!-- Otherwise show main page below - Gridlayout wrapped to vertically center same as loading graphic -->
+            
+            <GridLayout rows="*" columns="*">
+                <StackLayout row="0" col="0" class="form anim-fade-in" ref="mainLogin" v-show="!transitionWait" verticalAlignment="center">
                     <Image class="logo" src="~/assets/login_image/BD_reg_stacked.png" stretch="aspectFit" height="200"></Image>
                     <Label class="header" text="Alumni Login"></Label>
 
@@ -47,7 +48,7 @@
                     <Label *v-show="isLoggingIn" text="Forgot your password?"
                         class="login-label" @tap="forgotPassword()" horizontalAlignment="center"></Label>
                 </StackLayout>
-
+            </GridLayout>
         </StackLayout>
     </Page>
 </template>
@@ -204,21 +205,13 @@
 </script>
 
 <style scoped>
-    .page {
-        align-items: center;
-        flex-direction: column;
-    }
-
     .form {
         margin-left: 30;
         margin-right: 30;
-        flex-grow: 2;
-        vertical-align: middle;
     }
 
     .logo {
         margin-bottom: 12;
-        height: 180;
         font-weight: bold;
     }
 
@@ -283,6 +276,11 @@
         100% {
             background-color: white;
         }
+    }
+
+    .borderTest {
+        border-color:#000;
+	    border-width: 1;
     }
     
 
