@@ -476,7 +476,7 @@ export default {
         .save(entAdd)
         .then(function(entity) {
           // vm.getData();
-          console.log("Added seen data to Kinvey");
+          // console.log("Added seen data to Kinvey");
         })
         .catch(function(error) {
           console.log("Error with number of times seen method:" + error);
@@ -500,9 +500,6 @@ export default {
       }
       else if (args.direction == SwipeDirection.right & "Noticeboard" === this.currentComponent & this.mainReady) {
         vm.currentComponent = 'AddressBook'
-      }
-      else if (args.direction == SwipeDirection.down & this.mainReady) {
-        $modal.close
       }
       else {
         //nothing
