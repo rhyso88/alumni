@@ -7,6 +7,8 @@
 
     <!-- Set gridlayout which keeps portrait at top, and submit at bottom -->
 
+    <PreviousNextView> <!--  this line purely for keyboard next view plugin -->
+
         <GridLayout rows="auto,*,auto" columns="*" class="">
 
             <!-- Portrait Photo & Name -->
@@ -71,6 +73,9 @@
             </StackLayout>
         
         </GridLayout>
+
+        </PreviousNextView> <!--  this line purely for keyboard next view plugin -->
+
     </StackLayout>
   </Page>
 </template>
@@ -164,7 +169,7 @@ export default {
                 dataStore
                     .save(saveObject)
                     .then(function(entity) {
-                    console.log("just completed adding new post to server");
+                    // console.log("just completed adding new post to server");
                     // vm.getData(); - if using later need to work out data flow direction;
                     // alert("Added new post to Alumni Noticeboard");
                     })
@@ -295,7 +300,7 @@ export default {
     text-align: center;
     vertical-align: middle;
     padding-top: 5;
-    padding-bottom: 5;
+    padding-bottom: 10;
     padding-right: 5;
     padding-left: 5;
 }

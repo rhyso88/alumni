@@ -29,6 +29,11 @@ Vue.registerElement(
   () => require('@nstudio/nativescript-cardview').CardView
 );
 
+// Import keyboard shift/next 
+
+Vue.registerElement("PreviousNextView", 
+  () => require("nativescript-iqkeyboardmanager"). PreviousNextView)
+
 //Vue instance
 
 new Vue({

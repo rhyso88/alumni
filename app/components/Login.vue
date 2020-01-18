@@ -11,10 +11,12 @@
 
             <!-- Otherwise show main page below - Gridlayout wrapped to vertically center same as loading graphic -->
             
-            <GridLayout rows="*" columns="*">
-                <StackLayout row="0" col="0" class="form anim-fade-in" ref="mainLogin" v-show="!transitionWait" verticalAlignment="center">
+            <GridLayout rows="*" columns="*" class="form" ref="mainLogin" v-show="!transitionWait">
+                <StackLayout row="0" col="0" class="form"  verticalAlignment="center">
                     <Image class="logo" src="~/assets/login_image/BD_reg_stacked.png" stretch="aspectFit" height="200"></Image>
                     <Label class="header" text="Alumni Login"></Label>
+
+                    <PreviousNextView> <!--  this line purely for keyboard next view plugin -->
 
                     <GridLayout rows="auto, auto, auto">
                         <StackLayout row="0" class="input-field" @tap="dismissKeyboard">
@@ -24,7 +26,7 @@
                                 returnKeyType="next" @returnPress="focusPassword"></TextField>
                             <StackLayout class="hr-light"></StackLayout>
                         </StackLayout>
-
+                        
                         <StackLayout row="1" class="input-field" @tap="dismissKeyboard">
                             <TextField class="input" ref="password" :isEnabled="!processing"
                                 hint="Password" secure="true" v-model="user.password" width="250"
@@ -42,6 +44,8 @@
 
                         <ActivityIndicator rowSpan="3" :busy="processing"></ActivityIndicator>
                     </GridLayout>
+
+                    </PreviousNextView> <!--  this line purely for keyboard next view plugin -->
 
                     <Button :text="isLoggingIn ? 'Log In' : 'Sign Up'" :isEnabled="!processing"
                         @tap="submit" class="btn btn-primary m-t-20"></Button>
@@ -109,7 +113,7 @@
             login2() {
                 let element = this.$refs.mainLogin.nativeView
                 var vm = this
-                element.animate({ opacity: 0, duration:300})
+                element.animate({ opacity: 0, duration:500})
                     .then(function () { return vm.transitionWait = true; })
                     .then(function () { return vm.login(); })
                     .catch(function (e) {console.log("login2 error :"+ e.message);});
@@ -260,7 +264,7 @@
     .page-layout {
         background-color: #ffffff;
         animation-name: intro-background-intro;
-        animation-duration: 6;
+        animation-duration: 2;
         animation-fill-mode: forwards;
         animation-iteration-count: 1;
         animation-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);

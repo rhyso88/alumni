@@ -119,7 +119,7 @@ export default {
         email.compose({
         subject: "Perth Biodesign Alumni Query about: "+ vm.post_title +" from: " + vm.activeUserName,
         body: "",
-        to: ["addemail@hotmail.com"],
+        to: [this.email],
         cc: [],
         bcc: [],
         attachments:"",

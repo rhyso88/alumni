@@ -11,7 +11,7 @@
 
       <!-- Main Components - Row 1 all on top of each other, using v-show to display them -->
 
-      <GridLayout :rows="navHeight + ',*, 49'" columns="*, *, *" @swipe="onSwipe" v-show="mainReady" ref="mainPages">
+      <GridLayout :rows="navHeight + ',*,'+tabHeight" columns="*, *, *" @swipe="onSwipe" v-show="mainReady" ref="mainPages">
 
         <!-- Top Bar - Row 0 -->
 
@@ -40,7 +40,10 @@
                     class="removeBlueUnderline"/>
                 <Label col="2" :text="'fa-times' | fonticon" class="fas searchIcons" @tap="clearText" horizontalAlignment="center" verticalAlignment="center"/>
               </GridLayout>
-              <Label col="1" :text="'fa-filter' | fonticon" class="fas filterIcon"/>
+              <Label col="1" :text="'fa-tools' | fonticon" class="fas filterIcon" @tap="toggleAlumSkill" v-if="filterEngSci" />
+              <Label col="1" :text="'fa-stethoscope' | fonticon" class="fas filterIcon" @tap="toggleAlumSkill" v-else-if="filterMedical" />
+              <Label col="1" :text="'fa-briefcase' | fonticon" class="fas filterIcon" @tap="toggleAlumSkill" v-else-if="filterCorporate" />
+              <Label col="1" :text="'fa-filter' | fonticon" class="fas filterIcon" @tap="toggleAlumSkill" v-else/>
             </Gridlayout>
             <ListView for="item in filteredAlumni" height="700">
               <v-template>
@@ -48,12 +51,12 @@
                   @tap="showDetailPageModally(item)">
                     <Image row="0" col="0" :src="item.src" class="postImg" stretch="aspectFill"/>
                     <Label row="0" col="1" :text="item.name" class="alumniTitle"/>
-                    <Label row="0" col="2" class="fas skillIcons" :text="'fa-tools' | fonticon" v-if="item.eng_sci"/>
-                    <Label row="0" col="2" class="fas skillIcons" :text="'fa-tools' | fonticon" v-else color ="white"/>
-                    <Label row="0" col="3" class="fas skillIcons" :text="'fa-stethoscope' | fonticon" v-if="item.medical"/>
-                    <Label row="0" col="3" class="fas skillIcons" :text="'fa-stethoscope' | fonticon" v-else color ="white"/>
-                    <Label row="0" col="4" class="fas skillIcons" :text="'fa-briefcase' | fonticon" v-if="item.corporate"/>
-                    <Label row="0" col="4" class="fas skillIcons" :text="'fa-briefcase' | fonticon" v-else color ="white"/>
+                    <Label row="0" col="2" class="fas skillIcons" :text="'fa-tools' | fonticon" v-show="item.eng_sci"/>
+                    <!--<Label row="0" col="2" class="fas skillIcons" :text="'fa-tools' | fonticon" v-else color="white"/>-->
+                    <Label row="0" col="3" class="fas skillIcons" :text="'fa-stethoscope' | fonticon" v-show="item.medical"/>
+                    <!--<Label row="0" col="3" class="fas skillIcons" :text="'fa-stethoscope' | fonticon" v-else color="white"/>-->
+                    <Label row="0" col="4" class="fas skillIcons" :text="'fa-briefcase' | fonticon" v-show="item.corporate"/>
+                    <!--<Label row="0" col="4" class="fas skillIcons" :text="'fa-briefcase' | fonticon" v-else color="white"/>-->
                 </Gridlayout>
               </v-template>
             </ListView>
@@ -110,7 +113,8 @@
         </StackLayout>
 
         <!-- Bottom navigation -->
-        <GridLayout row="2" col="0" colSpan="3" rows="*" columns="*,*,*" v-show="mainReady" class="borderTop navBackground">
+        <GridLayout row="2" col="0" colSpan="3" rows="*" columns="*,*,*" v-show="mainReady" 
+          class="borderTop navBackground" android:style="padding-bottom:5;padding-top:5;">
           <Button
             :class="navigationButtonClasses('AddressBook')"
             @tap="currentComponent = 'AddressBook'"
@@ -172,16 +176,22 @@ export default {
       mainReady: false,
       mainAction:true,
       toSearch: false,
+      viewMainPages:false,
       searchQuery: "defaultSearch",
       currentComponent: "AddressBook",
       componentsArray: ["AddressBook", "Noticeboard", "Alerts"],
-      localdata: [],
       todelete: "_id of object you want to delete will go here",
       activity: false,
+
+      //Alumni data page
       searchAlumni:"",
+      localdata: [],
       filteredAlumni:[],
-      viewMainPages:false,
-      
+      filterEngSci: false,
+      filterMedical: false,
+      filterCorporate: false,
+      filterCount:0,
+      filterSkillArray: ["eng_sci","medical","corporate"],
 
       //Post page data
       searchNotice:"",
@@ -305,47 +315,67 @@ export default {
       this.$refs.noticeboardSearchBar.nativeView.dismissSoftInput()
     },
 
-   /*
+   toggleAlumSkill() {
 
-    dismissKeyboard() {
-        if (isIOS) {
-        utils.ios.getter(UIApplication, UIApplication.sharedApplication)
-            .keyWindow
-            .endEditing(true);
-        }
-        if (isAndroid) {
-          const dialogFragment = app.android
-              .foregroundActivity
-              .getFragmentManager()
-              .findFragmentByTag("dialog");
-          if (dialogFragment) {
-              utils.ad.dismissSoftInput(dialogFragment.getDialog().getCurrentFocus());
-          } else {
-              utils.ad.dismissSoftInput();
-          }
-      }
-    },
-
-    */
+    var vm = this;
+    vm.filterCount += 1
+    if (vm.filterCount > 3) {vm.filterCount = 0}
+    switch (vm.filterCount) {
+      case 0:
+        vm.filterEngSci = false,
+        vm.filterMedical = false,
+        vm.filterCorporate = false,
+        vm.filterAlumni()
+        break;
+      case 1:
+        vm.filterEngSci = true,
+        vm.filterMedical = false,
+        vm.filterCorporate = false,
+        vm.filterAlumni()
+        break;
+      case 2:
+        vm.filterEngSci = false,
+        vm.filterMedical = true,
+        vm.filterCorporate = false,
+        vm.filterAlumni()
+        break;
+      case 3:
+        vm.filterEngSci = false,
+        vm.filterMedical = false,
+        vm.filterCorporate = true,
+        vm.filterAlumni()
+        break;
+    }
+   },
 
     filterAlumni() {
       
       var vm = this;
 
-      if (vm.searchAlumni === "") {
-          vm.filteredAlumni = vm.localdata
-          this.$refs.alumSearchBar.nativeView.dismissSoftInput()
-          // console.log("dismiss keyboard now")
-          }
-      else {
+        if (vm.searchAlumni === "" & vm.filterCount === 0) {
+            vm.filteredAlumni = vm.localdata
+            vm.$refs.alumSearchBar.nativeView.dismissSoftInput()
+            }
+        else if (vm.filterCount === 0) {
+          vm.filteredAlumni = vm.localdata.filter(obj => {
+          return (vm.siftList(obj.name,vm.searchAlumni) || vm.siftList(obj.occupation,vm.searchAlumni)) 
+          });
+        }
 
-      var filteredAddress = vm.localdata.filter(obj => {
-        return vm.siftList(obj.name,vm.searchAlumni) || vm.siftList(obj.occupation,vm.searchAlumni);
-      });
+        else {
 
-      vm.filteredAlumni = filteredAddress;
+          // get count for array position of skill
 
-      }
+          var adj_count = vm.filterCount-1
+          var filterSkillButton = vm.filterSkillArray[adj_count]
+
+          vm.filteredAlumni = vm.localdata.filter(obj => {
+            return (vm.siftList(obj.name,vm.searchAlumni) || vm.siftList(obj.occupation,vm.searchAlumni)) 
+              && eval("obj."+filterSkillButton) === true
+          });
+
+          // vm.filteredAlumni = filteredAddress;
+        }
     },
 
     filterList() {
@@ -355,17 +385,14 @@ export default {
       if (vm.searchNotice === "") {
           vm.filteredPost = vm.localposts
           this.$refs.noticeboardSearchBar.nativeView.dismissSoftInput()
-          // console.log("dismiss keyboard now")
           }
       else {
 
-      var filteredNoticeboard = vm.localposts.filter(obj => {
+      vm.filteredPost = vm.localposts.filter(obj => {
         return vm.siftList(obj.userposting,vm.searchNotice) || vm.siftList(obj.post_title,vm.searchNotice);
       });
 
-      vm.filteredPost = filteredNoticeboard;
-
-      // console.log(JSON.stringify(filteredNoticeboard))
+      // vm.filteredPost = filteredNoticeboard;
 
       }
     },
@@ -400,7 +427,7 @@ export default {
     },
 
     viewPostMod(item){
-      console.log("Modal view of the following users post:  "+ item.userposting)
+      // console.log("Modal view of the following users post:  "+ item.userposting)
       this.addSeen(item);
       this.$showModal(ViewPostModal, {
         fullscreen: this.androidModal,
@@ -777,7 +804,16 @@ export default {
       else {
         return "50"
       }
-    }
+    },
+    tabHeight() {
+      if(app.android) {
+        return "62"
+      }
+      else {
+        return "49"
+      }
+    },
+
   },
   
   mounted () {

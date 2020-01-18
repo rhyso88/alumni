@@ -1,16 +1,16 @@
 {
   "name": "loginv3",
   "version": "1.0.0",
-  "description": "Medical innovation networking app for Biodesign Australia. Version 2 fixed bugs including keyboard dismiss, modal view, dimension differences, button shadow, forgot password.",
+  "description": "Medical innovation networking app for Biodesign Australia. Version 4 fixed bugs including keyboard dismiss, modal view, dimension differences, button shadow, forgot password, filter etc.",
   "author": "rhys daniel",
   "license": "MIT",
   "nativescript": {
     "id": "com.rhysdaniel1988.biodesignalumni",
     "templateVersion": "v2",
-    "tns-android": {
+    "tns-ios": {
       "version": "6.2.0"
     },
-    "tns-ios": {
+    "tns-android": {
       "version": "6.2.0"
     }
   },
@@ -21,6 +21,7 @@
     "kinvey-nativescript-sdk": "^4.2.5",
     "nativescript-email": "^1.5.5",
     "nativescript-fonticon": "^2.0.0",
+    "nativescript-iqkeyboardmanager": "^1.5.1",
     "nativescript-sqlite": "^2.3.3",
     "nativescript-vue": "^2.4.0",
     "serialize-javascript": "^2.1.2",
