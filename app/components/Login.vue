@@ -1,5 +1,5 @@
 <template>
-    <Page backgroundSpanUnderStatusBar="true" actionBarHidden="true" class="page-layout" @loaded="pageLoaded">
+    <Page backgroundSpanUnderStatusBar="true" actionBarHidden="true" @loaded="pageLoaded">
         <StackLayout height="100%" width="100%">
 
              <!--Loading Stage - show this -->
@@ -24,22 +24,13 @@
                                 keyboardType="email" autocorrect="false" ref="username" width="250"
                                 autocapitalizationType="none" v-model="user.email"
                                 returnKeyType="next" @returnPress="focusPassword"></TextField>
-                            <StackLayout class="hr-light"></StackLayout>
                         </StackLayout>
                         
                         <StackLayout row="1" class="input-field" @tap="dismissKeyboard">
                             <TextField class="input" ref="password" :isEnabled="!processing"
                                 hint="Password" secure="true" v-model="user.password" width="250"
-                                :returnKeyType="isLoggingIn ? 'done' : 'next'"
+                                returnKeyType="next"
                                 @returnPress="focusConfirmPassword" horizontalAlignment="center"></TextField>
-                            <StackLayout class="hr-light"></StackLayout>
-                        </StackLayout>
-
-                        <StackLayout row="2" v-show="!isLoggingIn" class="input-field">
-                            <TextField class="input" ref="confirmPassword" :isEnabled="!processing"
-                                hint="Confirm password" secure="true" v-model="user.confirmPassword"
-                                returnKeyType="done" horizontalAlignment="center"></TextField>
-                            <StackLayout class="hr-light"></StackLayout>
                         </StackLayout>
 
                         <ActivityIndicator rowSpan="3" :busy="processing"></ActivityIndicator>
@@ -47,10 +38,8 @@
 
                     </PreviousNextView> <!--  this line purely for keyboard next view plugin -->
 
-                    <Button :text="isLoggingIn ? 'Log In' : 'Sign Up'" :isEnabled="!processing"
-                        @tap="submit" class="btn btn-primary m-t-20"></Button>
-                    <Label *v-show="isLoggingIn" text="Forgot your password?"
-                        class="login-label" @tap="forgotPassword()" horizontalAlignment="center"></Label>
+                    <Button text="Log In" :isEnabled="!processing" @tap="submit" class="btn btn-primary m-t-20"></Button>
+                    <Label text="Forgot your password?" class="login-label" @tap="forgotPassword()" horizontalAlignment="center"></Label>
                 </StackLayout>
             </GridLayout>
         </StackLayout>
@@ -59,6 +48,7 @@
 
 <script>
     import Home from "./Home";
+    import Login from "./Login";
 
     //required to color android status bar
     import * as app from 'tns-core-modules/application'
@@ -70,12 +60,10 @@
         data() {
             return {
                 transitionWait: false,
-                isLoggingIn: true,
                 processing: false,
                 user: {
-                    email: "rhyso88@hotmail.com",
-                    password: "testing",
-                    confirmPassword: "testing"
+                    email: "",
+                    password: "",
                 }
             };
         },
@@ -90,9 +78,6 @@
                 this.$refs.username.nativeView.dismissSoftInput()
                 this.$refs.password.nativeView.dismissSoftInput()
             },
-            toggleForm() {
-                this.isLoggingIn = !this.isLoggingIn;
-            },
 
             submit() {
                 if (!this.user.email || !this.user.password) {
@@ -103,11 +88,7 @@
                 }
 
                 this.processing = true;
-                if (this.isLoggingIn) {
-                    this.login2();
-                } else {
-                    this.register();
-                }
+                this.login2();
             },
 
             login2() {
@@ -120,6 +101,7 @@
             },
 
             login() {
+                var vm = this
                 this.$backendService
                     .login(this.user)
                     .then(() => {
@@ -132,33 +114,13 @@
                         });
                     })
                     .catch(() => {
-                        this.processing = false;
+                        vm.transitionWait = false;
+                        vm.processing = false;
                         this.alert(
                             "Unfortunately we could not find your account."
                         );
-                    });
-            },
-
-            register() {
-                if (this.user.password != this.user.confirmPassword) {
-                    this.alert("Your passwords do not match.");
-                    this.processing = false;
-                    return;
-                }
-
-                this.$backendService
-                    .register(this.user)
-                    .then(() => {
-                        this.processing = false;
-                        this.alert(
-                            "Your account was successfully created.");
-                        this.isLoggingIn = true;
-                    })
-                    .catch(() => {
-                        this.processing = false;
-                        this.alert(
-                            "Unfortunately we were unable to create your account."
-                        );
+                        this.$navigateTo(Login, { clearHistory: true, 
+                        });
                     });
             },
 
@@ -190,11 +152,6 @@
 
             focusPassword() {
                 this.$refs.password.nativeView.focus();
-            },
-            focusConfirmPassword() {
-                if (!this.isLoggingIn) {
-                    this.$refs.confirmPassword.nativeView.focus();
-                }
             },
 
             alert(message) {
@@ -248,65 +205,6 @@
     .login-label {
         color: #A8A8A8;
         font-size: 16;
-    }
-
-    .sign-up-label {
-        margin-bottom: 20;
-    }
-
-    .bold {
-        color: #000000;
-    }
-
-    /* Below for sorting out splash screen to login page transition */
-
-    
-    .page-layout {
-        background-color: #ffffff;
-        animation-name: intro-background-intro;
-        animation-duration: 2;
-        animation-fill-mode: forwards;
-        animation-iteration-count: 1;
-        animation-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
-    }
-
-    @keyframes intro-background-intro {
-        0% {        
-            background-color: white;
-        }
-        20%{
-            background-color: white;
-        }
-        100% {
-            background-color: white;
-        }
-    }
-
-    .borderTest {
-        border-color:#000;
-	    border-width: 1;
-    }
-    
-
-    .anim-fade-in{    
-        animation-name: intro-element-intro;
-        animation-duration: 2;
-        animation-fill-mode: forwards;
-        animation-iteration-count: 1;
-        animation-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);    
-    
-    }
-    @keyframes intro-element-intro {
-        0% {
-            opacity:0;
-            transform: translate(0, 1000);
-            animation-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
-        }
-        100% {
-            opacity:1;
-            animation-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1); 
-            transform: translate(0, 0) ;        
-        }
     }
 
 </style>

@@ -22,10 +22,6 @@ export default class BackendService {
         return Kinvey.User.logout();
     }
 
-    register(user) {
-        return Kinvey.User.signup({ username: user.email, password: user.password });
-    }
-
     resetPassword(email) {
         return Kinvey.User.resetPassword(email)
     }

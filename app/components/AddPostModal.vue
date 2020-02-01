@@ -25,16 +25,16 @@
 
                     <!-- Post Title **Limit to 15 characters ** -->
                     <Label text="Topic: " class="titleText" style="text-align:center;" fontWeight="bold"
-                        textDecoration="underline"/>
-                    <StackLayout class="textFieldBord" verticalAlignment="center" @tap="dismissKeyboard">
+                        textDecoration="underline" v-show="shift_text"/>
+                    <StackLayout class="textFieldBord" verticalAlignment="center" v-show="shift_text">
                         <TextField v-model="post_title" hint="Enter post title <30 characters..." 
                         class="fieldText removeBlueUnderline" textWrap="true" maxLength="30" ref="titleEntry"/>
                     </StackLayout>
 
                     <!-- Post Skills Required -->
                     <Label text="Skills Required: " class="titleText" style="text-align:center;" fontWeight="bold"
-                        textDecoration="underline"/>
-                    <FlexboxLayout class="textFieldBord" alignItems="center" justifyContent="center">
+                        textDecoration="underline" v-show="shift_text"/>
+                    <FlexboxLayout class="textFieldBord" alignItems="center" justifyContent="center" v-show="shift_text">
                         <StackLayout class="" @tap="toggleEngSci">
                             <Label class="fas skilReqModIcon" :text="'fa-tools' | fonticon" color="#53beb1"/>
                             <Label class="skilReqModIconText" text="Eng/Science" textWrap="true"/>
@@ -58,7 +58,7 @@
                     <!-- Post Content **Limit to 100 characters - <50 words** -->
                     <Label text="Need Help With: " class="titleText" style="text-align:center;" fontWeight="bold" 
                         textDecoration="underline"/>
-                    <StackLayout class="textFieldBord" @tap="dismissKeyboard">
+                    <StackLayout class="textFieldBord" @doubletap="shift_dismiss">
                         <TextView v-model="post_content" hint="Enter a short query <360 characters..." class="fieldText removeBlueUnderline" 
                             textWrap="true" maxLength="360" height="170" ref="helpEntry"/>
                     </StackLayout>
@@ -99,13 +99,26 @@ export default {
           time_add: "",
           seen: false,
           no_seen:"0",
-          post_email:""
+          post_email:"",
+          shift_text:true
       }
     },
     methods: {
+        alert(message) {
+            return alert({
+            title: "Post Error",
+            okButtonText: "OK",
+            message: message
+            });
+        },
         dismissKeyboard() {
             this.$refs.titleEntry.nativeView.dismissSoftInput()
             this.$refs.helpEntry.nativeView.dismissSoftInput()
+        },
+        shift_dismiss() {
+            this.$refs.titleEntry.nativeView.dismissSoftInput()
+            this.$refs.helpEntry.nativeView.dismissSoftInput()
+            this.shift_text = !this.shift_text
         },
         toggleEngSci() {
             this.eng_sci = !this.eng_sci;
@@ -124,7 +137,7 @@ export default {
         //Screen data input crudely
 
         if (!vm.post_title || !vm.post_content) {
-            vm.alert("Please provide a post title and a post content");
+            vm.alert("Please provide both a post title and post content");
             return;
         }
 

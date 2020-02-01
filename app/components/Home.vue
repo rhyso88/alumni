@@ -88,7 +88,7 @@
                     <Label row="0" col="2" :text="item.time_add"  fontAttributes="Italic" style="text-align:right;"/>
                     <GridLayout row="1" col="2" rows="*" columns="*,auto" horizontalAlignment="right">
                       <Label col="0" :text="'fa-eye' | fonticon" class="fas" v-if="item.seen" color="#2196F3"/> 
-                      <Label col="1" :text="'fa-eye-slash' | fonticon" class="fas" v-else/>
+                      <Label col="0" :text="'fa-eye-slash' | fonticon" class="fas" v-else/>
                       <Label col="1" :text="item.no_seen"/>
                     </GridLayout>
                 </Gridlayout>
