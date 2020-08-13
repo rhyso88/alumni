@@ -24,7 +24,7 @@
     "nativescript-iqkeyboardmanager": "^1.5.1",
     "nativescript-sqlite": "^2.3.3",
     "nativescript-vue": "^2.4.0",
-    "serialize-javascript": "^2.1.2",
+    "serialize-javascript": "^3.1.0",
     "tns-core-modules": "^6.0.0"
   },
   "devDependencies": {
